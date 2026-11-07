@@ -1,0 +1,44 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|PowerShell",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell.exe",
+            "args": [
+              "-NoProfile",
+              "-ExecutionPolicy",
+              "Bypass",
+              "-File",
+              ".claude/hooks/require-privacy-check.ps1"
+            ],
+            "timeout": 30,
+            "onFailure": "block",
+            "statusMessage": "개인정보 검사 승인 확인 중..."
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell.exe",
+            "args": [
+              "-NoProfile",
+              "-ExecutionPolicy",
+              "Bypass",
+              "-File",
+              ".claude/hooks/request-code-review.ps1"
+            ],
+            "timeout": 30,
+            "statusMessage": "코드 리뷰 필요 여부 확인 중..."
+          }
+        ]
+      }
+    ]
+  }
+}
