@@ -62,3 +62,15 @@ Playwright MCP(`mcp__playwright__*` 도구)로 사이트를 브라우저에서 �
 
 - "심각"은 페이지가 안 뜨거나 기능이 동작하지 않는 경우, "보통"은 화면 깨짐·접근성 문제, "사소"는 개선 제안입니다.
 - 문제가 있으면 마지막에 고칠지 사용자에게 묻습니다.
+
+## 5. Discord 알림
+
+보고를 마치기 전에 결과를 Discord로 한 번 알립니다 (저장소 루트에서 실행):
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .claude/scripts/notify-discord.ps1 -Type test -Status <passed|blocked|failed> -Detail "<요약>"
+```
+
+- 결과에 따라 `-Status`를 고릅니다: 통과 → `passed`, 문제 있음 → `blocked`, 테스트 실패(서버가 안 뜨는 등) → `failed`
+- `-Detail`에는 테스트 범위, 통과/실패 개수, 문제 한 줄 요약을 적습니다. 폼 입력값 같은 개인정보나 비밀값은 넣지 않습니다.
+- 보고 끝에 알림을 보냈는지 적습니다.

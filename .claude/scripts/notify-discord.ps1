@@ -1,13 +1,16 @@
 ﻿# Sends a result to Discord via webhook.
-# Usage: powershell -NoProfile -ExecutionPolicy Bypass -File .claude/scripts/notify-discord.ps1 [-Type commit|privacy|review] -Status passed|blocked|failed [-Detail "..."]
+# Usage: powershell -NoProfile -ExecutionPolicy Bypass -File .claude/scripts/notify-discord.ps1 [-Type commit|privacy|review|test|pipeline] -Status passed|blocked|failed [-Detail "..."] [-Step "..."]
 #   commit  : 커밋 결과 (Claude가 커밋한 경우)
 #   privacy : /commit 개인정보 검사 결과 (커밋은 사용자가 GitHub Desktop에서)
 #   review  : 코드 리뷰 결과
+#   test    : /test 브라우저 테스트 결과 (passed=통과, blocked=문제 있음, failed=테스트 실패)
+#   pipeline: /commit-test 결과 (passed=보안 검사·테스트·커밋 완료, blocked=중단, failed=오류). -Step에 멈춘 단계를 적음
 # The webhook URL is read from the DISCORD_WEBHOOK_URL environment variable (never stored in the repo).
 param(
-    [ValidateSet('commit', 'privacy', 'review')][string]$Type = 'commit',
+    [ValidateSet('commit', 'privacy', 'review', 'test', 'pipeline')][string]$Type = 'commit',
     [ValidateSet('passed', 'blocked', 'failed')][string]$Status = 'passed',
-    [string]$Detail = ''
+    [string]$Detail = '',
+    [string]$Step = ''
 )
 $ErrorActionPreference = 'Stop'
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8  # read git's UTF-8 output correctly
@@ -67,6 +70,28 @@ switch ($Type) {
         }
         $count = @(& $g status --porcelain | Where-Object { $_ }).Count
         $fields += @{ name = '변경 파일 수'; value = "$count"; inline = $true }
+    }
+    'test' {
+        switch ($Status) {
+            'passed' { $title = '🧪 브라우저 테스트 · 통과'; $color = $green }
+            'blocked' { $title = '🐞 브라우저 테스트 · 문제 있음'; $color = $orange }
+            'failed' { $title = '⚠️ 브라우저 테스트 실패'; $color = $red }
+        }
+        $hash = ((& $g log -1 --format=%h) | Out-String).Trim()
+        $fields += @{ name = '기준 커밋'; value = "``$hash``"; inline = $true }
+    }
+    'pipeline' {
+        switch ($Status) {
+            'passed' {
+                $title = '🚀 보안 검사·테스트·커밋 완료 · GitHub Desktop에서 푸시하세요'; $color = $green
+                $hash = ((& $g log -1 --format=%h) | Out-String).Trim()
+                $subject = ((& $g log -1 --format=%s) | Out-String).Trim()
+                $fields += @{ name = '마지막 커밋'; value = "``$hash`` $subject"; inline = $false }
+            }
+            'blocked' { $title = '⛔ 커밋·테스트 파이프라인 중단'; $color = $red }
+            'failed' { $title = '⚠️ 커밋·테스트 파이프라인 실패'; $color = $orange }
+        }
+        if ($Step) { $fields += @{ name = '멈춘 단계'; value = $Step; inline = $true } }
     }
 }
 
