@@ -1,0 +1,24 @@
+# gitleaks 설정: 기본 규칙(수백 가지 키 형식)에 웹훅 URL 규칙을 더함
+# 실행: gitleaks git --staged --redact (커밋 전) / gitleaks git --redact (전체 기록)
+title = "gitleaks config"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "discord-webhook-url"
+description = "Discord webhook URL (URL 자체가 비밀번호)"
+regex = '''https://(?:ptb\.|canary\.)?discord(?:app)?\.com/api/webhooks/\d{17,20}/[A-Za-z0-9_\-]{60,80}'''
+keywords = ["discord"]
+
+[[rules]]
+id = "slack-webhook-url-strict"
+description = "Slack incoming webhook URL"
+regex = '''https://hooks\.slack\.com/(?:services|workflows|triggers)/[A-Za-z0-9+/]{30,}'''
+keywords = ["hooks.slack.com"]
+
+[[rules]]
+id = "teams-webhook-url"
+description = "Microsoft Teams incoming webhook URL"
+regex = '''https://[a-z0-9\-]+\.webhook\.office\.com/webhookb2/[A-Za-z0-9@\-/]{40,}'''
+keywords = ["webhook.office.com"]

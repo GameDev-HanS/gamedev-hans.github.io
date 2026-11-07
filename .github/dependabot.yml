@@ -1,0 +1,13 @@
+# 의존성과 GitHub Actions의 보안 업데이트를 자동으로 PR로 올림
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly

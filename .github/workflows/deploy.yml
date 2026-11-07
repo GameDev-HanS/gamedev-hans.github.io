@@ -1,32 +1,61 @@
 # Next.js 정적 사이트를 GitHub Pages에 배포
 # 참고: https://github.com/nextjs/deploy-github-pages
 # 사전 설정: 저장소 Settings > Pages > Source를 "GitHub Actions"로 지정
+# 보안: 비밀값 검사(gitleaks)와 npm 취약점 검사 통과 후에만 배포, 작업별 최소 권한, Action은 커밋 해시로 고정
+# PR(예: Dependabot)에서는 검사와 빌드만 하고 배포하지 않음
 name: Deploy Next.js site to Pages
 
 on:
   push:
     branches: ["main"]
+  pull_request:
+    branches: ["main"]
   workflow_dispatch:
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+# 기본 권한은 모두 막고, 필요한 작업에만 따로 부여
+permissions: {}
 
-# 진행 중인 배포는 끝까지 실행하고, 그 사이에 쌓인 실행은 건너뜀
+# 배포: 진행 중인 배포는 끝까지 실행. PR: 새 커밋이 오면 이전 검사는 취소
 concurrency:
-  group: "pages"
-  cancel-in-progress: false
+  group: ${{ github.event_name == 'pull_request' && format('pr-{0}', github.ref) || 'pages' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  NEXT_TELEMETRY_DISABLED: 1
 
 jobs:
-  build:
+  secret-scan:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - name: Checkout (full history)
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Scan for secrets (gitleaks, uses .gitleaks.toml)
+        uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_ENABLE_COMMENTS: false
+
+  build:
+    needs: secret-scan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: read
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 22
           cache: npm
@@ -34,12 +63,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # 사이트에 들어가는 패키지(devDependencies 제외)에 심각도 high 이상 취약점이 있으면 중단
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --audit-level=high
+
       - name: Setup Pages
+        if: github.event_name != 'pull_request'
         id: setup_pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
 
       - name: Restore Next.js cache
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: .next/cache
           key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
@@ -52,17 +86,22 @@ jobs:
           PAGES_BASE_PATH: ${{ steps.setup_pages.outputs.base_path }}
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
         with:
           path: ./out
 
   deploy:
+    if: github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4

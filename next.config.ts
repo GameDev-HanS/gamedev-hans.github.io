@@ -7,9 +7,6 @@ const nextConfig: NextConfig = {
   basePath: process.env.PAGES_BASE_PATH,
   // 정적 내보내기에서는 이미지 최적화 서버가 없으므로 원본 이미지 사용
   images: { unoptimized: true },
-  experimental: {
-    agentFeedback: true,
-  },
   turbopack: {
     rules: {
       "*.css": {
