@@ -40,5 +40,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# claude code (local only, never committed)
-.claude/
+# claude code: 공유 설정(.claude/commands, agents, hooks, scripts, settings.json)은 커밋하고
+# 개인 설정만 제외
+.claude/settings.local.json
+
+# playwright mcp 결과물 (스크린샷 등)
+.playwright-mcp/
