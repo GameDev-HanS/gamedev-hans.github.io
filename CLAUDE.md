@@ -76,8 +76,8 @@ Tailwind v4이고 config 파일이 없습니다. 테마 변수와 다크 모드(
 
 - 알림: `powershell -NoProfile -ExecutionPolicy Bypass -File .claude/scripts/notify-discord.ps1 -Type <종류> -Status <passed|blocked|failed> -Detail "<요약>"` (저장소 루트에서)
 - 리뷰·테스트에서 문제를 찾아도 코드는 사용자가 요청할 때만 고칩니다.
-- `git commit` 직전에 PreToolUse 훅([require-privacy-check.ps1](.claude/hooks/require-privacy-check.ps1))이 gitleaks 검사 후 승인을 받습니다. `git add`와 커밋을 한 명령에 섞거나 `--no-verify`를 쓰면 막힙니다.
-- **Claude는 푸시하지 않습니다.** 사용자가 GitHub Desktop에서 푸시합니다.
+- `git commit` 직전에 PreToolUse 훅([require-privacy-check.ps1](.claude/hooks/require-privacy-check.ps1))이 작성자(이름 = GitHub 사용자명, noreply 이메일)와 gitleaks를 검사한 뒤 승인을 받습니다. `git add`와 커밋을 한 명령에 섞거나, `--no-verify`·`--author`를 쓰면 막힙니다.
+- **Claude는 푸시하지 않습니다.** 훅과 `permissions.deny`가 `git push`를 막고, 사용자가 GitHub Desktop에서 푸시합니다.
 
 # 공통 원칙
 
