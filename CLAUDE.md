@@ -72,7 +72,7 @@ Tailwind v4이고 config 파일이 없습니다. 테마 변수와 다크 모드(
 | 코드 리뷰 | 작업 종료 시 Stop 훅이 요청 → `code-reviewer` 서브에이전트(포그라운드, 보고만) | `-Type review` |
 | 커밋 | [/commit](.claude/commands/commit.md): `privacy-guard` 검사(생략 불가) → 커밋 | `-Type commit` |
 | 테스트 | [/test](.claude/commands/test.md): Playwright MCP로 브라우저 확인 | `-Type test` |
-| 통합 | [/commit-test](.claude/commands/commit-test.md): 보안 검사 → 테스트 → 커밋. 둘 다 통과해야 커밋하고, 중간에 멈추면 즉시 알림 | `-Type pipeline` |
+| 통합 | [/commit-test](.claude/commands/commit-test.md): 보안 검사 → 테스트 → 커밋. 둘 다 통과해야 커밋하고(사이트 무관 파일만 바뀌면 테스트 생략), 중간에 멈추면 즉시 알림 | `-Type pipeline` |
 
 - 알림: `powershell -NoProfile -ExecutionPolicy Bypass -File .claude/scripts/notify-discord.ps1 -Type <종류> -Status <passed|blocked|failed> -Detail "<요약>"` (저장소 루트에서)
 - 리뷰·테스트에서 문제를 찾아도 코드는 사용자가 요청할 때만 고칩니다.

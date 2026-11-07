@@ -1,10 +1,10 @@
 ---
-description: 개인정보·보안 검사 → 브라우저 테스트 → 커밋을 한 번에 하고 결과를 Discord로 알립니다 (푸시는 사용자가 GitHub Desktop에서)
+description: 개인정보·보안 검사 → 브라우저 테스트(사이트 무관 변경이면 생략) → 커밋을 한 번에 하고 결과를 Discord로 알립니다 (푸시는 사용자가 GitHub Desktop에서)
 argument-hint: "[선택: 커밋 메시지 힌트]"
 ---
 
 변경사항을 **보안 검사 → 브라우저 테스트 → 커밋** 순서로 처리하고, 결과를 Discord로 알려 주세요.
-두 검사를 모두 통과해야 커밋합니다. **푸시는 하지 않습니다.** 사용자가 GitHub Desktop에서 직접 합니다.
+두 검사를 모두 통과해야 커밋합니다. 사이트와 관계없는 파일만 바뀌었으면 브라우저 테스트는 건너뜁니다 (2단계 참고). **푸시는 하지 않습니다.** 사용자가 GitHub Desktop에서 직접 합니다.
 
 추가 요청: $ARGUMENTS
 
@@ -36,6 +36,22 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .claude/scripts/notify-disco
 
 ## 2단계: 브라우저 테스트
 
+### 테스트 생략 판단
+
+커밋할 파일(스테이징된 파일)이 **모두** 아래 목록에 들어가면 사이트 화면에 영향이 없으므로 테스트를 건너뛰고 3단계로 갑니다.
+- `.claude/` 아래 파일, `.mcp.json`
+- `.github/` 아래 파일 (CI, Dependabot 설정)
+- `.vscode/` 아래 파일, `.gitignore`, `.gitattributes`, `.editorconfig`, gitleaks 설정
+- 저장소 루트의 문서(`README.md`, `CLAUDE.md`, `AGENTS.md` 등 `*.md`)
+
+규칙:
+- 목록에 없는 파일이 하나라도 있으면 테스트합니다. 특히 `app/`, `components/`, `config/`, `lib/`, `public/`, `package.json`, `package-lock.json`, `next.config.ts`, `tsconfig.json`, `components.json`은 항상 테스트 대상입니다.
+- 판단이 애매하면 테스트합니다.
+- 추가 요청에 "테스트 포함"처럼 테스트를 원한다는 말이 있으면 목록과 관계없이 테스트합니다.
+- 건너뛸 때는 사용자에게 "테스트 생략: 사이트와 관계없는 파일만 바뀜 (<파일 목록>)"이라고 알리고, 알림을 보내지 않고 3단계로 갑니다.
+
+### 테스트 실행
+
 [test.md](test.md)의 1~4단계(서버 준비, 기본 테스트, 정리, 보고)를 따릅니다. 다른 점은 다음과 같습니다.
 - 범위는 항상 "기본 테스트" 전체입니다.
 - test.md 4단계의 "고칠지 사용자에게 묻기"와 5단계 Discord 알림은 건너뜁니다. 고칠지는 파이프라인이 끝나거나 멈춘 뒤에 묻습니다.
@@ -63,12 +79,12 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .claude/scripts/notify-disco
 
 1. 모든 커밋이 끝나면 `-Status passed`로 알림을 한 번 보냅니다. `-Detail`에는 다음을 적습니다.
    - 보안 검사 결과
-   - 테스트 결과 (통과 수 / 전체 수, 사소한 문제 요약)
+   - 테스트 결과 (통과 수 / 전체 수, 사소한 문제 요약). 건너뛰었으면 `테스트: 생략 (사이트 무관 변경)`
    - 커밋 개수와 각 제목
    - 제외한 파일이 있으면 `제외: <경로> (<이유>)`
 2. 사용자에게 짧게 보고합니다.
    - 보안 검사 결과
-   - 테스트 결과 (test.md의 보고 형식)
+   - 테스트 결과 (test.md의 보고 형식). 건너뛰었으면 생략 이유와 해당 파일
    - 커밋별 해시와 메시지
    - 제외한 파일
    - 알림을 보냈는지
