@@ -11,6 +11,8 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu"
 import { siteConfig } from "@/config/site"
+import { isNavActive } from "@/lib/nav"
+import { cn } from "@/lib/utils"
 
 export function MainNav() {
   const pathname = usePathname()
@@ -19,13 +21,15 @@ export function MainNav() {
     <NavigationMenu className="hidden md:flex">
       <NavigationMenuList>
         {siteConfig.mainNav.map((item) => {
-          const active =
-            item.href === "/" ? pathname === "/" : pathname.startsWith(item.href)
+          const active = isNavActive(pathname, item.href)
           return (
             <NavigationMenuItem key={item.href}>
               <NavigationMenuLink
                 active={active}
-                className={navigationMenuTriggerStyle()}
+                className={cn(
+                  navigationMenuTriggerStyle(),
+                  active && "text-neon-cyan neon-text"
+                )}
                 render={<Link href={item.href} />}
               >
                 {item.title}

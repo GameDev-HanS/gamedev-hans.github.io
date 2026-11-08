@@ -13,7 +13,7 @@ export function SiteHeader() {
       <Container className="flex h-14 items-center gap-2">
         <MobileNav />
         <Link href="/" className="mr-4 flex items-center gap-2 font-heading text-sm font-semibold">
-          <BoxIcon className="size-5" />
+          <BoxIcon className="size-5 text-neon-cyan" />
           {siteConfig.name}
         </Link>
         <MainNav />
