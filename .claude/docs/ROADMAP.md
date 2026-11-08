@@ -117,9 +117,10 @@
   - 계획: [plans/T-118.md](plans/T-118.md)
 
 #### 에픽 1.4 MDX 콘텐츠 파이프라인 (PRD: F011, F007)
-- [ ] **T-108** MDX 방식 확정 (스파이크) · P0 · M · 의존: T-101
+- [x] **T-108** MDX 방식 확정 (스파이크) · P0 · M · 의존: T-101
   - 완료 조건: ① 공식 가이드 방식(`@next/mdx` + `mdx-components.tsx` + 동적 import + `generateStaticParams` + `dynamicParams = false`)으로 샘플 글 1개가 `npm run build` 후 `out/blog/<slug>.html`(또는 폴더)로 생성된다. ② frontmatter 처리 방식(gray-matter + `remark-frontmatter` / `export const metadata`)을 하나로 정한다. ③ 설치한 패키지의 peerDependencies가 Next.js 16·React 19와 충돌 없음을 `npm install` 경고 없음으로 확인한다. ④ 막히면 next-mdx-remote(RSC) → Velite 순으로 같은 기준을 검사하고 결과를 계획 문서에 적는다.
   - 위치: next.config.ts, mdx-components.tsx(루트), content/posts/, package.json
+  - 계획: [plans/T-108.md](plans/T-108.md)
 - [ ] **T-109** 글 데이터 로더와 샘플 글 · P0 · M · 의존: T-108
   - 완료 조건: `getAllPosts()`가 `content/posts/*.mdx`를 날짜 내림차순으로 돌려주고, `getPostBySlug()`가 한 글을 돌려준다. frontmatter를 zod로 검증해 필수 필드(title, date, summary, tags)가 빠지거나 `tags`에 영문 slug 형식(`^[a-z0-9]+(-[a-z0-9]+)*$`)이 아닌 값(예: `셰이더`, `Shader`)이 있으면 파일 이름이 들어간 메시지와 함께 빌드가 실패한다. 날짜가 다른 샘플 글 2개(이미지 1장 포함, 태그는 영문 slug)를 넣는다.
   - 위치: lib/posts.ts, content/posts/*.mdx, public/images/posts/<slug>/
