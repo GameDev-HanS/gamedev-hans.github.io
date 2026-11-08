@@ -1,0 +1,85 @@
+[
+  {
+    "slug": "clair-obscur-expedition-33",
+    "title": "클레르 옵스퀴르: 33원정대",
+    "platforms": ["PC (Steam)"],
+    "playtime": 24.2,
+    "startedAt": "2026-01-01",
+    "endedAt": "2026-01-15"
+  },
+  {
+    "slug": "yakuza-0",
+    "title": "용과 같이 제로",
+    "platforms": ["PC (Steam)"],
+    "status": "cleared",
+    "playtime": 23,
+    "startedAt": "2026-02-08",
+    "endedAt": "2026-04-11"
+  },
+  {
+    "slug": "stellar-blade",
+    "title": "스텔라 블레이드",
+    "platforms": ["PC (Steam)"],
+    "status": "cleared",
+    "playtime": 21.1,
+    "startedAt": "2026-03-06",
+    "endedAt": "2026-06-29"
+  },
+  {
+    "slug": "yakuza-kiwami",
+    "title": "용과 같이 극",
+    "platforms": ["PC (Steam)"],
+    "status": "cleared",
+    "playtime": 15.5,
+    "startedAt": "2026-04-18",
+    "endedAt": "2026-06-22"
+  },
+  {
+    "slug": "pragmata",
+    "title": "프래그마타",
+    "platforms": ["PC (Steam)"],
+    "status": "cleared",
+    "playtime": 11.5,
+    "startedAt": "2026-05-04",
+    "endedAt": "2026-06-30"
+  },
+  {
+    "slug": "metaphor-refantazio",
+    "title": "메타포: 리판타지오",
+    "platforms": ["PC (Steam)"],
+    "playtime": 60.9,
+    "startedAt": "2026-06-30",
+    "endedAt": "2026-08-20"
+  },
+  {
+    "slug": "escape-from-duckov",
+    "title": "Escape from Duckov",
+    "platforms": ["PC (Steam)"],
+    "playtime": 35.9,
+    "startedAt": "2026-09-25",
+    "endedAt": "2026-10-24"
+  },
+  {
+    "slug": "call-of-duty-modern-warfare-4",
+    "title": "콜 오브 듀티: 모던 워페어 4 (캠페인)",
+    "platforms": ["PC (Steam)"],
+    "status": "cleared",
+    "playtime": 8,
+    "startedAt": "2026-10-18",
+    "endedAt": "2026-10-19"
+  },
+  {
+    "slug": "phantom-blade-zero",
+    "title": "팬텀 블레이드 제로",
+    "platforms": ["PC (Steam)"],
+    "status": "playing",
+    "playtime": 15.1,
+    "startedAt": "2026-10-29"
+  },
+  {
+    "slug": "slay-the-spire-2",
+    "title": "Slay the Spire 2",
+    "platforms": ["PC (Steam)"],
+    "playtime": 97.3
+  }
+]
