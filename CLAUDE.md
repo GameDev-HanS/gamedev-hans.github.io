@@ -31,7 +31,7 @@ npx shadcn@latest add <이름>   # components/ui/에 컴포넌트 추가
 - 서버 액션, `cookies()`/`headers()`, API 라우트, 이미지 최적화는 불가합니다.
 - 동적 라우트에는 `generateStaticParams`, 메타데이터 라우트([robots.ts](app/robots.ts), [sitemap.ts](app/sitemap.ts))에는 `export const dynamic = "force-static"`가 필요합니다.
 - `basePath`는 `PAGES_BASE_PATH` 환경 변수에서 옵니다 (지금은 비어 있음). 경로는 하드코딩하지 말고 `next/link`를 씁니다.
-- 폼은 클라이언트에서만 처리합니다 ([example-form.tsx](components/sections/example-form.tsx): zod 검증 후 toast).
+- 폼은 클라이언트에서만 처리합니다 (zod 검증 후 toast).
 
 ## 사이트 설정
 
