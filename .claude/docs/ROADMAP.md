@@ -145,12 +145,14 @@
   - 계획: [plans/T-113.md](plans/T-113.md)
 
 #### 에픽 1.6 홈 최소 버전과 첫 배포 (PRD: F005 일부)
-- [ ] **T-114** 홈 페이지를 블로그 홈으로 교체 · P0 · S · 의존: T-110
+- [x] **T-114** 홈 페이지를 블로그 홈으로 교체 · P0 · S · 의존: T-110
   - 완료 조건: `/`에 이름·한 줄 소개(단계 1은 `siteConfig` 임시 값)와 최근 글 최대 3개 카드, "전체 글 보기" 버튼이 보이고 버튼이 `/blog`로 이동한다.
   - 위치: app/page.tsx, components/sections/hero.tsx (기존 파일 확인 필요), components/sections/recent-posts.tsx
-- [ ] **T-115** sitemap에 글 경로 추가와 첫 배포 점검 (제안) · P1 · S · 의존: T-111, T-112
+  - 계획: [plans/T-114.md](plans/T-114.md)
+- [x] **T-115** sitemap에 글 경로 추가와 첫 배포 점검 (제안) · P1 · S · 의존: T-111, T-112
   - 완료 조건: `out/sitemap.xml`에 `/blog`와 각 글 URL이 들어 있고, `npm run build` 결과물로 `/test` 브라우저 확인을 통과한다. `/games` 페이지(T-213)가 아직 없으면 sitemap에서 `/games`를 임시로 빼거나 단계 1 배포를 미루기로 정하고 계획 문서에 적는다. 푸시는 사용자가 한다.
   - 위치: app/sitemap.ts (기존 파일 확인 필요)
+  - 계획: [plans/T-115.md](plans/T-115.md)
 
 #### 에픽 1.8 모던 UI 애니메이션 기반과 적용 (PRD: F016)
 - [ ] **T-119** Motion 설치, 공통 애니메이션 래퍼, 동작 줄이기 기반 · P1 · M · 의존: T-104
