@@ -6,7 +6,8 @@
 #       2. The author cannot be changed in the command (--author, -c, git config, GIT_CONFIG_*, ...).
 #       3. The author/committer must be the GitHub noreply identity (name = GitHub login).
 #       4. gitleaks scans the staged changes; any secret found => denied (no override).
-#       5. Otherwise the user is asked to confirm the commit.
+#       5. Otherwise the commit runs without asking, but only when it is a standalone git commit
+#          command; anything chained to it (; | && newline redirect $( ) ...) makes the user confirm.
 $ErrorActionPreference = 'Stop'
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
@@ -194,4 +195,23 @@ if ($code -eq 1) {
 }
 if ($code -ne 0) { Decide 'deny' "gitleaks 검사가 오류로 끝나(종료 코드 $code) 커밋을 막았습니다. 검사가 정상 동작해야 커밋할 수 있습니다." }
 
-Decide 'ask' 'gitleaks 비밀값 검사와 작성자 확인 통과. 개인정보 검사 결과를 확인한 뒤 이 커밋을 실행할지 승인해 주세요.'
+# 검사를 모두 통과하면 묻지 않고 커밋합니다 (원격 반영은 사용자가 푸시할 때 결정).
+# 'allow'는 명령 전체를 권한 확인 없이 실행하므로, 금지 기호를 찾는 방식이 아니라
+# 원본 명령 전체가 아래 형태와 처음부터 끝까지 정확히 일치할 때만 허용합니다 (허용 목록). 나머지는 모두 묻습니다.
+#   [&] <git | git.exe | 'git 실제 경로' | "git 실제 경로"> commit <-m|--message> <메시지 하나>
+#   메시지: '작은따옴표 한 줄' | @'(줄바꿈) 여러 줄 (줄바꿈)'@ here-string
+# 메시지 안에서 금지하는 문자:
+#   - ' ‘ ’ ‚ ‛ / " “ ” „ : PowerShell은 스마트 따옴표도 따옴표로 취급해 문자열을 끝낼 수 있음
+#   - " \ : PowerShell 5.1이 git에 인자를 넘길 때 " 를 이스케이프하지 않아 -a, --no-verify 같은 인자가 끼어들 수 있음
+#   - CR 단독, 제어 문자, 유니코드 줄바꿈: here-string을 일찍 끝내고 다음 줄을 명령으로 실행할 수 있음
+# 토큰 사이는 공백·탭만 허용합니다 (\s는 줄바꿈까지 포함하므로 쓰지 않음).
+$q = '''‘’‚‛'
+$bad = $q + '"“”„\\\r\x00-\x08\x0B\x0C\x0E-\x1F\u0085  '
+$nl = '(?:\r\n|\n)'
+$exe = '(?:git(?:\.exe)?|''' + [regex]::Escape($git) + '''|"' + [regex]::Escape($git) + '")'
+$msg = "(?:'(?:[^$bad\n]|'')*'|@'$nl(?:[^$bad\n]|$nl(?![$q]@))*$nl'@)"
+$strict = '^[ \t\r\n]*(?:&[ \t]*)?' + $exe + '[ \t]+commit[ \t]+(?:-m|--message)[ \t]+' + $msg + '[ \t\r\n]*\z'
+if ($cmd -match '\r(?!\n)' -or $cmd -cnotmatch $strict) {
+    Decide 'ask' 'gitleaks 비밀값 검사와 작성자 확인 통과. 다만 정해진 단독 커밋 형태가 아니어서 자동 실행하지 않습니다. 실행할지 승인해 주세요.'
+}
+Decide 'allow' 'gitleaks 비밀값 검사와 작성자 확인 통과. 커밋합니다 (푸시는 사용자가 GitHub Desktop에서).'

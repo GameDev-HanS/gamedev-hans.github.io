@@ -49,7 +49,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .claude/scripts/notify-disco
    본문
    '@
    ```
-   - 훅이 gitleaks로 한 번 더 검사해 비밀값이 있으면 막습니다(이 경우 `-Status blocked`로 알리고 원인 보고). 없으면 사용자 승인 창이 뜹니다. 사용자가 거부하면 `-Status blocked -Detail "사용자가 커밋을 취소함"`으로 알리고 끝냅니다.
+   - 훅이 gitleaks로 한 번 더 검사해 비밀값이 있으면 막습니다(이 경우 `-Status blocked`로 알리고 원인 보고). 통과하면 승인 창 없이 바로 커밋됩니다. 자동 커밋은 위 형태(git 경로 + `commit -m` + here-string 또는 작은따옴표 메시지)의 단독 명령일 때만 되고, 메시지에 `"`, `\`, 특수 따옴표(‘ ’ “ ”)가 있으면 승인 창이 뜨므로 메시지에 쓰지 않습니다. 승인 창이 떠서 사용자가 거부하면 `-Status blocked -Detail "사용자가 커밋을 취소함"`으로 알리고 끝냅니다.
    - 실패하면 `-Status failed -Detail "<오류 요약>"`로 알리고 원인을 보고합니다. `--no-verify`로 우회하지 않습니다.
 
 7. 모든 커밋이 끝나면 `-Status passed`로 알림을 한 번 보냅니다. `-Detail`에 커밋 개수와 각 제목을 적고, 제외한 파일이 있으면 `제외: <경로> (<이유>)`도 함께 적습니다. 중간에 실패하면 그 시점에 `-Status failed`로 알리고 남은 커밋은 멈춥니다.

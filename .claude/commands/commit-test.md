@@ -68,9 +68,9 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .claude/scripts/notify-disco
 
 먼저 보안 검사 뒤에 바뀐 파일이 없는지 확인합니다. `& $g diff --name-only`(작업 폴더와 스테이징 비교)에 커밋할 파일이 나오면 검사하지 않은 내용이 섞인 것입니다. 이때는 커밋하지 않고 `-Status blocked -Step "커밋" -Detail "보안 검사 후 바뀐 파일: <경로>"`로 알리고 끝냅니다. 사용자에게는 `/commit-test`를 다시 실행하라고 안내합니다.
 
-바뀐 파일이 없으면 [commit.md](commit.md)의 절차 6을 따릅니다 (커밋 나누기, git 경로 따로 조회, 단독 명령으로 커밋, 훅의 gitleaks 검사와 사용자 승인). 커밋이 하나뿐이면 스테이징을 비우지 말고 지금 스테이징된 그대로 커밋합니다. 알림은 이렇게 바꿔 보냅니다.
+바뀐 파일이 없으면 [commit.md](commit.md)의 절차 6을 따릅니다 (커밋 나누기, git 경로 따로 조회, 단독 명령으로 커밋, 훅의 gitleaks 검사 통과 시 자동 커밋). 커밋이 하나뿐이면 스테이징을 비우지 말고 지금 스테이징된 그대로 커밋합니다. 알림은 이렇게 바꿔 보냅니다.
 - 훅이 비밀값을 찾아 막음: `-Status blocked -Step "커밋"`
-- 사용자가 승인 창에서 거부함: `-Status blocked -Step "커밋" -Detail "사용자가 커밋을 취소함"`
+- 승인 창이 떠서(단독 명령이 아닌 경우) 사용자가 거부함: `-Status blocked -Step "커밋" -Detail "사용자가 커밋을 취소함"`
 - 그 밖의 오류: `-Status failed -Step "커밋"`
 - 커밋이 여러 개일 때 중간에 멈추면 남은 커밋도 멈추고, 이미 만든 커밋의 해시를 `-Detail`에 적습니다.
 - `--no-verify` 같은 우회 옵션은 쓰지 않습니다.
