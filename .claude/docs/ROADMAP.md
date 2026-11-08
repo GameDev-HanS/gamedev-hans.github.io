@@ -121,23 +121,28 @@
   - 완료 조건: ① 공식 가이드 방식(`@next/mdx` + `mdx-components.tsx` + 동적 import + `generateStaticParams` + `dynamicParams = false`)으로 샘플 글 1개가 `npm run build` 후 `out/blog/<slug>.html`(또는 폴더)로 생성된다. ② frontmatter 처리 방식(gray-matter + `remark-frontmatter` / `export const metadata`)을 하나로 정한다. ③ 설치한 패키지의 peerDependencies가 Next.js 16·React 19와 충돌 없음을 `npm install` 경고 없음으로 확인한다. ④ 막히면 next-mdx-remote(RSC) → Velite 순으로 같은 기준을 검사하고 결과를 계획 문서에 적는다.
   - 위치: next.config.ts, mdx-components.tsx(루트), content/posts/, package.json
   - 계획: [plans/T-108.md](plans/T-108.md)
-- [ ] **T-109** 글 데이터 로더와 샘플 글 · P0 · M · 의존: T-108
+- [x] **T-109** 글 데이터 로더와 샘플 글 · P0 · M · 의존: T-108
   - 완료 조건: `getAllPosts()`가 `content/posts/*.mdx`를 날짜 내림차순으로 돌려주고, `getPostBySlug()`가 한 글을 돌려준다. frontmatter를 zod로 검증해 필수 필드(title, date, summary, tags)가 빠지거나 `tags`에 영문 slug 형식(`^[a-z0-9]+(-[a-z0-9]+)*$`)이 아닌 값(예: `셰이더`, `Shader`)이 있으면 파일 이름이 들어간 메시지와 함께 빌드가 실패한다. 날짜가 다른 샘플 글 2개(이미지 1장 포함, 태그는 영문 slug)를 넣는다.
   - 위치: lib/posts.ts, content/posts/*.mdx, public/images/posts/<slug>/
+  - 계획: [plans/T-109.md](plans/T-109.md)
 
 #### 에픽 1.5 블로그 목록·상세 (PRD: F006, F007)
-- [ ] **T-110** 글 카드 컴포넌트 · P0 · S · 의존: T-104, T-109
+- [x] **T-110** 글 카드 컴포넌트 · P0 · S · 의존: T-104, T-109
   - 완료 조건: 카드에 썸네일(없으면 네온 그라데이션 자리 표시), 제목, 요약, 작성일(YYYY-MM-DD), 태그 칩이 보이고 카드 전체를 누르면 글 상세로 간다. 호버 시 네온 테두리가 켜진다. (태그 칩 링크는 T-307에서 연결)
   - 위치: components/shared/post-card.tsx (shadcn Card·Badge 재사용)
-- [ ] **T-111** 블로그 목록 페이지 · P0 · S · 의존: T-110
+  - 계획: [plans/T-110.md](plans/T-110.md)
+- [x] **T-111** 블로그 목록 페이지 · P0 · S · 의존: T-110
   - 완료 조건: `/blog`에서 샘플 글 2개가 최신순으로 보이고, 글 파일을 모두 빼고 개발 서버에서 보면 "아직 글이 없습니다" 안내가 보인다.
   - 위치: app/blog/page.tsx, components/sections/post-list.tsx, components/shared/page-header.tsx (기존 파일 확인 필요)
-- [ ] **T-112** 글 상세 페이지 · P0 · M · 의존: T-109
+  - 계획: [plans/T-111.md](plans/T-111.md)
+- [x] **T-112** 글 상세 페이지 · P0 · M · 의존: T-109
   - 완료 조건: `/blog/<slug>`에 제목·작성일·태그·대표 이미지·본문과 "목록으로" 버튼이 보이고, 브라우저 탭 제목이 글 제목이다(`generateMetadata`). 없는 slug는 404 페이지가 된다.
   - 위치: app/blog/[slug]/page.tsx, components/sections/post-header.tsx
-- [ ] **T-113** 본문 타이포그래피와 MDX 요소 스타일 · P0 · S · 의존: T-112
+  - 계획: [plans/T-112.md](plans/T-112.md)
+- [x] **T-113** 본문 타이포그래피와 MDX 요소 스타일 · P0 · S · 의존: T-112
   - 완료 조건: 본문의 제목 단계·목록·인용·링크·이미지·인라인 코드가 다크·라이트 모두에서 읽기 좋게 보이고(링크는 시안 포인트), 본문 이미지가 화면 폭을 넘지 않는다.
   - 위치: app/globals.css(`@tailwindcss/typography` 등록), mdx-components.tsx
+  - 계획: [plans/T-113.md](plans/T-113.md)
 
 #### 에픽 1.6 홈 최소 버전과 첫 배포 (PRD: F005 일부)
 - [ ] **T-114** 홈 페이지를 블로그 홈으로 교체 · P0 · S · 의존: T-110

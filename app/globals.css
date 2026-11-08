@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+/* 블로그 본문 서식 (prose 클래스) */
+@plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
 

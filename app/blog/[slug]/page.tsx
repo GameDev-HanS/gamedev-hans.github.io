@@ -1,32 +1,51 @@
-import fs from "node:fs"
-import path from "node:path"
-
-import matter from "gray-matter"
+import type { Metadata } from "next"
+import Link from "next/link"
+import { notFound } from "next/navigation"
+import { ArrowLeftIcon } from "lucide-react"
 
 import { Container } from "@/components/layout/container"
+import { PostHeader } from "@/components/sections/post-header"
+import { buttonVariants } from "@/components/ui/button"
+import { getAllPosts, getPostBySlug } from "@/lib/posts"
+import { cn } from "@/lib/utils"
 
-// T-108 스파이크용 최소 글 상세 페이지. 글 데이터 로더(T-109)와 상세 화면(T-112)에서 본격적으로 바꿉니다.
-const POSTS_DIR = path.join(process.cwd(), "content", "posts")
-
-// 빌드 시 content/posts/*.mdx마다 정적 페이지를 만들고, 그 밖의 주소는 404
+// 빌드 시 글마다 정적 페이지를 만들고, 그 밖의 주소는 404(GAME OVER)
 export function generateStaticParams() {
-  return fs
-    .readdirSync(POSTS_DIR)
-    .filter((file) => file.endsWith(".mdx"))
-    .map((file) => ({ slug: file.replace(/\.mdx$/, "") }))
+  return getAllPosts().map((post) => ({ slug: post.slug }))
 }
 
 export const dynamicParams = false
 
+// 브라우저 탭 제목 = 글 제목, 검색 설명 = 요약
+export async function generateMetadata({ params }: PageProps<"/blog/[slug]">): Promise<Metadata> {
+  const { slug } = await params
+  const post = getPostBySlug(slug)
+  if (!post) return {}
+  return { title: post.title, description: post.summary }
+}
+
 export default async function PostPage({ params }: PageProps<"/blog/[slug]">) {
   const { slug } = await params
-  const { data } = matter(fs.readFileSync(path.join(POSTS_DIR, `${slug}.mdx`), "utf8"))
-  const { default: Post } = await import(`@/content/posts/${slug}.mdx`)
+  const post = getPostBySlug(slug)
+  if (!post) notFound()
+
+  const { default: Body } = await import(`@/content/posts/${slug}.mdx`)
 
   return (
-    <Container className="py-12">
-      <h1 className="mb-6 font-heading text-3xl font-bold">{String(data.title)}</h1>
-      <Post />
+    <Container className="max-w-3xl py-12">
+      <article className="flex flex-col gap-10">
+        <PostHeader post={post} />
+        {/* 본문 서식: @tailwindcss/typography의 prose + 네온 시안 링크 */}
+        <div className="prose prose-neutral max-w-none dark:prose-invert prose-headings:font-heading prose-headings:tracking-tight prose-a:text-neon-cyan prose-a:underline-offset-4 prose-blockquote:border-neon-magenta prose-blockquote:not-italic prose-code:rounded prose-code:bg-muted prose-code:px-1 prose-code:py-0.5 prose-code:font-normal prose-code:before:content-none prose-code:after:content-none prose-img:mx-auto">
+          <Body />
+        </div>
+      </article>
+      <div className="mt-12 border-t pt-8">
+        <Link href="/blog" className={cn(buttonVariants({ variant: "outline" }), "neon-hover")}>
+          <ArrowLeftIcon data-icon="inline-start" />
+          목록으로
+        </Link>
+      </div>
     </Container>
   )
 }
