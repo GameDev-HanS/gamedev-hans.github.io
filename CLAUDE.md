@@ -68,6 +68,7 @@ Tailwind v4이고 config 파일이 없습니다. 테마 변수와 다크 모드(
 
 | 단계 | 방법 | Discord 알림 |
 |------|------|--------------|
+| 기획 | [/pm](.claude/commands/pm.md): `prd <아이디어>` → `roadmap` → `next`(TODO 하나씩: 플랜 → 구현 → 리뷰 → 체크 → 커밋 안내) 반복. 계획 문서는 모두 [.claude/docs/](.claude/docs/)에 둠 (PRD·ROADMAP은 `product-manager`가 쓰고 훅으로 문서만 접근, TODO별 계획 `plans/T-xxx.md`는 승인 후 메인 세션이 저장) | `-Type pm` |
 | 기능 개발 | 플랜 모드에서 AskUserQuestion으로 정하고 승인 후 구현. Next.js 16 API는 `node_modules/next/dist/docs/`를 먼저 확인 | — |
 | 코드 리뷰 | 작업 종료 시 Stop 훅이 요청 → `code-reviewer` 서브에이전트(포그라운드, 보고만) | `-Type review` |
 | 커밋 | [/commit](.claude/commands/commit.md): `privacy-guard` 검사(생략 불가) → 커밋 | `-Type commit` |
