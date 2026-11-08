@@ -4,10 +4,12 @@ import "./globals.css";
 
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
+import { BgmProvider } from "@/components/providers/bgm-provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { siteConfig } from "@/config/site";
+import { getBackgroundMusic } from "@/lib/music";
 import { cn } from "@/lib/utils";
 
 const geistSans = Geist({
@@ -38,6 +40,9 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
+  // 배경 음악: 음원이 없으면 null → 헤더 버튼·푸터 출처·<audio>를 모두 숨김
+  const music = getBackgroundMusic();
+
   return (
     // suppressHydrationWarning: next-themes가 렌더 전에 <html> class를 바꾸기 때문에 필요
     <html
@@ -52,12 +57,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           enableSystem
           disableTransitionOnChange
         >
-          <TooltipProvider>
-            <SiteHeader />
-            <main className="flex flex-1 flex-col">{children}</main>
-            <SiteFooter />
-            <Toaster />
-          </TooltipProvider>
+          <BgmProvider src={music?.src ?? null}>
+            <TooltipProvider>
+              <SiteHeader />
+              <main className="flex flex-1 flex-col">{children}</main>
+              <SiteFooter music={music} />
+              <Toaster />
+            </TooltipProvider>
+          </BgmProvider>
         </ThemeProvider>
       </body>
     </html>

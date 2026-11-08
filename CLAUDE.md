@@ -44,7 +44,7 @@ npx shadcn@latest add <이름>   # components/ui/에 컴포넌트 추가
 - `components/layout/`: 헤더, 푸터, 내비게이션, `Container`
 - `components/shared/`: 여러 페이지에서 쓰는 조각 (`PageHeader`, `Section`, `ThemeToggle`)
 - `components/sections/`: 페이지를 이루는 큰 블록. `app/*/page.tsx`는 섹션을 조립만 합니다.
-- `components/providers/`: 클라이언트 Provider (next-themes)
+- `components/providers/`: 클라이언트 Provider (next-themes, 배경 음악). layout·shared에서 훅(예: `useBgm`)으로 import할 수 있습니다
 
 `"use client"`는 상호작용이 필요한 컴포넌트에만 붙입니다.
 

@@ -103,15 +103,18 @@
   - 계획: [plans/T-107.md](plans/T-107.md)
 
 #### 에픽 1.7 배경 음악 (PRD: F015) — T-107 다음에 진행 (작업 번호는 추가 순서라 T-116부터)
-- [ ] **T-116** 배경 음악 데이터 로더와 음원 유무 판정 · P0 · S · 의존: T-101
+- [x] **T-116** 배경 음악 데이터 로더와 음원 유무 판정 · P0 · S · 의존: T-101
   - 완료 조건: `getBackgroundMusic()`가 빌드 시 `content/music.json`을 zod(file, title, artist, source, sourceUrl 선택, license)로 검증하고 `public/audio/<file>`이 실제로 있을 때만 곡 정보를 돌려준다. ① `music.json`이 없을 때 ② `music.json`은 있는데 mp3가 없을 때 둘 다 `null`을 돌려주고 빌드는 통과한다 (지금처럼 음원을 아직 넣지 않은 상태가 정상 동작). ③ `music.json`이 있는데 필드가 빠졌거나 `file`이 경로(`/`·`..` 포함)이거나 `.mp3`가 아니면 파일 이름이 들어간 메시지와 함께 빌드가 실패한다. 서버 전용(fs 사용)이며 클라이언트 번들에 들어가지 않는다.
   - 위치: lib/music.ts (content/music.json·public/audio/bgm.mp3는 사용자가 나중에 추가 — 이 작업에서는 만들지 않음)
-- [ ] **T-117** 배경 음악 Provider와 헤더 음악 버튼 · P0 · M · 의존: T-116, T-105
+  - 계획: [plans/T-116.md](plans/T-116.md)
+- [x] **T-117** 배경 음악 Provider와 헤더 음악 버튼 · P0 · M · 의존: T-116, T-105
   - 완료 조건: ① 음원이 없으면(`null`) 데스크톱·모바일 헤더 어디에도 음악 버튼이 없고 빌드 결과 HTML에 `<audio>`도 없다. ② 임시로 `music.json`과 짧은 mp3를 넣고 확인했을 때(확인 후 커밋하지 않고 제거): 페이지를 열면 항상 꺼짐(음소거 아이콘)이고 소리가 나지 않으며, 버튼을 누르면 한 곡이 반복 재생되고 음표 아이콘 + 네온 글로우로 바뀌며, 다시 누르면 멈춘다. ③ 켠 상태로 헤더 메뉴·카드 등 `next/link`로 다른 페이지에 가도 음악이 끊기지 않는다. ④ 새로고침·새 탭에서는 다시 꺼짐에서 시작하고, localStorage·sessionStorage·쿠키에 아무 값도 저장하지 않는다 (개발자 도구로 확인). ⑤ 버튼에 `aria-label`("배경 음악 켜기"/"배경 음악 끄기")과 `aria-pressed`가 있어 키보드로도 켜고 끌 수 있다. ⑥ `audio.play()`가 거부되면 꺼짐 상태로 돌아가고 콘솔 오류가 남지 않는다. ⑦ `<audio>`는 `preload="none"`이라 켜기 전에는 음원을 내려받지 않는다.
   - 위치: components/providers/bgm-provider.tsx("use client", `<audio loop>`·상태 컨텍스트), components/shared/bgm-toggle.tsx(shadcn Button + lucide 음표·음소거 아이콘), components/layout/site-header.tsx, app/layout.tsx (기존 파일 확인 필요). Provider는 이후 페이지 전환 래퍼(T-122)보다 바깥(루트 레이아웃)에 둔다. 음원 경로의 basePath 처리는 T-310과 같은 방식.
-- [ ] **T-118** 푸터 배경 음악 출처·라이선스 문구 · P0 · S · 의존: T-116, T-106
+  - 계획: [plans/T-117.md](plans/T-117.md)
+- [x] **T-118** 푸터 배경 음악 출처·라이선스 문구 · P0 · S · 의존: T-116, T-106
   - 완료 조건: 음원이 없으면 푸터에 출처 문구가 전혀 보이지 않는다. 임시 `music.json`과 mp3로 확인하면 "배경 음악: <곡 제목> — <작곡가> (<출처>, <라이선스>)"가 보이고, `sourceUrl`이 있으면 출처가 새 탭 링크(`target="_blank" rel="noopener noreferrer"`)이며 없으면 일반 텍스트다. 모바일(375px)에서 줄이 넘쳐도 가로 스크롤이 생기지 않는다.
   - 위치: components/layout/site-footer.tsx, components/shared/music-credit.tsx
+  - 계획: [plans/T-118.md](plans/T-118.md)
 
 #### 에픽 1.4 MDX 콘텐츠 파이프라인 (PRD: F011, F007)
 - [ ] **T-108** MDX 방식 확정 (스파이크) · P0 · M · 의존: T-101
