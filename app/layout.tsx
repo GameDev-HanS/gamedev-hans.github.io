@@ -5,6 +5,7 @@ import "./globals.css";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { BgmProvider } from "@/components/providers/bgm-provider";
+import { MotionProvider } from "@/components/providers/motion-provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -50,6 +51,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       suppressHydrationWarning
       className={cn("h-full antialiased font-sans", geistSans.variable, jetbrainsMono.variable)}
     >
+      <head>
+        {/* JS가 꺼진 브라우저: 애니메이션 시작 상태(투명·아래로 이동)를 풀어 내용이 바로 보이게 함 */}
+        <noscript
+          dangerouslySetInnerHTML={{
+            __html: "<style>[data-motion]{opacity:1!important;transform:none!important}</style>",
+          }}
+        />
+      </head>
       <body className="flex min-h-full flex-col bg-background text-foreground">
         <ThemeProvider
           attribute="class"
@@ -57,14 +66,16 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           enableSystem
           disableTransitionOnChange
         >
-          <BgmProvider src={music?.src ?? null}>
-            <TooltipProvider>
-              <SiteHeader />
-              <main className="flex flex-1 flex-col">{children}</main>
-              <SiteFooter music={music} />
-              <Toaster />
-            </TooltipProvider>
-          </BgmProvider>
+          <MotionProvider>
+            <BgmProvider src={music?.src ?? null}>
+              <TooltipProvider>
+                <SiteHeader />
+                <main className="flex flex-1 flex-col">{children}</main>
+                <SiteFooter music={music} />
+                <Toaster />
+              </TooltipProvider>
+            </BgmProvider>
+          </MotionProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -163,9 +163,10 @@
   - 계획: [plans/T-127.md](plans/T-127.md)
 
 #### 에픽 1.8 모던 UI 애니메이션 기반과 적용 (PRD: F016)
-- [ ] **T-119** Motion 설치, 공통 애니메이션 래퍼, 동작 줄이기 기반 · P1 · M · 의존: T-104
+- [x] **T-119** Motion 설치, 공통 애니메이션 래퍼, 동작 줄이기 기반 · P1 · M · 의존: T-104
   - 완료 조건: ① `motion`을 설치하고 `npm install`에서 React 19.3·Next.js 16과 peerDependencies 경고가 없다. ② 루트에 `MotionConfig reducedMotion="user"` Provider가 있고, 공통 래퍼 `FadeIn`(등장), `Stagger`/`StaggerItem`(차례 등장), `Reveal`(`whileInView`, `viewport={{ once: true }}`)이 `motion/react`에서 import되며 이 파일들에만 `"use client"`가 붙는다 (페이지·섹션은 서버 컴포넌트 유지). ③ 지속 시간·이동 거리·이징을 한 곳(`lib/motion.ts`)에 상수로 두고 0.2~0.5초, 이동은 transform·opacity만 쓴다. ④ Playwright에서 `prefers-reduced-motion: reduce`를 에뮬레이션하면 래퍼가 이동 없이 투명도만 바뀐다. ⑤ `out/index.html`에 래퍼로 감싼 텍스트가 그대로 들어 있다(검색 엔진·JS 지연 대비).
   - 위치: package.json, components/providers/motion-provider.tsx, components/shared/motion/fade-in.tsx, stagger.tsx, reveal.tsx, lib/motion.ts, app/layout.tsx
+  - 계획: [plans/T-119.md](plans/T-119.md)
 - [ ] **T-120** 링크·메뉴·버튼 호버/누름 마이크로 인터랙션 (CSS) · P1 · S · 의존: T-105, T-106, T-127
   - 완료 조건: 헤더·푸터 링크와 메뉴는 호버·키보드 포커스(`focus-visible`) 시 같은 색·밑줄 전환이 보이고, 버튼은 누를 때 살짝 작아진다(`active:scale-*`). 모두 Tailwind `transition`과 `motion-reduce:`로 처리해 JS를 추가하지 않고, 동작 줄이기에서는 크기 변화가 없다. 공통 클래스(`@utility` 등)로 만들어 이후 태그 칩(T-307)·연도 탭(T-212)·이전/다음 링크(T-302)가 그대로 재사용한다. 레이아웃이 밀리지 않는다.
   - 위치: app/globals.css, components/layout/main-nav.tsx, mobile-nav.tsx, site-footer.tsx (components/ui/button.tsx는 직접 수정 최소화 — 기존 파일 확인 필요)
