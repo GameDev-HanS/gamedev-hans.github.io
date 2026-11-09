@@ -13,8 +13,8 @@ export const metadata: Metadata = {
 export default function NotFound() {
   return (
     <Container className="flex flex-1 flex-col items-center justify-center gap-6 py-24 text-center">
-      <p className="text-xs tracking-[0.4em] text-muted-foreground">404 · STAGE NOT FOUND</p>
-      <h1 className="font-heading text-5xl font-bold tracking-widest text-neon-magenta neon-text-magenta sm:text-7xl">
+      <p className="font-mono text-xs tracking-[0.4em] text-primary">404 · STAGE NOT FOUND</p>
+      <h1 className="font-heading text-5xl font-bold tracking-widest sm:text-7xl">
         GAME OVER
       </h1>
       <div className="flex flex-col gap-1">
@@ -29,7 +29,7 @@ export default function NotFound() {
         </Link>
         <Link
           href="/blog"
-          className={cn(buttonVariants({ variant: "outline", size: "lg" }), "neon-hover")}
+          className={cn(buttonVariants({ variant: "outline", size: "lg" }), "accent-hover")}
         >
           블로그 보기
         </Link>

@@ -28,7 +28,7 @@ export function MainNav() {
                 active={active}
                 className={cn(
                   navigationMenuTriggerStyle(),
-                  active && "text-neon-cyan neon-text"
+                  active && "text-primary"
                 )}
                 render={<Link href={item.href} />}
               >

@@ -21,7 +21,7 @@ export function SiteFooter({ music }: { music: BackgroundMusic | null }) {
               <Link
                 key={item.href}
                 href={item.href}
-                className="transition-colors hover:text-neon-cyan"
+                className="transition-colors hover:text-primary"
               >
                 {item.title}
               </Link>
@@ -32,7 +32,7 @@ export function SiteFooter({ music }: { music: BackgroundMusic | null }) {
                 href={link.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="transition-colors hover:text-neon-cyan"
+                className="transition-colors hover:text-primary"
               >
                 {link.title}
               </a>

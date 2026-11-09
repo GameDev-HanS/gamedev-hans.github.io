@@ -47,7 +47,7 @@ export function MobileNav() {
                 className={cn(
                   "px-2 py-2 text-sm transition-colors hover:bg-muted",
                   active
-                    ? "bg-muted font-medium text-neon-cyan neon-text"
+                    ? "bg-muted font-medium text-primary"
                     : "text-muted-foreground"
                 )}
               >

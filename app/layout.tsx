@@ -48,7 +48,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="ko"
       suppressHydrationWarning
-      className={cn("h-full antialiased font-mono", geistSans.variable, jetbrainsMono.variable)}
+      className={cn("h-full antialiased font-sans", geistSans.variable, jetbrainsMono.variable)}
     >
       <body className="flex min-h-full flex-col bg-background text-foreground">
         <ThemeProvider

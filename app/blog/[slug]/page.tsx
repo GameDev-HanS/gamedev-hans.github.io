@@ -35,13 +35,13 @@ export default async function PostPage({ params }: PageProps<"/blog/[slug]">) {
     <Container className="max-w-3xl py-12">
       <article className="flex flex-col gap-10">
         <PostHeader post={post} />
-        {/* 본문 서식: @tailwindcss/typography의 prose + 네온 시안 링크 */}
-        <div className="prose prose-neutral max-w-none dark:prose-invert prose-headings:font-heading prose-headings:tracking-tight prose-a:text-neon-cyan prose-a:underline-offset-4 prose-blockquote:border-neon-magenta prose-blockquote:not-italic prose-code:rounded prose-code:bg-muted prose-code:px-1 prose-code:py-0.5 prose-code:font-normal prose-code:before:content-none prose-code:after:content-none prose-img:mx-auto">
+        {/* 본문 서식: @tailwindcss/typography의 prose + 포인트 색(시안) 링크 */}
+        <div className="prose prose-neutral max-w-none dark:prose-invert prose-headings:font-heading prose-headings:tracking-tight prose-a:text-primary prose-a:underline-offset-4 prose-blockquote:border-primary prose-blockquote:not-italic prose-code:rounded prose-code:bg-muted prose-code:px-1 prose-code:py-0.5 prose-code:font-normal prose-code:before:content-none prose-code:after:content-none prose-img:mx-auto">
           <Body />
         </div>
       </article>
       <div className="mt-12 border-t pt-8">
-        <Link href="/blog" className={cn(buttonVariants({ variant: "outline" }), "neon-hover")}>
+        <Link href="/blog" className={cn(buttonVariants({ variant: "outline" }), "accent-hover")}>
           <ArrowLeftIcon data-icon="inline-start" />
           목록으로
         </Link>

@@ -14,14 +14,14 @@ export function RecentPosts({ posts, total }: { posts: Post[]; total: number }) 
       <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {posts.map((post) => (
           <li key={post.slug}>
-            <PostCard post={post} />
+            <PostCard post={post} headingAs="h3" />
           </li>
         ))}
       </ul>
       {total > posts.length && (
         <Link
           href="/blog"
-          className="mt-8 inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-neon-cyan"
+          className="mt-8 inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-primary"
         >
           전체 글 보기 ({total}개)
           <ArrowRightIcon className="size-4" />

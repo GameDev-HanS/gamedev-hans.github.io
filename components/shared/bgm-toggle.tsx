@@ -21,7 +21,7 @@ export function BgmToggle() {
       title={label}
     >
       {playing ? (
-        <MusicIcon className="text-neon-cyan drop-shadow-[0_0_6px_var(--neon-cyan-glow)]" />
+        <MusicIcon className="text-primary" />
       ) : (
         <VolumeXIcon />
       )}

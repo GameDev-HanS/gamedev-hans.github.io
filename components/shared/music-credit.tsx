@@ -12,7 +12,7 @@ export function MusicCredit({ music }: { music: BackgroundMusic | null }) {
           href={music.sourceUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="underline underline-offset-2 transition-colors hover:text-neon-cyan"
+          className="underline underline-offset-2 transition-colors hover:text-primary"
         >
           {music.source}
         </a>

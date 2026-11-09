@@ -12,9 +12,14 @@ export function Hero() {
   return (
     <section className="border-b py-20 sm:py-28">
       <Container className="flex flex-col items-start gap-6">
-        <Badge variant="secondary">Game Dev Log</Badge>
-        <h1 className="max-w-3xl font-heading text-4xl font-bold tracking-tight text-neon-cyan neon-text sm:text-6xl">
+        <Badge variant="secondary" className="font-mono">
+          Game Dev Log
+        </Badge>
+        <h1 className="max-w-3xl font-heading text-4xl font-bold tracking-tight sm:text-6xl">
           {siteConfig.name}
+          <span aria-hidden className="text-primary">
+            .
+          </span>
         </h1>
         <p className="max-w-2xl text-sm text-muted-foreground sm:text-base">
           {siteConfig.description}
@@ -26,7 +31,7 @@ export function Hero() {
           </Link>
           <Link
             href="/about"
-            className={cn(buttonVariants({ variant: "outline", size: "lg" }), "neon-hover")}
+            className={cn(buttonVariants({ variant: "outline", size: "lg" }), "accent-hover")}
           >
             소개
           </Link>
