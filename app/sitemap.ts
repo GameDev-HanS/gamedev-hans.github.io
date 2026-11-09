@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next"
 
 import { siteConfig } from "@/config/site"
+import { getGameYears, getGamesByYear } from "@/lib/games"
 import { getAllPosts } from "@/lib/posts"
 
 // 정적 내보내기(output: 'export')에서는 빌드 시 파일로 생성되도록 명시
@@ -17,5 +18,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
     url: `${siteConfig.url}/blog/${post.slug}`,
     lastModified: new Date(`${post.date}T00:00:00Z`),
   }))
-  return [...pages, ...posts]
+  // 연도별 플레이 게임 페이지 (수정일 = 그해 게임의 가장 늦은 시작일·끝낸 날, 날짜가 없으면 생략)
+  const gameYears = getGameYears().map((year) => {
+    const latest = (getGamesByYear(year) ?? [])
+      .flatMap((game) => [game.startedAt, game.endedAt])
+      .filter((date): date is string => Boolean(date))
+      .sort()
+      .at(-1)
+    return {
+      url: `${siteConfig.url}/games/${year}`,
+      ...(latest && { lastModified: new Date(`${latest}T00:00:00Z`) }),
+    }
+  })
+  return [...pages, ...posts, ...gameYears]
 }

@@ -7,7 +7,10 @@ import path from "node:path"
 import { cache } from "react"
 import { z } from "zod"
 
+import { GAME_STATUSES, STATUS_LABEL, type GameStatus } from "./game-status"
 import { SLUG, SLUG_MESSAGE, dateString, formatIssues, required } from "./schema"
+
+export { GAME_STATUSES, STATUS_LABEL, type GameStatus }
 
 // 플레이 게임 기록 로더. content/games/<연도>.json(게임 배열)을 읽고 검증합니다.
 // 형식이 틀리면 파일 이름이 들어간 메시지로 빌드를 실패시켜 잘못된 기록이 배포되지 않게 합니다.
@@ -15,8 +18,6 @@ const GAMES_DIR = path.join(process.cwd(), "content", "games")
 const PUBLIC_DIR = path.join(process.cwd(), "public")
 
 const YEAR_FILE = /^(\d{4})\.json$/
-
-export const GAME_STATUSES = ["playing", "cleared", "dropped", "wishlist"] as const
 
 const gameSchema = z
   .object({
@@ -58,12 +59,12 @@ const gameSchema = z
   })
 
 export type Game = z.infer<typeof gameSchema>
-export type GameStatus = (typeof GAME_STATUSES)[number]
 
 function readYearFile(dir: string, publicDir: string, file: string, year: number): Game[] {
   const where = `content/games/${file}`
 
-  const text = fs.readFileSync(path.join(dir, file), "utf8")
+  // Windows 편집기가 붙이는 BOM(파일 맨 앞의 보이지 않는 문자)은 JSON 오류가 되므로 떼고 읽습니다
+  const text = fs.readFileSync(path.join(dir, file), "utf8").replace(/^\uFEFF/, "")
   let data: unknown
   try {
     data = JSON.parse(text)
@@ -132,4 +133,47 @@ export function getGameYears(): number[] {
  */
 export function getGamesByYear(year: number): readonly Game[] | null {
   return loadGames().get(year) ?? null
+}
+
+/** 상태가 없는 게임의 묶음 이름 */
+const NO_STATUS_LABEL = "플레이한 게임"
+
+export type GameGroup = {
+  /** 상태 값, 상태가 없는 묶음은 "none" */
+  key: GameStatus | "none"
+  label: string
+  games: Game[]
+}
+
+// 묶음 안 순서: 시작일 최신순, 시작일이 없으면 뒤로 보내고 제목순
+function compareGames(a: Game, b: Game): number {
+  if (a.startedAt && b.startedAt) {
+    return b.startedAt.localeCompare(a.startedAt) || a.title.localeCompare(b.title, "ko")
+  }
+  if (a.startedAt) return -1
+  if (b.startedAt) return 1
+  return a.title.localeCompare(b.title, "ko")
+}
+
+/**
+ * 상태별 묶음: 플레이 중 → 클리어 → 중단 → 하고 싶은 게임 → 플레이한 게임(상태 없음).
+ * 게임이 없는 묶음은 빼고 돌려줍니다. 받은 배열은 바꾸지 않습니다.
+ */
+export function groupGames(games: readonly Game[]): GameGroup[] {
+  const groups: GameGroup[] = [
+    ...GAME_STATUSES.map((status) => ({
+      key: status,
+      label: STATUS_LABEL[status],
+      games: games.filter((game) => game.status === status),
+    })),
+    { key: "none", label: NO_STATUS_LABEL, games: games.filter((game) => !game.status) },
+  ]
+  return groups
+    .filter((group) => group.games.length > 0)
+    .map((group) => ({ ...group, games: group.games.toSorted(compareGames) }))
+}
+
+/** 묶음별 게임 수 (요약 줄·연도 카드용, 0개 묶음 제외) */
+export function countGroups(games: readonly Game[]): { label: string; count: number }[] {
+  return groupGames(games).map((group) => ({ label: group.label, count: group.games.length }))
 }
