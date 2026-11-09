@@ -8,27 +8,19 @@ import matter from "gray-matter"
 import { cache } from "react"
 import { z } from "zod"
 
+import { SLUG, SLUG_MESSAGE, dateString, formatIssues, required } from "./schema"
+
 // 블로그 글 데이터 로더. content/posts/*.mdx의 맨 위 YAML(frontmatter)을 읽고 검증합니다.
 // 형식이 틀리면 파일 이름이 들어간 메시지로 빌드를 실패시켜 잘못된 글이 배포되지 않게 합니다.
 const POSTS_DIR = path.join(process.cwd(), "content", "posts")
 const PUBLIC_DIR = path.join(process.cwd(), "public")
-
-// URL에 그대로 쓰는 값(파일 이름, 태그)은 영문 소문자·숫자·하이픈만 허용
-const SLUG = /^[a-z0-9]+(-[a-z0-9]+)*$/
-const SLUG_MESSAGE = "영문 소문자·숫자·하이픈만 쓸 수 있습니다 (예: game-programming)"
-
-// 항목이 빠졌거나 형식이 다를 때 보여 줄 안내 (zod 기본 영어 메시지 대신)
-const required = (example: string) => ({ error: `필수 항목입니다 (예: ${example})` })
 
 const frontmatterSchema = z.object({
   title: z.string(required("title: 게임 루프 이해하기")).trim().min(1, "제목이 비어 있습니다"),
   // YAML은 2026-11-09를 Date로 읽으므로 문자열 YYYY-MM-DD로 맞춘 뒤 검사
   date: z.preprocess(
     (value) => (value instanceof Date ? value.toISOString().slice(0, 10) : value),
-    z
-      .string(required("date: 2026-11-09"))
-      .regex(/^\d{4}-\d{2}-\d{2}$/, "YYYY-MM-DD 형식이어야 합니다")
-      .refine((value) => new Date(`${value}T00:00:00Z`).toISOString().startsWith(value), "없는 날짜입니다")
+    dateString("date: 2026-11-09")
   ),
   summary: z.string(required("summary: 한 줄 요약")).trim().min(1, "요약이 비어 있습니다"),
   tags: z
@@ -56,10 +48,7 @@ function readPost(file: string): Post {
   const { data } = matter(fs.readFileSync(path.join(POSTS_DIR, file), "utf8"))
   const parsed = frontmatterSchema.safeParse(data)
   if (!parsed.success) {
-    const issues = parsed.error.issues
-      .map((issue) => `${issue.path.join(".") || "(전체)"}: ${issue.message}`)
-      .join(", ")
-    throw new Error(`${where}: 글 정보(frontmatter)가 올바르지 않습니다 — ${issues}`)
+    throw new Error(`${where}: 글 정보(frontmatter)가 올바르지 않습니다 — ${formatIssues(parsed.error)}`)
   }
 
   const { thumbnail } = parsed.data
