@@ -1,13 +1,9 @@
-import Link from "next/link"
-
 import { Container } from "@/components/layout/container"
 import { MusicCredit } from "@/components/shared/music-credit"
 import { siteConfig } from "@/config/site"
 import type { BackgroundMusic } from "@/lib/music"
 
-// 홈은 로고로 갈 수 있으므로 푸터에서는 뺍니다
-const footerNav = siteConfig.mainNav.filter((item) => item.href !== "/")
-
+// 사이트 안 메뉴는 헤더에 있으므로 푸터에는 저작권 표시와 외부 링크(GitHub 등)만 둡니다
 export function SiteFooter({ music }: { music: BackgroundMusic | null }) {
   return (
     <footer className="border-t py-6">
@@ -16,28 +12,21 @@ export function SiteFooter({ music }: { music: BackgroundMusic | null }) {
           <p>
             © {new Date().getFullYear()} {siteConfig.name}
           </p>
-          <nav className="flex gap-4">
-            {footerNav.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="transition-colors hover:text-primary"
-              >
-                {item.title}
-              </Link>
-            ))}
-            {siteConfig.links.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="transition-colors hover:text-primary"
-              >
-                {link.title}
-              </a>
-            ))}
-          </nav>
+          {siteConfig.links.length > 0 && (
+            <nav aria-label="외부 링크" className="flex gap-4">
+              {siteConfig.links.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="transition-colors hover:text-primary"
+                >
+                  {link.title}
+                </a>
+              ))}
+            </nav>
+          )}
         </div>
         <MusicCredit music={music} />
       </Container>
