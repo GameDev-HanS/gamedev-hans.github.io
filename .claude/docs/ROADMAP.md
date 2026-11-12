@@ -179,9 +179,11 @@
   - 완료 조건: 첫 접속·새로고침 때 로고 → 메뉴 항목(왼쪽부터) → 음악·테마 버튼이 짧은 간격으로 투명도·위치 전환으로 나타나고 전체가 약 0.6초 안에 끝난다. 사이트 안 링크 이동 때는 다시 재생되지 않는다(헤더는 레이아웃에 유지). 모바일 헤더도 같은 순서이며, 음원이 없어 음악 버튼이 숨겨진 경우에도 순서가 깨지지 않는다. 동작 줄이기에서는 투명도만 바뀐다.
   - 위치: components/layout/site-header.tsx, main-nav.tsx (T-119의 Stagger 재사용)
   - 계획: [plans/T-120.md](plans/T-120.md)
-- [ ] **T-122** 페이지 전환 크로스페이드 (React `<ViewTransition>`) · P1 · M · 의존: T-117, T-105
-  - 완료 조건: ① `import { ViewTransition } from 'react'`로 구현하고 **실험 플래그·`next.config` 변경 없이** 동작한다 (가이드 "View transitions work in the App Router with no configuration. React 19.3 includes the `<ViewTransition>` component" 확인함, React 19.3.1). `@types/react`에 `ViewTransition` 타입이 없어 `npx tsc --noEmit`가 실패하면 타입 패키지 버전을 확인해 계획 문서에 적는다(문서 확인 필요). ② 헤더 메뉴·카드 링크로 이동하면 이전 페이지 본문이 흐려지고 새 본문이 나타난다 (퇴장 약 150ms, 등장 약 210ms). ③ 헤더·푸터는 `viewTransitionName`을 주고 CSS로 애니메이션을 꺼서 움직이지 않는다. ④ `::view-transition { pointer-events: none; }`으로 전환 중 클릭이 사라지지 않는다. ⑤ `@media (prefers-reduced-motion: reduce)`에서 전환 애니메이션 시간이 0이다(즉시 전환). ⑥ 음악을 켠 채 이동해도 끊기지 않는다(Provider는 래퍼 바깥). ⑦ 미지원 브라우저에서도 이동은 정상이다. ⑧ 래퍼 위치: 가이드는 레이아웃이 아닌 **각 page.tsx**에 두라고 하므로 공통 `PageTransition` 컴포넌트를 만들어 지금 있는 페이지(홈·404 등)에 감싸고, 이후 새 페이지도 감싼다(공통 완료 기준에 추가). `app/template.tsx`로 한 번에 감싸는 방식은 가이드에 없으므로 시험해 보고 동작하면 채택(문서 확인 필요). Motion의 페이지 등장 애니메이션과 겹치지 않게 본문 전체에는 Motion을 쓰지 않는다.
-  - 위치: components/shared/page-transition.tsx, app/globals.css(::view-transition 규칙), components/layout/site-header.tsx, site-footer.tsx, app/page.tsx, app/not-found.tsx (규칙: node_modules/next/dist/docs/01-app/02-guides/view-transitions.md)
+- [x] **T-122** 페이지 전환 크로스페이드 (React `<ViewTransition>`) · P1 · M · 의존: T-117, T-105 · 완료(2026-11-12)
+  - 완료 조건: ① `import { ViewTransition } from 'react'`로 구현하고 **실험 플래그·`next.config` 변경 없이** 동작한다 (가이드 "View transitions work in the App Router with no configuration. React 19.3 includes the `<ViewTransition>` component" 확인함, React 19.3.1). `@types/react`에 `ViewTransition` 타입이 없어 `npx tsc --noEmit`가 실패하면 타입 패키지 버전을 확인해 계획 문서에 적는다(문서 확인 필요). ② 헤더 메뉴·카드 링크로 이동하면 이전 페이지 본문이 흐려지고 새 본문이 나타난다 (퇴장 약 150ms, 등장 약 210ms). ③ 헤더·푸터는 `viewTransitionName`을 주고 CSS로 애니메이션을 꺼서 움직이지 않는다. ④ `::view-transition { pointer-events: none; }`으로 전환 중 클릭이 사라지지 않는다. ⑤ `@media (prefers-reduced-motion: reduce)`에서 전환 애니메이션 시간이 0이다(즉시 전환). ⑥ 음악을 켠 채 이동해도 끊기지 않는다(Provider는 래퍼 바깥). ⑦ 미지원 브라우저에서도 이동은 정상이다. ⑧ 래퍼 위치: 공통 `PageTransition`(`components/shared/page-transition.tsx`, update 크로스페이드)을 페이지마다가 아니라 **레이아웃 `<main>` 안 한 곳**에 둔다. 새 페이지는 따로 감쌀 필요가 없다. Motion의 페이지 등장 애니메이션과 겹치지 않게 본문 전체에는 Motion을 쓰지 않는다.
+  - 위치: components/shared/page-transition.tsx, app/layout.tsx, app/globals.css, components/layout/site-header.tsx, site-footer.tsx (규칙: node_modules/next/dist/docs/01-app/02-guides/view-transitions.md)
+  - 계획: [plans/T-122.md](plans/T-122.md)
+  - 구현 메모: 래퍼는 레이아웃 `<main>` 안 한 곳(update 크로스페이드)으로 확정. 헤더 메뉴, `/blog`→글, `/games`→`/games/2026` 전환 확인. `PageTransition`은 클라이언트 컴포넌트로, 하이드레이션 전에는 `update="none"`, 그 뒤에는 `"page-fade"`(`useSyncExternalStore`) — 서버 HTML에 전환 속성이 있으면 첫 접속 때 로딩 화면(app/loading.tsx) → 본문 교체에도 전환이 걸려 글꼴·이미지를 기다리느라 본문이 늦게 보이기 때문. 투명도만 바꿈(blur 없음): 퇴장 150ms, 등장 210ms, 본문 상자 크기 변화 애니메이션은 끔. 주의: 하이드레이션 뒤 `<main>` 안에서 `startTransition`으로 DOM을 바꾸면 본문 전체에 전환이 재생되므로, 나중에 본문 안 상태 변경에 transition을 쓰면 확인이 필요.
 - [x] **T-123** 홈 등장 연출 · P1 · S · 의존: T-119, T-114, T-127 · 완료(2026-11-12)
   - 구현 메모: 히어로 delay 0.25초, 최근 글 delay 0.5초, 이동 거리 전체 8px.
   - 완료 조건: 홈이 그려질 때 히어로의 이름 → 한 줄 소개 → 버튼, 이어서 최근 글 카드가 차례로 나타난다. 첫 진입에서는 헤더 스태거 뒤에 이어서 재생되고, 사이트 안에서 홈으로 돌아올 때도 짧게 재생된다 (PRD 가정). 히어로는 이동 거리를 작게(약 8px 이하) 해서 JS가 늦어도 빈 화면이 오래 보이지 않는다. T-208에서 히어로 데이터가 바뀌어도 래퍼 구조는 유지된다.
@@ -286,7 +288,7 @@
 
 #### 에픽 2.5 소개·게임 페이지 애니메이션 (PRD: F016)
 - [ ] **T-215** 소개 페이지 스크롤 등장과 프로젝트 카드 호버 · P1 · S · 의존: T-207, T-124, T-125
-  - 완료 조건: `/about`에서 기술 스택 배지 묶음·프로젝트 카드·타임라인 항목이 화면에 들어올 때 차례로 한 번만 나타나고, 프로젝트 카드에 T-125의 떠오름·기울기·포인트 색 테두리가 적용된다. 프로젝트 외부 링크가 새 탭으로 그대로 열린다. 동작 줄이기에서는 이동·기울기가 없다. `/about` 페이지가 T-122의 `PageTransition`으로 감싸져 있다.
+  - 완료 조건: `/about`에서 기술 스택 배지 묶음·프로젝트 카드·타임라인 항목이 화면에 들어올 때 차례로 한 번만 나타나고, 프로젝트 카드에 T-125의 떠오름·기울기·포인트 색 테두리가 적용된다. 프로젝트 외부 링크가 새 탭으로 그대로 열린다. 동작 줄이기에서는 이동·기울기가 없다. `/about` 페이지에도 레이아웃의 T-122 `PageTransition`이 자동 적용된다.
   - 위치: components/sections/skill-stack.tsx, project-list.tsx, career-timeline.tsx
 - [ ] **T-216** 게임 페이지 스크롤 등장과 게임 줄 호버(PV 버튼) · P1 · S · 의존: T-212, T-213, T-125
   - 완료 조건: `/games`와 `/games/<연도>`의 상태별 묶음·게임 줄(T-220 바 형태)이 화면에 들어올 때 차례로 한 번만 나타나고, 게임 줄(PV 버튼, T-218)에 T-125의 떠오름·기울기·포인트 색 테두리가, 연도 탭에 T-120의 호버 전환이 적용된다. 줄 버튼 클릭으로 PV 팝업이 그대로 열린다. 보기 목록('전체 · 2026 · …')으로 전체·다른 연도로 이동할 때 T-122 크로스페이드가 동작한다. 동작 줄이기에서는 이동·기울기가 없다.
@@ -423,9 +425,9 @@ graph LR
   T125 --> T216
 ```
 
-- 완료 (2026-11-12 기준): 단계 1의 T-101~T-119·T-127, 단계 2의 T-202·T-209~T-214·T-218·T-219·T-220. 단계 1은 T-120·T-121·T-123·T-124·T-126도 완료.
-- **다음 작업: T-122** (페이지 전환 크로스페이드, React `<ViewTransition>`). 의존 T-117·T-105 완료.
-- 단계 1 남은 작업은 T-122·T-125뿐 (의존 모두 완료, 지금 착수 가능).
+- 완료 (2026-11-12 기준): 단계 1의 T-101~T-119·T-127, 단계 2의 T-202·T-209~T-214·T-218·T-219·T-220. 단계 1은 T-120~T-124·T-126도 완료.
+- **다음 작업: T-125** (카드 호버 떠오름·기울기 공통 래퍼와 글 카드 적용). 의존 T-119·T-110·T-127 완료.
+- 단계 1 남은 작업은 T-125뿐 (T-122 완료, 의존 모두 완료, 지금 착수 가능).
 - 단계 2 소개·홈 (T-201~T-208): T-201은 단계 1 완료(T-120~T-126) 후 시작하고, T-203~T-208은 T-201 이후. (T-202는 완료)
 - 단계 2 애니메이션: T-215는 T-207·T-124·T-125 이후, T-216은 T-125 이후 (게임 쪽 의존 T-212·T-213은 완료).
 - T-217(2026 게임 표지)은 **보류** — 사용자가 허락된 이미지를 준비하면 진행.
@@ -471,12 +473,13 @@ graph LR
 - 상태가 선택이 되면서 T-210(상태 배지 4종)·T-211(상태별 4묶음·요약)·T-213(연도 카드의 상태별 게임 수)의 기준이 흔들림 — 결정 전까지 가정: 상태가 있는 게임만 배지 표시, 상태 없는 게임은 별도 묶음(예: "기록") 또는 끝낸 날짜순 단일 목록. T-210 착수 전에 확정
 - 테마 리뉴얼 후 유틸리티 이름 — 결정 전까지 가정: `neon-` 접두어를 없애고 accent 계열(예: `accent-hover`)로 정리 (T-127에서 확정)
 - 코드 블록 언어 표시 이름 변환표 범위 — 결정 전까지 가정: C#, C++, HLSL, GLSL, TypeScript, JavaScript, JSON, Shell 정도 (T-301에서 확정)
-- 페이지 전환 래퍼 위치 — 결정 전까지 가정: 가이드대로 각 `page.tsx`를 공통 `PageTransition`으로 감쌈. `app/template.tsx` 한 번 감싸기가 동작하면 그쪽으로 바꿈 (T-122에서 확정)
 - 홈 등장 연출 재생 시점 — 결정 전까지 가정: 홈이 그려질 때마다(사이트 안에서 홈으로 돌아올 때 포함) 짧게 재생, 헤더 스태거는 첫 로드만 (PRD 가정, T-123)
 - 카드 기울기 정도 — 결정 전까지 가정: 약 4° 이하, 터치 기기는 기울기 없음 (PRD 가정, T-125)
 - MDX 라이브러리 표기 차이 — PRD 기술 스택은 next-mdx-remote(RSC)를 적었고 ROADMAP은 Next.js 16 공식 가이드 기준 `@next/mdx`를 1순위로 둠. 결정 전까지 가정: T-108 스파이크 결과를 따르고, 확정되면 PRD 기술 스택 문구를 맞춤
 
 ### 결정됨
+
+- 페이지 전환 래퍼 위치 (2026-11-12) — 각 `page.tsx`가 아니라 레이아웃 `<main>` 안 한 곳의 `PageTransition`(update 크로스페이드, 하이드레이션 전 `update="none"`)으로 확정. 새 페이지는 따로 감쌀 필요 없음. 반영: T-122(완료)
 
 - 게임 목록 바 형태·PV 안내·유튜브 썸네일 미사용 (2026-11-12) — 세로 표지 카드 대신 한 줄(바) 목록(왼쪽 이니셜/작은 표지, 제목·상태 배지, 시간·날짜·플랫폼, 오른쪽 ▶ PV, 데스크톱 2열·모바일 1열), 목록 위 PV 안내 문구, 유튜브 썸네일은 방문자 IP가 구글로 가지 않도록 쓰지 않음 (PRD F013·F017 변경). 반영: T-220(완료), T-216
 - `/games` 전체 보기와 `earlier.json` (2026-11-12) — `/games`는 모든 연도 + `earlier.json`을 합친 전체 보기(연도 파일끼리 같은 slug는 최근 연도 것), `/games/<연도>`는 그해만, 보기 목록 '전체 · 2026 · …', canonical 없음, sitemap은 `/games`와 모든 `/games/<연도>`, 플랫폼 한글 표기("PC, 모바일" 순서). 리뷰 반영: `earlier.json` 표지는 `/images/games/earlier/`, `earlier.json`과 연도 파일의 slug 겹침은 빌드 실패 (PRD F014 변경, T-218 결정 대체). 반영: T-219(완료), T-218 메모
@@ -505,6 +508,6 @@ graph LR
 - 코드 리뷰(`code-reviewer`) 반영
 - `/test`로 브라우저 확인 (데스크톱·모바일, 라이트·다크 모드)
 - 새 페이지는 `config/site.ts`의 `mainNav`에 등록 (메뉴에 없는 글 상세·태그·404 페이지는 제외)
-- T-122 이후 새 `page.tsx`는 페이지 전환 래퍼(`PageTransition`, 또는 T-122에서 정한 방식)를 적용하고, 새 카드·목록은 T-119·T-125 래퍼를 재사용
+- 페이지 전환(`PageTransition`)은 레이아웃에서 자동 적용되므로 새 `page.tsx`에서 따로 감싸지 않음. 새 카드·목록은 T-119·T-125 래퍼를 재사용
 - 애니메이션이 있는 화면은 `prefers-reduced-motion: reduce` 에뮬레이션에서도 확인 (이동·기울기 없음, 레이아웃 흔들림 없음)
 - 커밋은 `/commit` 또는 `/commit-test`(privacy-guard 검사 포함)로 하고, 푸시는 사용자가 GitHub Desktop에서

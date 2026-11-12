@@ -6,7 +6,8 @@ import type { BackgroundMusic } from "@/lib/music"
 // 사이트 안 메뉴는 헤더에 있으므로 푸터에는 저작권 표시와 외부 링크(GitHub 등)만 둡니다
 export function SiteFooter({ music }: { music: BackgroundMusic | null }) {
   return (
-    <footer className="border-t py-6">
+    // viewTransitionName: 페이지 전환(T-122) 중에도 푸터는 그대로 두기 위한 이름 (globals.css)
+    <footer className="border-t py-6" style={{ viewTransitionName: "site-footer" }}>
       <Container className="flex flex-col gap-3 text-xs text-muted-foreground">
         <div className="flex flex-col items-center justify-between gap-2 sm:flex-row">
           <p>

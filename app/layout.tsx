@@ -7,6 +7,7 @@ import { SiteHeader } from "@/components/layout/site-header";
 import { BgmProvider } from "@/components/providers/bgm-provider";
 import { MotionProvider } from "@/components/providers/motion-provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
+import { PageTransition } from "@/components/shared/page-transition";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { siteConfig } from "@/config/site";
@@ -70,7 +71,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <BgmProvider src={music?.src ?? null}>
               <TooltipProvider>
                 <SiteHeader />
-                <main className="flex flex-1 flex-col">{children}</main>
+                <main className="flex flex-1 flex-col">
+                  <PageTransition>{children}</PageTransition>
+                </main>
                 <SiteFooter music={music} />
                 <Toaster />
               </TooltipProvider>
