@@ -12,7 +12,7 @@ import { SLUG, SLUG_MESSAGE, dateString, formatIssues, required } from "./schema
 
 export { GAME_STATUSES, STATUS_LABEL, type GameStatus }
 
-// 플레이 게임 기록 로더. content/games/<연도>.json(게임 배열)을 읽고 검증합니다.
+// 플레이 게임 기록 로더. content/games/<연도>.json과 earlier.json(게임 배열)을 읽고 검증합니다.
 // 형식이 틀리면 파일 이름이 들어간 메시지로 빌드를 실패시켜 잘못된 기록이 배포되지 않게 합니다.
 const GAMES_DIR = path.join(process.cwd(), "content", "games")
 const PUBLIC_DIR = path.join(process.cwd(), "public")
@@ -40,12 +40,21 @@ const gameSchema = z
     startedAt: dateString('"startedAt": "2026-03-06"').optional(),
     // 끝낸 날 (클리어 여부와 관계없음)
     endedAt: dateString('"endedAt": "2026-06-29"').optional(),
-    // 표지(선택): public/images/games/<연도>/ 아래 파일. 출처 문구(coverCredit)를 함께 적습니다.
+    // 표지(선택): public/images/games/<연도 또는 earlier>/ 아래 파일. 출처 문구(coverCredit)를 함께 적습니다.
+    // 파일마다 맞는 폴더인지는 readGameFile에서 따로 검사합니다.
     cover: z
       .string()
-      .regex(/^\/images\/games\/\d{4}\/(?!.*\.\.)\S+$/, "/images/games/<연도>/로 시작하는 경로여야 합니다")
+      .regex(
+        /^\/images\/games\/(\d{4}|earlier)\/(?!.*\.\.)\S+$/,
+        "/images/games/<연도 또는 earlier>/로 시작하는 경로여야 합니다"
+      )
       .optional(),
     coverCredit: z.string().trim().min(1, "표지 출처가 비어 있습니다").optional(),
+    // 공식 PV(선택): 유튜브 영상 ID 11자 (예: https://www.youtube.com/watch?v=qgJBFa952mY 의 qgJBFa952mY)
+    trailer: z
+      .string()
+      .regex(/^[A-Za-z0-9_-]{11}$/, "유튜브 영상 ID(11자)여야 합니다 (예: qgJBFa952mY)")
+      .optional(),
   })
   // 모르는 필드(오타 등)는 실패
   .strict()
@@ -60,7 +69,8 @@ const gameSchema = z
 
 export type Game = z.infer<typeof gameSchema>
 
-function readYearFile(dir: string, publicDir: string, file: string, year: number): Game[] {
+// coverDir: 표지를 둘 폴더 이름 (연도 파일은 "2026", earlier.json은 "earlier")
+function readGameFile(dir: string, publicDir: string, file: string, coverDir: string): Game[] {
   const where = `content/games/${file}`
 
   // Windows 편집기가 붙이는 BOM(파일 맨 앞의 보이지 않는 문자)은 JSON 오류가 되므로 떼고 읽습니다
@@ -88,8 +98,8 @@ function readYearFile(dir: string, publicDir: string, file: string, year: number
     seen.add(game.slug)
 
     if (game.cover) {
-      if (!game.cover.startsWith(`/images/games/${year}/`)) {
-        throw new Error(`${where}: ${game.slug}의 표지는 /images/games/${year}/ 아래에 둡니다 — ${game.cover}`)
+      if (!game.cover.startsWith(`/images/games/${coverDir}/`)) {
+        throw new Error(`${where}: ${game.slug}의 표지는 /images/games/${coverDir}/ 아래에 둡니다 — ${game.cover}`)
       }
       if (!fs.statSync(path.join(publicDir, game.cover), { throwIfNoEntry: false })?.isFile()) {
         throw new Error(`${where}: ${game.slug}의 표지 파일이 없습니다 — public${game.cover}`)
@@ -99,32 +109,57 @@ function readYearFile(dir: string, publicDir: string, file: string, year: number
   })
 }
 
+/** 2026 이전에만 플레이해 정확한 연도가 없는 게임 (전체 보기에만 나옴) */
+const EARLIER_FILE = "earlier.json"
+
+export type GamesData = {
+  /** 연도 → 그해 게임 */
+  byYear: Map<number, Game[]>
+  /** earlier.json의 게임 */
+  earlier: Game[]
+}
+
 /**
- * 폴더 안의 연도별 게임 기록을 모두 읽어 검증합니다 (연도 → 게임 목록).
- * 파일 이름이 네 자리 연도가 아니면 실패합니다. 폴더가 없으면 빈 Map.
+ * 폴더 안의 게임 기록을 모두 읽어 검증합니다: 연도 파일(2026.json 등)과 earlier.json.
+ * 그 밖의 이름이면 실패합니다. 폴더가 없으면 빈 결과.
  */
-export function readGamesDir(dir: string, publicDir: string = PUBLIC_DIR): Map<number, Game[]> {
-  const byYear = new Map<number, Game[]>()
-  if (!fs.existsSync(dir)) return byYear
+export function readGamesDir(dir: string, publicDir: string = PUBLIC_DIR): GamesData {
+  const data: GamesData = { byYear: new Map(), earlier: [] }
+  if (!fs.existsSync(dir)) return data
 
   for (const file of fs.readdirSync(dir)) {
     if (!file.endsWith(".json")) continue
+    if (file === EARLIER_FILE) {
+      data.earlier = readGameFile(dir, publicDir, file, "earlier")
+      continue
+    }
     const match = YEAR_FILE.exec(file)
     if (!match) {
-      throw new Error(`content/games/${file}: 파일 이름은 네 자리 연도여야 합니다 (예: 2026.json)`)
+      throw new Error(
+        `content/games/${file}: 파일 이름은 네 자리 연도(예: 2026.json) 또는 ${EARLIER_FILE}이어야 합니다`
+      )
     }
-    const year = Number(match[1])
-    byYear.set(year, readYearFile(dir, publicDir, file, year))
+    data.byYear.set(Number(match[1]), readGameFile(dir, publicDir, file, match[1]))
   }
-  return byYear
+
+  // earlier.json은 "2026 이전에만 플레이한 게임"이라 연도 파일과 겹치면 잘못 넣은 것으로 보고 실패합니다.
+  // (연도 파일끼리 겹치는 것은 여러 해에 걸쳐 플레이한 경우라 허용)
+  const yearSlugs = new Set([...data.byYear.values()].flat().map((game) => game.slug))
+  const overlap = data.earlier.filter((game) => yearSlugs.has(game.slug)).map((game) => game.slug)
+  if (overlap.length > 0) {
+    throw new Error(
+      `content/games/${EARLIER_FILE}: 연도 파일에도 있는 게임입니다 — ${overlap.join(", ")} (해당 연도 파일에만 두세요)`
+    )
+  }
+  return data
 }
 
 // 한 번의 렌더 안에서는 폴더를 한 번만 읽습니다.
 const loadGames = cache(() => readGamesDir(GAMES_DIR))
 
-/** 기록이 있는 연도 목록 (최신순). */
+/** 기록이 있는 연도 목록 (최신순, earlier.json 제외). */
 export function getGameYears(): number[] {
-  return [...loadGames().keys()].sort((a, b) => b - a)
+  return [...loadGames().byYear.keys()].sort((a, b) => b - a)
 }
 
 /**
@@ -132,8 +167,25 @@ export function getGameYears(): number[] {
  * 캐시된 배열이므로 읽기 전용입니다. 정렬·묶기는 toSorted() 등으로 복사본을 만들어 씁니다.
  */
 export function getGamesByYear(year: number): readonly Game[] | null {
-  return loadGames().get(year) ?? null
+  return loadGames().byYear.get(year) ?? null
 }
+
+/** 모든 연도와 earlier.json의 게임을 합친 목록. 같은 게임(slug)은 가장 최근 연도 것 하나만. */
+export function mergeGames(data: GamesData): Game[] {
+  const lists = [
+    ...[...data.byYear.entries()].sort(([a], [b]) => b - a).map(([, games]) => games),
+    data.earlier,
+  ]
+  // 최근 연도부터 넣으므로, 같은 slug는 처음 넣은 것(가장 최근 연도)이 남습니다
+  const bySlug = new Map<string, Game>()
+  for (const game of lists.flat()) {
+    if (!bySlug.has(game.slug)) bySlug.set(game.slug, game)
+  }
+  return [...bySlug.values()]
+}
+
+/** 전체 보기용 게임 목록 (읽기 전용) */
+export const getAllGames = cache((): readonly Game[] => mergeGames(loadGames()))
 
 /** 상태가 없는 게임의 묶음 이름 */
 const NO_STATUS_LABEL = "플레이한 게임"
@@ -173,7 +225,7 @@ export function groupGames(games: readonly Game[]): GameGroup[] {
     .map((group) => ({ ...group, games: group.games.toSorted(compareGames) }))
 }
 
-/** 묶음별 게임 수 (요약 줄·연도 카드용, 0개 묶음 제외) */
+/** 묶음별 게임 수 (요약 줄용, 0개 묶음 제외) */
 export function countGroups(games: readonly Game[]): { label: string; count: number }[] {
   return groupGames(games).map((group) => ({ label: group.label, count: group.games.length }))
 }

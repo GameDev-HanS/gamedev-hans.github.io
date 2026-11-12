@@ -18,7 +18,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     url: `${siteConfig.url}/blog/${post.slug}`,
     lastModified: new Date(`${post.date}T00:00:00Z`),
   }))
-  // 연도별 플레이 게임 페이지 (수정일 = 그해 게임의 가장 늦은 시작일·끝낸 날, 날짜가 없으면 생략)
+  // 연도별 플레이 게임 페이지 (/games는 전체 보기라 메뉴 경로로 이미 포함)
+  // 수정일 = 그해 게임의 가장 늦은 시작일·끝낸 날, 날짜가 없으면 생략
   const gameYears = getGameYears().map((year) => {
     const latest = (getGamesByYear(year) ?? [])
       .flatMap((game) => [game.startedAt, game.endedAt])

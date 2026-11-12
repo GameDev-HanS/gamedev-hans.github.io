@@ -5,7 +5,8 @@
     "platforms": ["PC (Steam)"],
     "playtime": 24.2,
     "startedAt": "2026-01-01",
-    "endedAt": "2026-01-15"
+    "endedAt": "2026-01-15",
+    "trailer": "2VaLOc1FpSo"
   },
   {
     "slug": "yakuza-0",
@@ -14,7 +15,8 @@
     "status": "cleared",
     "playtime": 23,
     "startedAt": "2026-02-08",
-    "endedAt": "2026-04-11"
+    "endedAt": "2026-04-11",
+    "trailer": "N5E-R6NjMgk"
   },
   {
     "slug": "stellar-blade",
@@ -23,7 +25,8 @@
     "status": "cleared",
     "playtime": 21.1,
     "startedAt": "2026-03-06",
-    "endedAt": "2026-06-29"
+    "endedAt": "2026-06-29",
+    "trailer": "_VyeH5uteVk"
   },
   {
     "slug": "yakuza-kiwami",
@@ -32,7 +35,8 @@
     "status": "cleared",
     "playtime": 15.5,
     "startedAt": "2026-04-18",
-    "endedAt": "2026-06-22"
+    "endedAt": "2026-06-22",
+    "trailer": "uC3w6aRXVJI"
   },
   {
     "slug": "pragmata",
@@ -41,7 +45,8 @@
     "status": "cleared",
     "playtime": 11.5,
     "startedAt": "2026-05-04",
-    "endedAt": "2026-06-30"
+    "endedAt": "2026-06-30",
+    "trailer": "oncaa_fMsyw"
   },
   {
     "slug": "metaphor-refantazio",
@@ -49,7 +54,8 @@
     "platforms": ["PC (Steam)"],
     "playtime": 60.9,
     "startedAt": "2026-06-30",
-    "endedAt": "2026-08-20"
+    "endedAt": "2026-08-20",
+    "trailer": "Np83M8m9rIg"
   },
   {
     "slug": "escape-from-duckov",
@@ -57,7 +63,8 @@
     "platforms": ["PC (Steam)"],
     "playtime": 35.9,
     "startedAt": "2026-09-25",
-    "endedAt": "2026-10-24"
+    "endedAt": "2026-10-24",
+    "trailer": "sSlRUkJx050"
   },
   {
     "slug": "call-of-duty-modern-warfare-4",
@@ -66,7 +73,8 @@
     "status": "cleared",
     "playtime": 8,
     "startedAt": "2026-10-18",
-    "endedAt": "2026-10-19"
+    "endedAt": "2026-10-19",
+    "trailer": "yLFRQaQT0qM"
   },
   {
     "slug": "phantom-blade-zero",
@@ -74,12 +82,64 @@
     "platforms": ["PC (Steam)"],
     "status": "playing",
     "playtime": 15.1,
-    "startedAt": "2026-10-29"
+    "startedAt": "2026-10-29",
+    "trailer": "qgJBFa952mY"
   },
   {
     "slug": "slay-the-spire-2",
     "title": "Slay the Spire 2",
     "platforms": ["PC (Steam)"],
-    "playtime": 97.3
+    "playtime": 97.3,
+    "trailer": "PW22jwFNxU8"
+  },
+  {
+    "slug": "league-of-legends",
+    "title": "리그 오브 레전드",
+    "platforms": ["PC"],
+    "status": "playing",
+    "trailer": "e3D7Fj1PsWk"
+  },
+  {
+    "slug": "teamfight-tactics",
+    "title": "전략적 팀 전투 (TFT)",
+    "platforms": ["PC", "모바일"],
+    "trailer": "liNLLx874g4"
+  },
+  {
+    "slug": "starcraft",
+    "title": "스타크래프트",
+    "platforms": ["PC"],
+    "trailer": "1BzNM2pyzW8"
+  },
+  {
+    "slug": "chaos-zero-nightmare",
+    "title": "카오스 제로 나이트메어",
+    "platforms": ["PC", "모바일"],
+    "status": "playing",
+    "trailer": "0nydDSWNwMA"
+  },
+  {
+    "slug": "goddess-of-victory-nikke",
+    "title": "승리의 여신: 니케",
+    "platforms": ["PC", "모바일"],
+    "trailer": "JjcR8wuWEC4"
+  },
+  {
+    "slug": "zenless-zone-zero",
+    "title": "젠레스 존 제로",
+    "platforms": ["모바일"],
+    "trailer": "C5WS9Ohb-fI"
+  },
+  {
+    "slug": "arknights-endfield",
+    "title": "명일방주: 엔드필드",
+    "platforms": ["모바일"],
+    "trailer": "5Xm45NwWOlo"
+  },
+  {
+    "slug": "neverness-to-everness",
+    "title": "이환",
+    "platforms": ["모바일"],
+    "trailer": "Rwb4SjpjR2A"
   }
 ]

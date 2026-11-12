@@ -1,22 +1,26 @@
 import type { Metadata } from "next"
 
 import { Container } from "@/components/layout/container"
-import { GameYearList } from "@/components/sections/game-year-list"
-import { PageHeader } from "@/components/shared/page-header"
-import { getGameYears, getGamesByYear } from "@/lib/games"
+import { GameYearView } from "@/components/sections/game-year-view"
+import { getAllGames, getGameYears } from "@/lib/games"
 
 export const metadata: Metadata = {
   title: "게임",
-  description: "해마다 플레이한 게임 기록",
+  description: "지금까지 플레이한 게임 기록",
 }
 
+// 헤더 '게임'으로 들어오면 전체 보기(모든 연도 + 2026 이전 게임). 연도별 보기는 보기 목록에서 선택.
+// 연도 파일은 최소 1개 있어야 합니다 (없으면 /games/[year]의 generateStaticParams 때문에 빌드 실패).
 export default function GamesPage() {
-  const years = getGameYears().map((year) => ({ year, games: getGamesByYear(year) ?? [] }))
-
   return (
     <Container className="flex flex-col gap-8 py-12">
-      <PageHeader title="게임" description="해마다 플레이한 게임 기록" />
-      <GameYearList years={years} />
+      <GameYearView
+        title="플레이 게임"
+        description="지금까지 플레이한 게임 기록"
+        current="all"
+        years={getGameYears()}
+        games={getAllGames()}
+      />
     </Container>
   )
 }

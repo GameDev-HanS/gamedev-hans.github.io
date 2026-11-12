@@ -1,0 +1,30 @@
+[
+  {
+    "slug": "djmax-respect-v",
+    "title": "DJMAX RESPECT V",
+    "platforms": ["PC (Steam)"],
+    "playtime": 42.2,
+    "trailer": "icxKWxuirMc"
+  },
+  {
+    "slug": "monster-hunter-world-iceborne",
+    "title": "몬스터 헌터: 월드 - 아이스본",
+    "platforms": ["PC (Steam)"],
+    "playtime": 125.9,
+    "trailer": "q4AoVUamhxo"
+  },
+  {
+    "slug": "pubg-battlegrounds",
+    "title": "배틀그라운드",
+    "platforms": ["PC (Steam)"],
+    "playtime": 1229.6,
+    "trailer": "u1oqfdh4xBY"
+  },
+  {
+    "slug": "eternal-return",
+    "title": "이터널 리턴",
+    "platforms": ["PC (Steam)"],
+    "playtime": 140.6,
+    "trailer": "CL8iLBHZmdU"
+  }
+]
