@@ -21,7 +21,7 @@ Playwright MCP(`mcp__playwright__*` 도구)로 사이트를 브라우저에서 �
 
 ## 2. 기본 테스트
 
-각 페이지마다 `browser_navigate` → `browser_snapshot`으로 내용을 확인하고, `browser_console_messages`로 콘솔 오류를 확인합니다.
+아래 항목을 되도록 `browser_run_code_unsafe` 한 번(많아야 두세 번)에 묶어 확인하고, 콘솔 오류는 그 안에서 `page.on('console')`로 모으거나 `browser_console_messages`(`level: "error"`)로 확인합니다. 화면 구조를 직접 봐야 할 때만 `browser_snapshot`을 씁니다.
 
 | 대상 | 확인할 것 |
 |------|-----------|
@@ -41,7 +41,12 @@ Playwright MCP(`mcp__playwright__*` 도구)로 사이트를 브라우저에서 �
 
 **반응형**: `browser_resize`로 375×812(모바일)로 바꿔 `/`를 다시 확인합니다. 가로 스크롤이 생기지 않는지, 모바일 메뉴가 열리고 닫히는지 봅니다. 끝나면 1280×800으로 되돌립니다.
 
-**스크린샷**: 문제가 보이는 화면만 `browser_take_screenshot`으로 찍습니다. 파일 이름만 주고 전체 경로는 주지 않습니다. 그러면 `.mcp.json`의 `--output-dir`(`%TEMP%\playwright-mcp`)에 저장되어 저장소 밖에 남습니다.
+**스크린샷**: 문제가 보이는 화면만 `browser_take_screenshot`으로 찍습니다. 파일 이름은 주지 않습니다(주면 저장소 기준 경로로 저장됨). 그러면 `.mcp.json`의 `--output-dir`(`%TEMP%\playwright-mcp`)에 저장되어 저장소 밖에 남습니다. 전체 페이지(`fullPage`)는 찍지 않습니다.
+
+**사용량 절약**
+- 페이지마다 `browser_snapshot`을 받지 말고, `browser_run_code_unsafe` 한 번으로 여러 항목을 확인해 결과를 짧은 객체로만 돌려받습니다 (예: 제목·개수·URL·true/false). 페이지 전체 텍스트나 HTML은 돌려받지 않습니다.
+- 콘솔은 `level: "error"`로만 확인합니다.
+- 같은 항목을 두 번 확인하지 않습니다. 실패한 항목만 다시 봅니다.
 
 ## 3. 정리
 
