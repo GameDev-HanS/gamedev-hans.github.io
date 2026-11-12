@@ -4,7 +4,7 @@
 /** 한 번의 등장에 걸리는 시간 (초) */
 export const DURATION = 0.35
 /** 아래에서 올라오는 거리 (px) */
-export const DISTANCE = 10
+export const DISTANCE = 8
 /** 차례 등장할 때 항목 사이 간격 (초) */
 export const STAGGER = 0.06
 /** 빠르게 시작해 부드럽게 멈추는 곡선 */

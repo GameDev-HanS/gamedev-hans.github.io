@@ -140,6 +140,42 @@
   }
 }
 
+/* 링크·메뉴: 호버·키보드 포커스 시 글자와 밑줄이 포인트 색으로 바뀝니다.
+   밑줄은 평소에도 투명하게 그려 두어(두께·간격 고정) 바뀔 때 레이아웃이 밀리지 않습니다.
+   태그 칩(T-307)·이전/다음 링크(T-302)도 이 클래스를 씁니다. */
+@utility link-hover {
+  text-decoration-line: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  /* 배경색도 포함: 모바일 메뉴처럼 hover:bg-*를 함께 쓰는 곳도 부드럽게 바뀜 */
+  transition-property: color, background-color, text-decoration-color;
+  transition-duration: 150ms;
+  &:hover,
+  &:focus-visible {
+    color: var(--primary);
+    text-decoration-color: currentColor;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+/* 누르는 동안 살짝 작아지는 효과 (버튼이 아닌 눌리는 요소용, 버튼은 components/ui/button.tsx에 같은 효과)
+   Tailwind v4의 scale-* 유틸리티와 같은 scale 속성을 써서 함께 써도 겹치지 않습니다. */
+@utility press {
+  transition-property: scale;
+  transition-duration: 100ms;
+  &:active {
+    scale: 0.97;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    &:active {
+      scale: none;
+    }
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

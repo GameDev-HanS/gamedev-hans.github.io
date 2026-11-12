@@ -169,27 +169,37 @@
   - 완료 조건: ① `motion`을 설치하고 `npm install`에서 React 19.3·Next.js 16과 peerDependencies 경고가 없다. ② 루트에 `MotionConfig reducedMotion="user"` Provider가 있고, 공통 래퍼 `FadeIn`(등장), `Stagger`/`StaggerItem`(차례 등장), `Reveal`(`whileInView`, `viewport={{ once: true }}`)이 `motion/react`에서 import되며 이 파일들에만 `"use client"`가 붙는다 (페이지·섹션은 서버 컴포넌트 유지). ③ 지속 시간·이동 거리·이징을 한 곳(`lib/motion.ts`)에 상수로 두고 0.2~0.5초, 이동은 transform·opacity만 쓴다. ④ Playwright에서 `prefers-reduced-motion: reduce`를 에뮬레이션하면 래퍼가 이동 없이 투명도만 바뀐다. ⑤ `out/index.html`에 래퍼로 감싼 텍스트가 그대로 들어 있다(검색 엔진·JS 지연 대비).
   - 위치: package.json, components/providers/motion-provider.tsx, components/shared/motion/fade-in.tsx, stagger.tsx, reveal.tsx, lib/motion.ts, app/layout.tsx
   - 계획: [plans/T-119.md](plans/T-119.md)
-- [ ] **T-120** 링크·메뉴·버튼 호버/누름 마이크로 인터랙션 (CSS) · P1 · S · 의존: T-105, T-106, T-127
+- [x] **T-120** 링크·메뉴·버튼 호버/누름 마이크로 인터랙션 (CSS) · P1 · S · 의존: T-105, T-106, T-127 · 완료(2026-11-12)
+  - 구현 메모: link-hover(@utility, 색·밑줄·배경 전환 150ms)를 헤더·모바일·푸터·최근 글 링크에 적용. 버튼은 누를 때 scale 0.97(동작 줄이기에서 1). press 유틸리티(scale 속성)는 이후 태그 칩 등용. 보기 목록(연도 탭)은 테두리 표시가 있어 link-hover 미적용, 음악 출처는 늘 밑줄 유지.
   - 완료 조건: 헤더·푸터 링크와 메뉴는 호버·키보드 포커스(`focus-visible`) 시 같은 색·밑줄 전환이 보이고, 버튼은 누를 때 살짝 작아진다(`active:scale-*`). 모두 Tailwind `transition`과 `motion-reduce:`로 처리해 JS를 추가하지 않고, 동작 줄이기에서는 크기 변화가 없다. 공통 클래스(`@utility` 등)로 만들어 이후 태그 칩(T-307)·연도 탭(T-212)·이전/다음 링크(T-302)가 그대로 재사용한다. 레이아웃이 밀리지 않는다.
   - 위치: app/globals.css, components/layout/main-nav.tsx, mobile-nav.tsx, site-footer.tsx (components/ui/button.tsx는 직접 수정 최소화 — 기존 파일 확인 필요)
-- [ ] **T-121** 헤더 첫 진입 스태거 등장 · P1 · S · 의존: T-119, T-117
+  - 계획: [plans/T-120.md](plans/T-120.md)
+- [x] **T-121** 헤더 첫 진입 스태거 등장 · P1 · S · 의존: T-119, T-117 · 완료(2026-11-12)
+  - 구현 메모: 차례 등장 간격 0.05초(약 0.65초), 메뉴 항목은 motion.li. 화면에 안 보이는 항목(데스크톱의 모바일 버튼 등)도 순서를 차지해 간격이 조금 어색하나 사용자 결정으로 그대로 둠.
   - 완료 조건: 첫 접속·새로고침 때 로고 → 메뉴 항목(왼쪽부터) → 음악·테마 버튼이 짧은 간격으로 투명도·위치 전환으로 나타나고 전체가 약 0.6초 안에 끝난다. 사이트 안 링크 이동 때는 다시 재생되지 않는다(헤더는 레이아웃에 유지). 모바일 헤더도 같은 순서이며, 음원이 없어 음악 버튼이 숨겨진 경우에도 순서가 깨지지 않는다. 동작 줄이기에서는 투명도만 바뀐다.
   - 위치: components/layout/site-header.tsx, main-nav.tsx (T-119의 Stagger 재사용)
+  - 계획: [plans/T-120.md](plans/T-120.md)
 - [ ] **T-122** 페이지 전환 크로스페이드 (React `<ViewTransition>`) · P1 · M · 의존: T-117, T-105
   - 완료 조건: ① `import { ViewTransition } from 'react'`로 구현하고 **실험 플래그·`next.config` 변경 없이** 동작한다 (가이드 "View transitions work in the App Router with no configuration. React 19.3 includes the `<ViewTransition>` component" 확인함, React 19.3.1). `@types/react`에 `ViewTransition` 타입이 없어 `npx tsc --noEmit`가 실패하면 타입 패키지 버전을 확인해 계획 문서에 적는다(문서 확인 필요). ② 헤더 메뉴·카드 링크로 이동하면 이전 페이지 본문이 흐려지고 새 본문이 나타난다 (퇴장 약 150ms, 등장 약 210ms). ③ 헤더·푸터는 `viewTransitionName`을 주고 CSS로 애니메이션을 꺼서 움직이지 않는다. ④ `::view-transition { pointer-events: none; }`으로 전환 중 클릭이 사라지지 않는다. ⑤ `@media (prefers-reduced-motion: reduce)`에서 전환 애니메이션 시간이 0이다(즉시 전환). ⑥ 음악을 켠 채 이동해도 끊기지 않는다(Provider는 래퍼 바깥). ⑦ 미지원 브라우저에서도 이동은 정상이다. ⑧ 래퍼 위치: 가이드는 레이아웃이 아닌 **각 page.tsx**에 두라고 하므로 공통 `PageTransition` 컴포넌트를 만들어 지금 있는 페이지(홈·404 등)에 감싸고, 이후 새 페이지도 감싼다(공통 완료 기준에 추가). `app/template.tsx`로 한 번에 감싸는 방식은 가이드에 없으므로 시험해 보고 동작하면 채택(문서 확인 필요). Motion의 페이지 등장 애니메이션과 겹치지 않게 본문 전체에는 Motion을 쓰지 않는다.
   - 위치: components/shared/page-transition.tsx, app/globals.css(::view-transition 규칙), components/layout/site-header.tsx, site-footer.tsx, app/page.tsx, app/not-found.tsx (규칙: node_modules/next/dist/docs/01-app/02-guides/view-transitions.md)
-- [ ] **T-123** 홈 등장 연출 · P1 · S · 의존: T-119, T-114, T-127
+- [x] **T-123** 홈 등장 연출 · P1 · S · 의존: T-119, T-114, T-127 · 완료(2026-11-12)
+  - 구현 메모: 히어로 delay 0.25초, 최근 글 delay 0.5초, 이동 거리 전체 8px.
   - 완료 조건: 홈이 그려질 때 히어로의 이름 → 한 줄 소개 → 버튼, 이어서 최근 글 카드가 차례로 나타난다. 첫 진입에서는 헤더 스태거 뒤에 이어서 재생되고, 사이트 안에서 홈으로 돌아올 때도 짧게 재생된다 (PRD 가정). 히어로는 이동 거리를 작게(약 8px 이하) 해서 JS가 늦어도 빈 화면이 오래 보이지 않는다. T-208에서 히어로 데이터가 바뀌어도 래퍼 구조는 유지된다.
   - 위치: components/sections/hero.tsx, components/sections/recent-posts.tsx
-- [ ] **T-124** 글 카드 목록 스크롤 등장 · P1 · S · 의존: T-119, T-111
+  - 계획: [plans/T-120.md](plans/T-120.md)
+- [x] **T-124** 글 카드 목록 스크롤 등장 · P1 · S · 의존: T-119, T-111 · 완료(2026-11-12)
+  - 구현 메모: 카드마다 Reveal(as=li)로 화면에 들어올 때 한 번, 같은 줄은 왼쪽부터 0.06초씩. 목록이 길어도 카드가 안 나타나는 문제 방지(리뷰 반영).
   - 완료 조건: `/blog`에서 아래로 스크롤하면 글 카드가 화면에 들어올 때 아래에서 살짝 올라오며 차례로 나타나고, 다시 스크롤해도 한 번만 재생된다. 같은 목록 섹션을 쓰는 태그별 글 목록(T-308)에도 그대로 적용된다. 글 상세 본문 문단·코드 블록·영상에는 적용하지 않는다(PRD).
   - 위치: components/sections/post-list.tsx (T-119의 Reveal·Stagger 재사용)
+  - 계획: [plans/T-120.md](plans/T-120.md)
 - [ ] **T-125** 카드 호버 떠오름·기울기 공통 래퍼와 글 카드 적용 · P1 · M · 의존: T-119, T-110, T-127
   - 완료 조건: 공통 `HoverCard` 래퍼로 글 카드에 마우스를 올리면 살짝 떠오르고 마우스 위치를 따라 수 도(약 4° 이하) 기울며 T-127의 포인트 색 테두리(+ 옅은 그림자)가 함께 켜진다. 터치 기기(`hover: none`)에서는 기울기 없이 누름 효과만, 동작 줄이기에서는 떠오름·기울기 없이 포인트 색 테두리만 보인다. 키보드 포커스에도 포인트 색 테두리가 보이고, 카드 전체 링크 클릭이 그대로 동작하며 주변 카드가 밀리지 않는다. 이후 프로젝트 카드(T-215)·게임 줄(PV 버튼, T-216)이 같은 래퍼를 쓴다.
   - 위치: components/shared/motion/hover-card.tsx, components/shared/post-card.tsx
-- [ ] **T-126** 404 안내 문구 등장 연출 · P2 · S · 의존: T-119, T-107, T-127
+- [x] **T-126** 404 안내 문구 등장 연출 · P2 · S · 의존: T-119, T-107, T-127 · 완료(2026-11-12)
+  - 구현 메모: 404 라벨 → GAME OVER → 문구 → 버튼 차례 등장.
   - 완료 조건: `/no-such-page`에서 GAME OVER 안내 문구와 버튼이 투명도·위치 전환으로 차례로 나타나고, 버튼에 T-120의 호버·누름 효과가 있다. 동작 줄이기에서는 투명도만 바뀐다.
   - 위치: app/not-found.tsx (T-119의 Stagger 재사용)
+  - 계획: [plans/T-120.md](plans/T-120.md)
 
 ### 단계 2: 소개·플레이 게임 페이지와 홈 완성 — 운영자가 누구이고 무엇을 만들고 즐기는지 보여 주기
 완료 기준: `/about`에 프로필·기술 스택·프로젝트·경력 타임라인·외부 링크가 JSON 데이터로 보이고, 홈 히어로와 푸터가 같은 `profile.json`을 쓴다. `/games`에서 지금까지 플레이한 모든 게임(전체 보기)을, `/games/<연도>`에서 그해 게임을 상태별 카드로 볼 수 있고 카드에서 공식 PV를 팝업으로 재생할 수 있으며, 게임 데이터가 잘못되면 빌드가 실패한다.
@@ -413,9 +423,9 @@ graph LR
   T125 --> T216
 ```
 
-- 완료 (2026-11-12 기준): 단계 1의 T-101~T-119·T-127, 단계 2의 T-202·T-209~T-214·T-218·T-219·T-220.
-- **다음 작업: T-120** (링크·메뉴·버튼 CSS 호버/누름). 의존 T-105·T-106·T-127 완료. 이후 공통 클래스를 T-126·T-216이 재사용한다.
-- 단계 1 남은 작업 (애니메이션, T-120~T-126) — 지금 착수 가능: T-120, T-121, T-122, T-123, T-124, T-125 (의존 모두 완료). T-126은 T-120 이후(호버·누름 효과 재사용).
+- 완료 (2026-11-12 기준): 단계 1의 T-101~T-119·T-127, 단계 2의 T-202·T-209~T-214·T-218·T-219·T-220. 단계 1은 T-120·T-121·T-123·T-124·T-126도 완료.
+- **다음 작업: T-122** (페이지 전환 크로스페이드, React `<ViewTransition>`). 의존 T-117·T-105 완료.
+- 단계 1 남은 작업은 T-122·T-125뿐 (의존 모두 완료, 지금 착수 가능).
 - 단계 2 소개·홈 (T-201~T-208): T-201은 단계 1 완료(T-120~T-126) 후 시작하고, T-203~T-208은 T-201 이후. (T-202는 완료)
 - 단계 2 애니메이션: T-215는 T-207·T-124·T-125 이후, T-216은 T-125 이후 (게임 쪽 의존 T-212·T-213은 완료).
 - T-217(2026 게임 표지)은 **보류** — 사용자가 허락된 이미지를 준비하면 진행.

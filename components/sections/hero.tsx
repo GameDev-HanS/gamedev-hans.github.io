@@ -14,7 +14,8 @@ export function Hero() {
   return (
     <section className="border-b py-20 sm:py-28">
       <Container>
-        <Stagger className="flex flex-col items-start gap-6">
+        {/* 헤더 차례 등장(약 0.6초)과 겹쳐 이어지도록 조금 늦게 시작 */}
+        <Stagger delay={0.25} className="flex flex-col items-start gap-6">
           <StaggerItem>
             <Badge variant="secondary" className="font-mono">
               Game Dev Log

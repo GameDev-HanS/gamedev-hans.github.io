@@ -20,7 +20,7 @@ export function SiteFooter({ music }: { music: BackgroundMusic | null }) {
                   href={link.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="transition-colors hover:text-primary"
+                  className="link-hover"
                 >
                   {link.title}
                 </a>
