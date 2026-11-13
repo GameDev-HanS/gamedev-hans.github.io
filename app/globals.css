@@ -190,6 +190,19 @@
   }
 }
 
+/* 코드 블록 하이라이트 (T-301): rehype-pretty-code가 글자마다 라이트·다크 색을 변수로 넣어 두므로
+   지금 테마에 맞는 쪽을 고릅니다. 패널(배경·테두리·여백)은 components/shared/code-block.tsx가 맡고,
+   rehype-pretty-code가 감싸는 figure는 prose 기본 여백만 없앱니다. */
+[data-rehype-pretty-code-figure] {
+  margin: 0;
+}
+[data-rehype-pretty-code-figure] code span {
+  color: var(--shiki-light);
+}
+.dark [data-rehype-pretty-code-figure] code span {
+  color: var(--shiki-dark);
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

@@ -1,6 +1,8 @@
 import type { MDXComponents } from "mdx/types"
 import Link from "next/link"
+import type { ComponentProps } from "react"
 
+import { CodeBlock } from "@/components/shared/code-block"
 import { cn } from "@/lib/utils"
 
 // MDX 본문에 쓰는 전역 컴포넌트 (App Router에서 @next/mdx를 쓰려면 이 파일이 반드시 있어야 함).
@@ -27,6 +29,11 @@ const components: MDXComponents = {
   img: ({ alt = "", className, ...props }) => (
     // eslint-disable-next-line @next/next/no-img-element
     <img alt={alt} loading="lazy" {...props} className={cn("h-auto max-w-full", className)} />
+  ),
+  // 코드 블록은 전용 패널로 (T-301). 언어는 rehype-pretty-code가 pre에 넣는 data-language에서 받고,
+  // 언어를 적지 않은 블록은 이 값이 없어 상단 바 없이 패널만 보입니다.
+  pre: (props: ComponentProps<"pre"> & { "data-language"?: string }) => (
+    <CodeBlock language={props["data-language"]} {...props} />
   ),
 }
 

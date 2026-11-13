@@ -20,4 +20,38 @@ tags: [blog, devlog]
 | 공부 | 새로 배운 개념 정리 |
 | 개발 | 만든 기능과 과정 |
 
+## 코드 예시
+
+Unity에서 오브젝트를 회전시키는 간단한 C# 스크립트입니다.
+
+```csharp
+using UnityEngine;
+
+public class Spinner : MonoBehaviour
+{
+    [SerializeField] private float speed = 90f; // 초당 회전 각도
+
+    private void Update()
+    {
+        transform.Rotate(Vector3.up, speed * Time.deltaTime);
+    }
+}
+```
+
+셰이더에서 텍스처 색에 밝기를 곱하는 HLSL 함수입니다.
+
+```hlsl
+float4 ApplyBrightness(Texture2D tex, SamplerState samp, float2 uv, float brightness)
+{
+    float4 color = tex.Sample(samp, uv);
+    return float4(color.rgb * brightness, color.a);
+}
+```
+
+언어를 적지 않은 블록은 하이라이트 없이 보입니다.
+
+```
+빌드 → 테스트 → 배포
+```
+
 다른 작업은 [GitHub](https://github.com/GameDev-HanS)에서 볼 수 있습니다.

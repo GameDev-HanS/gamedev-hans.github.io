@@ -22,9 +22,23 @@ const nextConfig: NextConfig = {
 // Turbopack에서는 플러그인을 문자열 이름으로만 지정할 수 있습니다 (함수 옵션 불가).
 // - remark-frontmatter: 글 맨 위 YAML(제목·날짜 등)이 본문에 찍히지 않게 함 (값은 lib에서 gray-matter로 읽음)
 // - remark-gfm: 표·취소선 등 GitHub 마크다운 문법
+// - rehype-pretty-code: 코드 블록을 빌드 시 shiki로 하이라이트 (T-301).
+//   라이트·다크 색을 함께 넣어 두고 globals.css에서 테마에 맞는 색을 고릅니다.
+//   배경은 넣지 않고(패널은 components/shared/code-block.tsx), 인라인 코드는 건드리지 않습니다.
+//   언어를 적지 않은 블록은 그대로 두고, shiki에 없는 언어는 하이라이트 없이 글자만 나옵니다.
 const withMDX = createMDX({
   options: {
     remarkPlugins: ["remark-frontmatter", "remark-gfm"],
+    rehypePlugins: [
+      [
+        "rehype-pretty-code",
+        {
+          theme: { light: "github-light", dark: "github-dark" },
+          keepBackground: false,
+          bypassInlineCode: true,
+        },
+      ],
+    ],
   },
 });
 
