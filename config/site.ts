@@ -9,8 +9,7 @@ export const siteConfig = {
     { title: "블로그", href: "/blog" },
     { title: "게임", href: "/games" },
   ],
-  // 푸터 외부 링크 (T-207에서 content/profile.json으로 옮길 예정). 이메일·전화번호는 넣지 않습니다.
-  links: [{ title: "GitHub", href: "https://github.com/GameDev-HanS" }],
+  // 푸터 외부 링크는 content/profile.json의 links에 있습니다 (T-207)
 } as const
 
 export type NavItem = (typeof siteConfig.mainNav)[number]

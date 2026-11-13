@@ -11,6 +11,7 @@ import { PageTransition } from "@/components/shared/page-transition";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { siteConfig } from "@/config/site";
+import { getProfile } from "@/lib/content";
 import { getBackgroundMusic } from "@/lib/music";
 import { cn } from "@/lib/utils";
 
@@ -44,6 +45,8 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   // 배경 음악: 음원이 없으면 null → 헤더 버튼·푸터 출처·<audio>를 모두 숨김
   const music = getBackgroundMusic();
+  // 푸터 외부 링크 (content/profile.json, T-207)
+  const { links } = getProfile();
 
   return (
     // suppressHydrationWarning: next-themes가 렌더 전에 <html> class를 바꾸기 때문에 필요
@@ -74,7 +77,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
                 <main className="flex flex-1 flex-col">
                   <PageTransition>{children}</PageTransition>
                 </main>
-                <SiteFooter music={music} />
+                <SiteFooter links={links} music={music} />
                 <Toaster />
               </TooltipProvider>
             </BgmProvider>

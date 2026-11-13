@@ -105,7 +105,7 @@ export type TimelineItem = z.infer<typeof timelineSchema>
 function readJson(file: string): unknown {
   const full = path.join(CONTENT_DIR, file)
   if (!fs.existsSync(full)) {
-    throw new Error(`content/${file}: 파일이 없습니다 (소개 페이지에 필요한 데이터입니다)`)
+    throw new Error(`content/${file}: 파일이 없습니다 (홈 소개 섹션·푸터에 필요한 데이터입니다)`)
   }
   // Windows 편집기가 붙이는 BOM(파일 맨 앞의 보이지 않는 문자)은 JSON 오류가 되므로 떼고 읽습니다
   const raw = fs.readFileSync(full, "utf8").replace(/^\uFEFF/, "")
@@ -156,6 +156,8 @@ export const getProfile = cache((): Profile => {
     throw new Error(`content/${file}: 프로필이 올바르지 않습니다 — ${formatIssues(parsed.error)}`)
   }
   if (parsed.data.photo) assertFile(file, "프로필 사진", parsed.data.photo)
+  // 같은 주소가 두 번 있으면 푸터에 링크가 겹쳐 보이므로 실패
+  assertUnique(file, parsed.data.links, (link) => link.url, "링크 주소")
   return parsed.data
 })
 

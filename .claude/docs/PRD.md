@@ -312,7 +312,7 @@
 
 현재 값(2026-11-13): 경력 1건(빅게임 스튜디오, 전투 클라이언트 프로그래머), 교육 2건(쥬신게임아카데미 149기, 숭실대학교 컴퓨터학부), 자격증 1건(정보처리기사).
 
-소개 데이터 빌드 시 검증 규칙 (Zod, 위 4개 파일 공통): 모르는 필드가 있으면 빌드 실패, skills `name` 중복, projects `slug` 중복, 한 프로젝트 `stack` 안 기술 중복, `stack`에 `skills.json`에 없는 기술이 있으면 빌드 실패. 외부 링크·프로젝트 링크가 http/https가 아니면(`mailto:`·`tel:` 등) 빌드 실패.
+소개 데이터 빌드 시 검증 규칙 (Zod, 위 4개 파일 공통): 모르는 필드가 있으면 빌드 실패, skills `name` 중복, projects `slug` 중복, 한 프로젝트 `stack` 안 기술 중복, `stack`에 `skills.json`에 없는 기술이 있으면 빌드 실패. 외부 링크·프로젝트 링크가 http/https가 아니면(`mailto:`·`tel:` 등) 빌드 실패. `profile.json`의 `links`에서 url이 중복되면 빌드 실패. (참고: 푸터가 `profile.json`을 읽으므로 이 파일이 없거나 형식이 틀리면 레이아웃 때문에 모든 페이지 빌드가 실패한다.)
 
 ### 플레이 게임 기록 — `content/games/<연도>.json` (예: `content/games/2026.json`) + `content/games/earlier.json`, JSON 배열 (표지는 `public/images/games/<연도>/`, earlier는 `public/images/games/earlier/`)
 

@@ -1,10 +1,12 @@
 import { Container } from "@/components/layout/container"
 import { MusicCredit } from "@/components/shared/music-credit"
 import { siteConfig } from "@/config/site"
+import type { Profile } from "@/lib/content"
 import type { BackgroundMusic } from "@/lib/music"
 
-// 사이트 안 메뉴는 헤더에 있으므로 푸터에는 저작권 표시와 외부 링크(GitHub 등)만 둡니다
-export function SiteFooter({ music }: { music: BackgroundMusic | null }) {
+// 사이트 안 메뉴는 헤더에 있으므로 푸터에는 저작권 표시와 외부 링크(GitHub 등)만 둡니다.
+// 외부 링크는 content/profile.json의 links (T-207). 로더가 http/https만 허용해 이메일·전화 링크는 없습니다.
+export function SiteFooter({ links, music }: { links: Profile["links"]; music: BackgroundMusic | null }) {
   return (
     // viewTransitionName: 페이지 전환(T-122) 중에도 푸터는 그대로 두기 위한 이름 (globals.css)
     <footer className="border-t py-6" style={{ viewTransitionName: "site-footer" }}>
@@ -13,17 +15,17 @@ export function SiteFooter({ music }: { music: BackgroundMusic | null }) {
           <p>
             © {new Date().getFullYear()} {siteConfig.name}
           </p>
-          {siteConfig.links.length > 0 && (
-            <nav aria-label="외부 링크" className="flex gap-4">
-              {siteConfig.links.map((link) => (
+          {links.length > 0 && (
+            <nav aria-label="외부 링크" className="flex flex-wrap justify-center gap-4">
+              {links.map((link) => (
                 <a
-                  key={link.href}
-                  href={link.href}
+                  key={link.url}
+                  href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="link-hover"
                 >
-                  {link.title}
+                  {link.label}
                 </a>
               ))}
             </nav>
