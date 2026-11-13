@@ -290,10 +290,10 @@
 |------|------|----------|
 | name | 이름(또는 닉네임) | 문자열 |
 | tagline | 한 줄 소개 | 문자열 |
-| photo | 프로필 사진 (선택) | 저장소 이미지 경로 |
+| photo | 프로필 사진 (선택, `/images/profile/` 아래 경로, 적었는데 파일이 없으면 빌드 실패) | 저장소 이미지 경로 |
 | interests | 관심 분야 | 문자열 배열 |
 | studying | 지금 공부 중인 것 | 문자열 배열 |
-| links | 외부 링크 (GitHub, YouTube 등. 이메일·전화 금지) | {label, url, icon} 배열 |
+| links | 외부 링크 (GitHub, YouTube 등. http/https만, 이메일·전화 금지). `icon`은 simple-icons 아이콘 slug(예: github), 비우면 이니셜 | {label, url, icon} 배열 |
 
 ### 기술 스택 — `content/skills.json`, JSON
 
@@ -301,7 +301,7 @@
 |------|------|----------|
 | name | 기술 이름 (예: Unity, C#) | 문자열 |
 | category | 분류 | engine / language / tool |
-| icon | 배지 아이콘 이름 (선택, simple-icons 아이콘 이름. 비우거나 아이콘이 없으면 name의 텍스트 이니셜로 표시) | 문자열 |
+| icon | 배지 아이콘 (선택, simple-icons 아이콘 slug. 예: unity, cplusplus, github). 비우면 name의 텍스트 이니셜로 표시, **적었는데 simple-icons에 없는 이름이면 빌드 실패**(오타 방지). 아이콘 license가 CC-BY 계열이면 출처 표기 필요 | 문자열 |
 
 ### 프로젝트 — `content/projects.json`, JSON
 
@@ -310,9 +310,9 @@
 | slug | 고유 식별자 | 문자열 |
 | title | 프로젝트 이름 | 문자열 |
 | summary | 한두 줄 설명 | 문자열 |
-| thumbnail | 대표 이미지 | 저장소 이미지 경로 |
+| thumbnail | 대표 이미지 (선택, `/images/projects/` 아래 경로, 없으면 자리표시, 적었는데 파일이 없으면 빌드 실패) | 저장소 이미지 경로 |
 | stack | 사용 기술 | → 기술 스택.name 배열 |
-| link | 외부 링크 (스토어, GitHub, 영상) | URL |
+| link | 외부 링크 (선택, 스토어, GitHub, 영상. http/https만, 없으면 링크 버튼 숨김) | URL |
 
 ### 경력·학력 — `content/timeline.json`, JSON
 
@@ -323,6 +323,8 @@
 | organization | 회사·학교 이름 | 문자열 |
 | type | 구분 | work / education |
 | description | 한 줄 설명 (선택) | 문자열 |
+
+소개 데이터 빌드 시 검증 규칙 (Zod, 위 4개 파일 공통): 모르는 필드가 있으면 빌드 실패, skills `name` 중복, projects `slug` 중복, 한 프로젝트 `stack` 안 기술 중복, `stack`에 `skills.json`에 없는 기술이 있으면 빌드 실패. 외부 링크·프로젝트 링크가 http/https가 아니면(`mailto:`·`tel:` 등) 빌드 실패.
 
 ### 플레이 게임 기록 — `content/games/<연도>.json` (예: `content/games/2026.json`) + `content/games/earlier.json`, JSON 배열 (표지는 `public/images/games/<연도>/`, earlier는 `public/images/games/earlier/`)
 

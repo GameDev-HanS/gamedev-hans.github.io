@@ -1,0 +1,15 @@
+[
+  {
+    "slug": "sample-action-game",
+    "title": "(예시) 2D 액션 게임",
+    "summary": "(예시) Unity로 만든 짧은 횡스크롤 액션 게임입니다.",
+    "stack": ["Unity", "C#"],
+    "link": "https://github.com/GameDev-HanS"
+  },
+  {
+    "slug": "sample-shader-lab",
+    "title": "(예시) 셰이더 실험실",
+    "summary": "(예시) 툰 셰이딩과 외곽선 효과를 실험한 프로젝트입니다.",
+    "stack": ["Unreal Engine", "C++", "Blender"]
+  }
+]
