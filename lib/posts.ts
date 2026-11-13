@@ -15,6 +15,10 @@ import { SLUG, SLUG_MESSAGE, dateString, formatIssues, required } from "./schema
 const POSTS_DIR = path.join(process.cwd(), "content", "posts")
 const PUBLIC_DIR = path.join(process.cwd(), "public")
 
+// 태그 선택 목록의 '전체' 보기와 겹치지 않도록 태그 slug로 쓸 수 없는 이름
+const RESERVED_TAG = "all"
+const RESERVED_TAG_MESSAGE = `"${RESERVED_TAG}"는 '전체' 보기용 이름이라 태그로 쓸 수 없습니다`
+
 const frontmatterSchema = z.object({
   title: z.string(required("title: 게임 루프 이해하기")).trim().min(1, "제목이 비어 있습니다"),
   // YAML은 2026-11-09를 Date로 읽으므로 문자열 YYYY-MM-DD로 맞춘 뒤 검사
@@ -24,7 +28,10 @@ const frontmatterSchema = z.object({
   ),
   summary: z.string(required("summary: 한 줄 요약")).trim().min(1, "요약이 비어 있습니다"),
   tags: z
-    .array(z.string().regex(SLUG, SLUG_MESSAGE), required("tags: [game-programming, devlog]"))
+    .array(
+      z.string().regex(SLUG, SLUG_MESSAGE).refine((tag) => tag !== RESERVED_TAG, RESERVED_TAG_MESSAGE),
+      required("tags: [game-programming, devlog]")
+    )
     .min(1, "태그를 1개 이상 적습니다")
     // 같은 태그가 두 번 있으면 칩이 겹쳐 보이므로 막습니다
     .refine((tags) => new Set(tags).size === tags.length, "같은 태그가 두 번 적혀 있습니다"),
@@ -44,6 +51,8 @@ const tagLabelsSchema = z
     for (const key of Object.keys(labels)) {
       if (!SLUG.test(key)) {
         ctx.addIssue({ code: "custom", path: [key], message: `키(태그 slug)는 ${SLUG_MESSAGE}` })
+      } else if (key === RESERVED_TAG) {
+        ctx.addIssue({ code: "custom", path: [key], message: RESERVED_TAG_MESSAGE })
       }
     }
   })
@@ -138,6 +147,11 @@ export const getAllTags = cache((): (Tag & { count: number })[] => {
   }
   return [...counts.values()].sort((a, b) => b.count - a.count || a.slug.localeCompare(b.slug))
 })
+
+/** 그 태그가 붙은 글을 최신순으로 돌려줍니다 (getAllPosts()와 같은 순서). 없으면 빈 배열. */
+export function getPostsByTag(tag: string): Post[] {
+  return getAllPosts().filter((post) => post.tags.some((item) => item.slug === tag))
+}
 
 /** slug에 해당하는 글을 돌려주고, 없으면 null. */
 export function getPostBySlug(slug: string): Post | null {

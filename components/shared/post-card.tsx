@@ -2,7 +2,7 @@ import Image from "next/image"
 import Link from "next/link"
 
 import { HoverCard } from "@/components/shared/motion/hover-card"
-import { Badge } from "@/components/ui/badge"
+import { TagList } from "@/components/shared/tag-list"
 import { Card } from "@/components/ui/card"
 import type { Post } from "@/lib/posts"
 
@@ -41,14 +41,10 @@ export function PostCard({ post, headingAs: Heading = "h2" }: { post: Post; head
               {post.title}
             </Heading>
             <p className="line-clamp-2 text-sm text-muted-foreground">{post.summary}</p>
-            {/* 태그 칩: 태그별 페이지 링크는 T-307에서 연결 */}
-            <ul className="mt-auto flex flex-wrap gap-1.5 pt-2 font-mono" aria-label="태그">
-              {post.tags.map((tag) => (
-                <li key={tag.slug}>
-                  <Badge variant="outline">#{tag.label}</Badge>
-                </li>
-              ))}
-            </ul>
+            {/* 태그 칩: 카드 전체가 글 상세 링크라 링크 없이 표시만 (태그 이동은 /blog 상단 칩·글 상세 칩) */}
+            <div className="mt-auto pt-2">
+              <TagList tags={post.tags} />
+            </div>
           </div>
         </Card>
       </HoverCard>
