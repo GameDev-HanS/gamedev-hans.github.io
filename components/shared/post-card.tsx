@@ -44,8 +44,8 @@ export function PostCard({ post, headingAs: Heading = "h2" }: { post: Post; head
             {/* 태그 칩: 태그별 페이지 링크는 T-307에서 연결 */}
             <ul className="mt-auto flex flex-wrap gap-1.5 pt-2 font-mono" aria-label="태그">
               {post.tags.map((tag) => (
-                <li key={tag}>
-                  <Badge variant="outline">#{tag}</Badge>
+                <li key={tag.slug}>
+                  <Badge variant="outline">#{tag.label}</Badge>
                 </li>
               ))}
             </ul>

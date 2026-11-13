@@ -25,7 +25,9 @@ const frontmatterSchema = z.object({
   summary: z.string(required("summary: 한 줄 요약")).trim().min(1, "요약이 비어 있습니다"),
   tags: z
     .array(z.string().regex(SLUG, SLUG_MESSAGE), required("tags: [game-programming, devlog]"))
-    .min(1, "태그를 1개 이상 적습니다"),
+    .min(1, "태그를 1개 이상 적습니다")
+    // 같은 태그가 두 번 있으면 칩이 겹쳐 보이므로 막습니다
+    .refine((tags) => new Set(tags).size === tags.length, "같은 태그가 두 번 적혀 있습니다"),
   // 대표 이미지(선택): public/images/posts/ 아래 파일 경로
   thumbnail: z
     .string()
@@ -33,9 +35,58 @@ const frontmatterSchema = z.object({
     .optional(),
 })
 
-export type Post = z.infer<typeof frontmatterSchema> & {
+// 태그 표시 이름 대응표 content/tags.json: { "영문 slug": "화면에 보일 이름" }
+const TAGS_JSON = "content/tags.json"
+const tagLabelsSchema = z
+  .record(z.string(), z.string("표시 이름은 문자열이어야 합니다").trim().min(1, "표시 이름이 비어 있습니다"))
+  // 키 검사는 record의 키 스키마 대신 여기서 합니다 (키 스키마 메시지는 zod 기본 영어 문구로 바뀌어 보임)
+  .superRefine((labels, ctx) => {
+    for (const key of Object.keys(labels)) {
+      if (!SLUG.test(key)) {
+        ctx.addIssue({ code: "custom", path: [key], message: `키(태그 slug)는 ${SLUG_MESSAGE}` })
+      }
+    }
+  })
+
+/** 화면에 보일 태그. slug는 URL(/blog/tags/<slug>), label은 표시 이름 */
+export type Tag = { slug: string; label: string }
+
+export type Post = Omit<z.infer<typeof frontmatterSchema>, "tags"> & {
   /** 파일 이름 (URL: /blog/<slug>) */
   slug: string
+  /** frontmatter 순서 그대로, 표시 이름을 붙인 태그 */
+  tags: Tag[]
+}
+
+/**
+ * 태그 slug → 표시 이름 대응표. 파일이 없으면 빈 대응표(모든 태그를 slug 그대로 표시)이고,
+ * JSON이나 형식이 틀리면 빌드를 실패시킵니다. 대응표에만 있고 글에 안 쓰인 태그는 괜찮습니다.
+ */
+const getTagLabels = cache((): Record<string, string> => {
+  const full = path.join(process.cwd(), TAGS_JSON)
+  if (!fs.existsSync(full)) return {}
+
+  // Windows 편집기가 붙이는 BOM(파일 맨 앞의 보이지 않는 문자)은 JSON 오류가 되므로 떼고 읽습니다
+  const text = fs.readFileSync(full, "utf8")
+  const raw = text.charCodeAt(0) === 0xfeff ? text.slice(1) : text
+  let data: unknown
+  try {
+    data = JSON.parse(raw)
+  } catch (error) {
+    throw new Error(`${TAGS_JSON}: JSON 형식이 올바르지 않습니다 — ${(error as Error).message}`)
+  }
+
+  const parsed = tagLabelsSchema.safeParse(data)
+  if (!parsed.success) {
+    throw new Error(`${TAGS_JSON}: 태그 표시 이름 대응표가 올바르지 않습니다 — ${formatIssues(parsed.error)}`)
+  }
+  return parsed.data
+})
+
+function toTag(slug: string): Tag {
+  // 대응표에 없는 태그는 slug를 그대로 표시 (hasOwn: "constructor" 같은 기본 속성 이름을 피함)
+  const labels = getTagLabels()
+  return { slug, label: Object.hasOwn(labels, slug) ? labels[slug] : slug }
 }
 
 function readPost(file: string): Post {
@@ -56,7 +107,7 @@ function readPost(file: string): Post {
     throw new Error(`${where}: thumbnail 파일이 없습니다 — public${thumbnail}`)
   }
 
-  return { slug, ...parsed.data }
+  return { slug, ...parsed.data, tags: parsed.data.tags.map(toTag) }
 }
 
 /**
@@ -70,6 +121,22 @@ export const getAllPosts = cache((): Post[] => {
     .filter((file) => file.endsWith(".mdx"))
     .map(readPost)
     .sort((a, b) => b.date.localeCompare(a.date) || a.slug.localeCompare(b.slug))
+})
+
+/**
+ * 글에 쓰인 모든 태그와 글 수. 글 수가 많은 순, 같으면 slug순입니다.
+ * (한 글 안의 태그 중복은 frontmatter 검증에서 막습니다)
+ */
+export const getAllTags = cache((): (Tag & { count: number })[] => {
+  const counts = new Map<string, Tag & { count: number }>()
+  for (const post of getAllPosts()) {
+    for (const tag of post.tags) {
+      const entry = counts.get(tag.slug)
+      if (entry) entry.count += 1
+      else counts.set(tag.slug, { ...tag, count: 1 })
+    }
+  }
+  return [...counts.values()].sort((a, b) => b.count - a.count || a.slug.localeCompare(b.slug))
 })
 
 /** slug에 해당하는 글을 돌려주고, 없으면 null. */
