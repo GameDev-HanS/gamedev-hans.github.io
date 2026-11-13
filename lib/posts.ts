@@ -76,3 +76,18 @@ export const getAllPosts = cache((): Post[] => {
 export function getPostBySlug(slug: string): Post | null {
   return getAllPosts().find((post) => post.slug === slug) ?? null
 }
+
+/**
+ * 날짜순으로 바로 앞뒤 글을 돌려줍니다. prev는 더 오래된 글, next는 더 최근 글이고 없으면 null.
+ * 순서는 getAllPosts()와 같습니다 (같은 날이면 slug순).
+ */
+export function getAdjacentPosts(slug: string): { prev: Post | null; next: Post | null } {
+  const posts = getAllPosts()
+  const index = posts.findIndex((post) => post.slug === slug)
+  if (index === -1) return { prev: null, next: null }
+  return {
+    // 목록이 최신순이라 뒤쪽(index + 1)이 더 오래된 글
+    prev: posts[index + 1] ?? null,
+    next: posts[index - 1] ?? null,
+  }
+}

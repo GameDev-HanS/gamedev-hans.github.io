@@ -5,8 +5,9 @@ import { ArrowLeftIcon } from "lucide-react"
 
 import { Container } from "@/components/layout/container"
 import { PostHeader } from "@/components/sections/post-header"
+import { PostNav } from "@/components/sections/post-nav"
 import { buttonVariants } from "@/components/ui/button"
-import { getAllPosts, getPostBySlug } from "@/lib/posts"
+import { getAdjacentPosts, getAllPosts, getPostBySlug } from "@/lib/posts"
 import { cn } from "@/lib/utils"
 
 // 빌드 시 글마다 정적 페이지를 만들고, 그 밖의 주소는 404(GAME OVER)
@@ -40,7 +41,8 @@ export default async function PostPage({ params }: PageProps<"/blog/[slug]">) {
           <Body />
         </div>
       </article>
-      <div className="mt-12 border-t pt-8">
+      <div className="mt-12 flex flex-col items-start gap-8 border-t pt-8">
+        <PostNav {...getAdjacentPosts(slug)} />
         <Link href="/blog" className={cn(buttonVariants({ variant: "outline" }), "accent-hover")}>
           <ArrowLeftIcon data-icon="inline-start" />
           목록으로
