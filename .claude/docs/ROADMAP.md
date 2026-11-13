@@ -1,6 +1,6 @@
 # 로드맵: 게임 개발자 개인 블로그
 
-> 기준 PRD: .claude/docs/PRD.md · 작성일: 2026-11-08 · 갱신: 2026-11-09 (F015 배경 음악, F016 UI 애니메이션 반영 / F012 테마를 블랙 + 시안 1색으로 변경 — T-127 추가, 게임 데이터 실제 값 반영 / T-212 완료 조건 실제 구현 반영, 콘텐츠 최소 개수 제약 추가, T-310 게임 표지 포함, T-217 추가 / F017 게임 PV·F014 `/games` 구조 변경 — T-218 추가(완료)) · 갱신: 2026-11-12 (F014 전체·연도별 보기, `earlier.json` — T-219 추가(완료), 4장 다음 작업 정리 / T-219 리뷰 반영, T-218 시절 현재형 설명 정리 / F013 바 형태 목록·F017 PV 안내 문구, 유튜브 썸네일 미사용 — T-220 추가(완료), T-216 "게임 줄 호버"로 변경)
+> 기준 PRD: .claude/docs/PRD.md · 작성일: 2026-11-08 · 갱신: 2026-11-09 (F015 배경 음악, F016 UI 애니메이션 반영 / F012 테마를 블랙 + 시안 1색으로 변경 — T-127 추가, 게임 데이터 실제 값 반영 / T-212 완료 조건 실제 구현 반영, 콘텐츠 최소 개수 제약 추가, T-310 게임 표지 포함, T-217 추가 / F017 게임 PV·F014 `/games` 구조 변경 — T-218 추가(완료)) · 갱신: 2026-11-12 (F014 전체·연도별 보기, `earlier.json` — T-219 추가(완료), 4장 다음 작업 정리 / T-219 리뷰 반영, T-218 시절 현재형 설명 정리 / F013 바 형태 목록·F017 PV 안내 문구, 유튜브 썸네일 미사용 — T-220 추가(완료), T-216 "게임 줄 호버"로 변경) · 갱신: 2026-11-12 (T-201 소개용 JSON 스키마·로더 완료, PRD 데이터 모델 검증 규칙 반영, T-204·T-205 완료 조건 조정, 4장·6장 정리) · 갱신: 2026-11-12 (T-120·T-121·T-123·T-124·T-126 애니메이션 묶음 A, T-122 페이지 전환(래퍼를 레이아웃 `<main>` 안 한 곳으로 변경), T-125 HoverCard 구조와 `accent-hover-in-group` 완료 → 단계 1 완료. 6장 미결 사항 정리, 2장 페이지 전환 설명을 구현에 맞춤)
 
 ## 1. 개요
 
@@ -34,7 +34,7 @@
   - 데이터 흐름: `content/*` → `lib/posts.ts`, `lib/content.ts` (서버 전용, fs 사용) → `app/*/page.tsx` → `components/sections/*`.
   - 배경 음악 (F015): `lib/music.ts`가 빌드 시 `content/music.json`(zod 검증)과 `public/audio/<file>` 존재를 확인해 둘 다 있을 때만 곡 정보를, 하나라도 없으면 `null`(음원 없음)을 돌려준다. `app/layout.tsx`가 이 값을 클라이언트 Provider(`components/providers/bgm-provider.tsx`)에 넘기고, Provider가 `<audio loop>` 하나를 **루트 레이아웃에 한 번만** 둔다. 레이아웃은 사이트 안 링크 이동 때 다시 그려지지 않으므로 음악이 이어지고, 새로고침·새 탭은 새 방문이라 항상 꺼짐에서 시작한다. 켜짐/꺼짐은 React 상태(메모리)에만 두고 localStorage·sessionStorage·쿠키에 저장하지 않는다. 추가 라이브러리 없음.
   - 애니메이션 (F016): 등장·스태거·스크롤 등장·카드 호버는 **Motion**(`motion/react`)의 `"use client"` 래퍼 컴포넌트(`components/shared/motion/`)로 만들고, 페이지·섹션은 서버 컴포넌트로 둔 채 래퍼로 감싸기만 한다. 루트에 `MotionConfig reducedMotion="user"`를 두어 "동작 줄이기" 시 transform(이동·기울기)을 끄고 투명도만 남긴다. 단순 색·밑줄·누름 효과는 Tailwind `transition`·`active:`·`motion-reduce:`로 처리한다 (JS 없음).
-  - 페이지 전환 (F016): React `<ViewTransition>`(`import { ViewTransition } from 'react'`) 크로스페이드를 기본 방식으로 쓴다. 가이드(`node_modules/next/dist/docs/01-app/02-guides/view-transitions.md`) 확인 결과 **App Router에서 설정 없이 동작**하고(실험 플래그 불필요, `next.config` 문서에 관련 옵션 없음), `<ViewTransition>`은 React 19.3에 포함된다 (프로젝트 React 19.3.1 — 메인 세션이 package.json으로 확인). Next.js 라우트 이동은 transition이라 자동으로 활성화된다. 레이아웃은 이동 때 유지되어 enter/exit가 발생하지 않으므로 래퍼는 페이지 단위로 두고, 헤더·푸터는 `viewTransitionName`으로 고정한다. 지원하지 않는 브라우저는 애니메이션 없이 즉시 전환된다. Motion의 퇴장(exit) 애니메이션은 쓰지 않는다.
+  - 페이지 전환 (F016): React `<ViewTransition>`(`import { ViewTransition } from 'react'`) 크로스페이드를 기본 방식으로 쓴다. 가이드(`node_modules/next/dist/docs/01-app/02-guides/view-transitions.md`) 확인 결과 **App Router에서 설정 없이 동작**하고(실험 플래그 불필요, `next.config` 문서에 관련 옵션 없음), `<ViewTransition>`은 React 19.3에 포함된다 (프로젝트 React 19.3.1 — 메인 세션이 package.json으로 확인). Next.js 라우트 이동은 transition이라 자동으로 활성화된다. 레이아웃은 이동 때 유지되어 enter/exit가 발생하지 않으므로 `<ViewTransition update>`를 쓰는 공통 `PageTransition`을 **레이아웃 `<main>` 안 한 곳**에 두고(새 페이지는 따로 감싸지 않음, 2026-11-12 T-122 확정), 헤더·푸터는 래퍼 바깥이라 움직이지 않는다. `PageTransition`은 하이드레이션 전에는 `update="none"`, 그 뒤에는 `"page-fade"`로 켜서 첫 접속 때 로딩 화면 → 본문 교체에 전환이 걸리지 않게 한다. 지원하지 않는 브라우저는 애니메이션 없이 즉시 전환된다. Motion의 퇴장(exit) 애니메이션은 쓰지 않는다.
 - MDX 방식 (Next.js 16 공식 가이드 `node_modules/next/dist/docs/01-app/02-guides/mdx.md` 확인함):
   - **1순위: `@next/mdx`** (+ `@mdx-js/loader`, `@mdx-js/react`, `@types/mdx`). 공식 가이드의 "Using dynamic imports" 패턴(`await import(\`@/content/posts/${slug}.mdx\`)` + `generateStaticParams` + `dynamicParams = false`)이 이 프로젝트 구조와 그대로 맞는다. 루트에 `mdx-components.tsx`가 **필수**다.
   - 주의 1: `@next/mdx`는 frontmatter를 기본 지원하지 않는다 → 목록용 메타데이터는 `gray-matter`로 원본 파일을 읽고, 렌더링 시 YAML이 본문에 찍히지 않게 `remark-frontmatter`를 쓴다 (또는 MDX 안의 `export const metadata` 방식으로 대체). T-108에서 결정.
@@ -180,7 +180,7 @@
   - 위치: components/layout/site-header.tsx, main-nav.tsx (T-119의 Stagger 재사용)
   - 계획: [plans/T-120.md](plans/T-120.md)
 - [x] **T-122** 페이지 전환 크로스페이드 (React `<ViewTransition>`) · P1 · M · 의존: T-117, T-105 · 완료(2026-11-12)
-  - 완료 조건: ① `import { ViewTransition } from 'react'`로 구현하고 **실험 플래그·`next.config` 변경 없이** 동작한다 (가이드 "View transitions work in the App Router with no configuration. React 19.3 includes the `<ViewTransition>` component" 확인함, React 19.3.1). `@types/react`에 `ViewTransition` 타입이 없어 `npx tsc --noEmit`가 실패하면 타입 패키지 버전을 확인해 계획 문서에 적는다(문서 확인 필요). ② 헤더 메뉴·카드 링크로 이동하면 이전 페이지 본문이 흐려지고 새 본문이 나타난다 (퇴장 약 150ms, 등장 약 210ms). ③ 헤더·푸터는 `viewTransitionName`을 주고 CSS로 애니메이션을 꺼서 움직이지 않는다. ④ `::view-transition { pointer-events: none; }`으로 전환 중 클릭이 사라지지 않는다. ⑤ `@media (prefers-reduced-motion: reduce)`에서 전환 애니메이션 시간이 0이다(즉시 전환). ⑥ 음악을 켠 채 이동해도 끊기지 않는다(Provider는 래퍼 바깥). ⑦ 미지원 브라우저에서도 이동은 정상이다. ⑧ 래퍼 위치: 공통 `PageTransition`(`components/shared/page-transition.tsx`, update 크로스페이드)을 페이지마다가 아니라 **레이아웃 `<main>` 안 한 곳**에 둔다. 새 페이지는 따로 감쌀 필요가 없다. Motion의 페이지 등장 애니메이션과 겹치지 않게 본문 전체에는 Motion을 쓰지 않는다.
+  - 완료 조건: ① `import { ViewTransition } from 'react'`로 구현하고 **실험 플래그·`next.config` 변경 없이** 동작한다 (가이드 "View transitions work in the App Router with no configuration. React 19.3 includes the `<ViewTransition>` component" 확인함, React 19.3.1). `@types/react`에 `ViewTransition` 타입이 없어 `npx tsc --noEmit`가 실패하면 타입 패키지 버전을 확인해 계획 문서에 적는다(문서 확인 필요). ② 헤더 메뉴·카드 링크로 이동하면 이전 페이지 본문이 흐려지고 새 본문이 나타난다 (퇴장 약 150ms, 등장 약 210ms). ③ 헤더·푸터는 `<main>` 래퍼 바깥에 있어 전환 때 움직이지 않는다 (필요하면 `viewTransitionName`으로 고정). ④ `::view-transition { pointer-events: none; }`으로 전환 중 클릭이 사라지지 않는다. ⑤ `@media (prefers-reduced-motion: reduce)`에서 전환 애니메이션 시간이 0이다(즉시 전환). ⑥ 음악을 켠 채 이동해도 끊기지 않는다(Provider는 래퍼 바깥). ⑦ 미지원 브라우저에서도 이동은 정상이다. ⑧ 래퍼 위치: 공통 `PageTransition`(`components/shared/page-transition.tsx`, update 크로스페이드)을 페이지마다가 아니라 **레이아웃 `<main>` 안 한 곳**에 둔다. 새 페이지는 따로 감쌀 필요가 없다. Motion의 페이지 등장 애니메이션과 겹치지 않게 본문 전체에는 Motion을 쓰지 않는다.
   - 위치: components/shared/page-transition.tsx, app/layout.tsx, app/globals.css, components/layout/site-header.tsx, site-footer.tsx (규칙: node_modules/next/dist/docs/01-app/02-guides/view-transitions.md)
   - 계획: [plans/T-122.md](plans/T-122.md)
   - 구현 메모: 래퍼는 레이아웃 `<main>` 안 한 곳(update 크로스페이드)으로 확정. 헤더 메뉴, `/blog`→글, `/games`→`/games/2026` 전환 확인. `PageTransition`은 클라이언트 컴포넌트로, 하이드레이션 전에는 `update="none"`, 그 뒤에는 `"page-fade"`(`useSyncExternalStore`) — 서버 HTML에 전환 속성이 있으면 첫 접속 때 로딩 화면(app/loading.tsx) → 본문 교체에도 전환이 걸려 글꼴·이미지를 기다리느라 본문이 늦게 보이기 때문. 투명도만 바꿈(blur 없음): 퇴장 150ms, 등장 210ms, 본문 상자 크기 변화 애니메이션은 끔. 주의: 하이드레이션 뒤 `<main>` 안에서 `startTransition`으로 DOM을 바꾸면 본문 전체에 전환이 재생되므로, 나중에 본문 안 상태 변경에 transition을 쓰면 확인이 필요.
@@ -210,23 +210,26 @@
 완료 기준: `/about`에 프로필·기술 스택·프로젝트·경력 타임라인·외부 링크가 JSON 데이터로 보이고, 홈 히어로와 푸터가 같은 `profile.json`을 쓴다. `/games`에서 지금까지 플레이한 모든 게임(전체 보기)을, `/games/<연도>`에서 그해 게임을 상태별 카드로 볼 수 있고 카드에서 공식 PV를 팝업으로 재생할 수 있으며, 게임 데이터가 잘못되면 빌드가 실패한다.
 
 #### 에픽 2.1 소개 데이터와 아이콘 (PRD: F011, F002)
-- [ ] **T-201** 소개용 JSON 스키마와 로더 · P0 · M · 의존: 단계 1 완료
+- [x] **T-201** 소개용 JSON 스키마와 로더 · P0 · M · 의존: 단계 1 완료 · 완료(2026-11-12)
+  - 구현 메모: `lib/content.ts`의 `getProfile`/`getSkills`/`getProjects`/`getTimeline`(서버 전용). 예시 데이터는 "(예시)" 자리표시 값이고 실제 값은 운영자가 JSON만 고치면 됨. 예시 skills에서 Git 아이콘은 CC-BY-3.0이라 빼고 GitHub로 대체. 검증: 모르는 필드·skills name 중복·projects slug 중복·한 프로젝트 stack 안 중복·stack의 미등록 기술·http/https 아닌 링크·없는 simple-icons slug·없는 사진/썸네일 파일은 빌드 실패. `SKILL_CATEGORIES`·`TIMELINE_TYPES`는 server-only 파일에 있으므로 클라이언트에서 값이 필요하면 별도 파일로 분리.
   - 완료 조건: `profile.json`, `skills.json`, `projects.json`, `timeline.json`을 zod로 검증하는 로더가 있고, `links`에 `mailto:`·`tel:`이 있거나 `projects[].stack`에 `skills.json`에 없는 이름이 있으면 빌드가 실패한다. 각 파일에 예시 데이터가 들어간다.
   - 위치: lib/content.ts, content/profile.json, content/skills.json, content/projects.json, content/timeline.json
+  - 계획: [plans/T-201.md](plans/T-201.md)
 - [x] **T-202** 기술 브랜드 아이콘 라이브러리 확정 (스파이크) · P0 · S · 의존: 없음
   - 완료 조건: `simple-icons`와 `react-icons/si` 중 하나를 고르고, Unity·Unreal Engine·Godot·C#·C++·Blender·GitHub·YouTube 아이콘이 실제로 있는지, 없는 것(상표 문제로 빠진 로고 등)은 어떻게 대신할지(Lucide 일반 아이콘 또는 텍스트 이니셜)를 표로 기록한다. 라이선스(아이콘 데이터 CC0, 브랜드 상표 지침)와 Lucide 브랜드 아이콘 지원 현황도 함께 적는다.
   - 위치: 계획 문서(plans/T-202.md), package.json
   - 계획: [plans/T-202.md](plans/T-202.md)
 
 #### 에픽 2.2 소개 페이지 (PRD: F001, F002, F003, F004)
-- [ ] **T-203** 프로필 섹션 · P0 · S · 의존: T-201
+- [x] **T-203** 프로필 섹션 · P0 · S · 의존: T-201
   - 완료 조건: `/about` 상단에 사진(없으면 이름 이니셜 아바타), 이름, 한 줄 소개, 관심 분야, 지금 공부 중인 것 목록이 보이고, `photo`를 비우면 이니셜 아바타로 바뀐다.
   - 위치: app/about/page.tsx (기존 파일 확인 필요), components/sections/profile-intro.tsx (shadcn Avatar 재사용)
+  - 계획: [plans/T-203.md](plans/T-203.md)
 - [ ] **T-204** 기술 스택 배지 · P0 · S · 의존: T-201, T-202
-  - 완료 조건: 엔진 / 언어 / 도구 세 분류 제목 아래에 아이콘이 붙은 배지가 보이고, 아이콘이 없는 기술은 대체 표시로 깨지지 않는다. 쓰는 아이콘마다 simple-icons의 `license`·`guidelines` 값을 확인해 계획 문서에 적고, Godot 아이콘은 CC-BY-4.0이므로 출처 표기(소개 페이지 또는 푸터 크레딧)를 넣는다. 아이콘 옆에 이름 글자가 있으면 아이콘은 `aria-hidden`이다 (근거: plans/T-202.md).
+  - 완료 조건: 엔진 / 언어 / 도구 세 분류 제목 아래에 아이콘이 붙은 배지가 보이고, `icon`을 비운 기술은 이름 이니셜로 깨지지 않게 표시된다(적었는데 없는 slug는 T-201 로더가 빌드 실패시킴). 쓰는 아이콘마다 simple-icons의 `license`·`guidelines` 값을 확인해 계획 문서에 적고, Godot 아이콘은 CC-BY-4.0이므로 출처 표기(소개 페이지 또는 푸터 크레딧)를 넣는다. 아이콘 옆에 이름 글자가 있으면 아이콘은 `aria-hidden`이다 (근거: plans/T-202.md).
   - 위치: components/shared/tech-badge.tsx, components/sections/skill-stack.tsx
 - [ ] **T-205** 대표 프로젝트 카드 · P0 · S · 의존: T-204
-  - 완료 조건: 프로젝트마다 썸네일·제목·요약·사용 기술 배지(T-204 재사용)·외부 링크가 보이고, 링크는 `target="_blank" rel="noopener noreferrer"`로 새 탭에서 열린다. 모바일 1열, 데스크톱 2~3열이다.
+  - 완료 조건: 프로젝트마다 썸네일(없으면 자리표시)·제목·요약·사용 기술 배지(T-204 재사용)·외부 링크가 보이고, `link`가 없으면 링크 버튼이 숨겨지며, 링크는 `target="_blank" rel="noopener noreferrer"`로 새 탭에서 열린다. 모바일 1열, 데스크톱 2~3열이다.
   - 위치: components/sections/project-list.tsx
 - [ ] **T-206** 경력·학력 세로 타임라인 · P0 · M · 의존: T-201
   - 완료 조건: 기간·이름·소속·설명이 세로 타임라인으로 보이고 work/education이 아이콘이나 색으로 구분된다. 모바일에서 글자가 겹치지 않는다.
@@ -252,6 +255,7 @@
   - 계획: [plans/T-210.md](plans/T-210.md)
 - [x] **T-211** 상태별 게임 묶음 섹션 · P0 · S · 의존: T-210
   - 완료 조건: 게임이 플레이 중 → 클리어 → 중단 → 하고 싶은 게임 순서의 묶음 제목 아래 보이고, 묶음 안은 시작일 최신순(시작일 없으면 제목순)이다. 상단에 "플레이 중 n · 클리어 n · 중단 n · 하고 싶은 게임 n" 요약이 보이고, 게임이 없는 묶음은 제목째 숨긴다. 그해 게임이 0개면 "아직 기록한 게임이 없습니다"가 보인다. 모바일 2열, 데스크톱 4~5열.
+  - 메모 (T-210 계획에서 결정): 상태가 없는 게임은 맨 뒤 "플레이한 게임" 묶음에 둔다 (요약에도 포함).
   - 메모 (2026-11-12): T-220에서 세로 표지 카드가 한 줄(바) 형태로 바뀌어 배치가 데스크톱 2열·모바일 1열이 됨 (T-210 카드 구성·이 작업의 열 수 대체).
   - 위치: components/sections/game-list.tsx (정렬·집계는 lib/games.ts)
   - 계획: [plans/T-210.md](plans/T-210.md)
@@ -297,7 +301,7 @@
 - [ ] **T-216** 게임 페이지 스크롤 등장과 게임 줄 호버(PV 버튼) · P1 · S · 의존: T-212, T-213, T-125
   - 완료 조건: `/games`와 `/games/<연도>`의 상태별 묶음·게임 줄(T-220 바 형태)이 화면에 들어올 때 차례로 한 번만 나타나고, 게임 줄(PV 버튼, T-218)에 T-125의 떠오름·기울기·포인트 색 테두리가, 연도 탭에 T-120의 호버 전환이 적용된다. 줄 버튼 클릭으로 PV 팝업이 그대로 열린다. 보기 목록('전체 · 2026 · …')으로 전체·다른 연도로 이동할 때 T-122 크로스페이드가 동작한다. 동작 줄이기에서는 이동·기울기가 없다.
   - 위치: components/sections/game-year-view.tsx, game-list.tsx, components/shared/game-card.tsx, year-tabs.tsx, app/games/page.tsx, app/games/[year]/page.tsx
-  - 사용법(T-125): `HoverCard`는 링크(`.group`) 안에 두고 테두리는 `className`에 `accent-hover-in-group`을 준다. 주의: 다른 `.group`(예: 게임 줄 안의 `.group`) 안에 넣으면 `accent-hover-in-group`이 그 조상 호버에도 켜지므로 named group(`group/card`)으로 바꾼다.
+  - 사용법(T-125): `HoverCard`는 링크(`.group`) 안에 두고 테두리는 `className`에 `accent-hover-in-group`을 준다. 게임 줄은 링크가 아니라 PV 팝업을 여는 버튼이므로, 버튼(또는 바깥 요소)에 `.group`을 직접 주고 HoverCard 구조(제자리 바깥 요소 > 움직이는 안쪽 요소)를 지킨다. 주의: 다른 `.group`(예: 게임 줄 안의 `.group`) 안에 넣으면 `accent-hover-in-group`이 그 조상 호버에도 켜지므로 named group(`group/card`)으로 바꾼다.
 
 ### 단계 3: 블로그 확장 — 코드 하이라이트, 영상, 이전/다음, 태그
 완료 기준: 글 상세에서 코드 블록이 하이라이트되고 Supabase 영상이 재생되며 이전/다음 글로 이동할 수 있고, 태그 칩을 누르면 태그별 글 목록 페이지로 간다.
@@ -430,10 +434,10 @@ graph LR
   T125 --> T216
 ```
 
-- 완료 (2026-11-12 기준): 단계 1의 T-101~T-119·T-127, 단계 2의 T-202·T-209~T-214·T-218·T-219·T-220. 단계 1은 T-120~T-124·T-126도 완료.
-- 단계 1 완료 (T-122·T-125 완료로 모든 작업 끝).
-- **다음 작업: T-201** (소개용 JSON 스키마와 로더, P0·M). 의존(단계 1 완료)이 풀린 P0 중 번호가 가장 앞섬.
-- 지금 착수 가능 — 단계 2: T-201(P0), T-216(P1, 의존 T-212·T-213·T-125 완료). T-203~T-208은 T-201 이후, T-215는 T-207 이후. T-217은 **보류** (사용자가 허락된 이미지를 준비하면 진행).
+- 완료 (2026-11-12 기준): 단계 1의 T-101~T-127 전부(T-120~T-126 포함, T-125가 마지막), 단계 2의 T-201·T-202·T-209~T-214·T-218·T-219·T-220. 완료 38개 / 전체 58개 (단계 1 27/27, 단계 2 11/20, 단계 3 0/11).
+- 단계 1 완료 (T-101~T-127 모두 끝). 남은 것은 단계 2의 9개(T-203~T-208·T-215~T-217)와 단계 3의 11개.
+- **다음 작업: T-203** (프로필 섹션, P0·S). T-201 완료로 열린 T-203·T-204·T-206·T-208 중 P0·번호순 첫 번째.
+- 지금 착수 가능 — 단계 2: T-203·T-204·T-206·T-208(P0, T-201 완료로 열림), T-216(P1, 의존 T-212·T-213·T-125 완료). T-205는 T-204 이후, T-207은 T-203·T-205·T-206 이후, T-215는 T-207 이후. T-217은 **보류** (사용자가 허락된 이미지를 준비하면 진행).
 - 지금 착수 가능 — 단계 3: T-301·T-302·T-306(P0), T-310(P2, 제안). T-307·T-308은 T-306 이후, T-304는 T-303 이후. T-303(Supabase 준비)은 의존이 없어 언제든 가능(운영자 작업 포함).
 
 ## 5. 위험 요소
@@ -466,21 +470,28 @@ graph LR
 
 ## 6. 미결 사항
 
-- frontmatter 처리를 YAML(gray-matter + remark-frontmatter)로 할지 MDX `export const metadata`로 할지 — 결정 전까지 가정: PRD 데이터 모델대로 YAML frontmatter (T-108에서 확정)
-- 기술 브랜드 아이콘 라이브러리 — 결정 전까지 가정: `simple-icons` 계열, 없는 로고는 텍스트 이니셜 배지 (T-202에서 확정)
-- Supabase 무료 플랜 한도 — 결정 전까지 가정: 영상은 H.264 MP4 1080p 이하로 압축해 올림 (T-303에서 확인)
-- 단계 1에서 이름·한 줄 소개·외부 링크의 임시 위치 — 결정 전까지 가정: `config/site.ts`에 두고 단계 2(T-207, T-208)에서 `profile.json`으로 옮김
-- 스타터킷 데모 제거 후 쓰지 않는 패키지(react-hook-form 등) 삭제 여부 — 결정 전까지 가정: 남겨 둠 (문의 폼이 MVP 이후 범위에 있음)
-- 단계 1 배포 시 아직 없는 `/games` 처리 — 결정 전까지 가정: sitemap에서 임시 제외하고 헤더 링크 404는 허용 (T-115에서 확정, 또는 게임 에픽을 앞당김)
-- `wishlist`(하고 싶은 게임)에 평점이 들어 있으면 빌드 실패로 할지 — 결정 전까지 가정: 경고 없이 허용하되 카드에서는 숨김 (T-209에서 확정)
-- 상태가 선택이 되면서 T-210(상태 배지 4종)·T-211(상태별 4묶음·요약)·T-213(연도 카드의 상태별 게임 수)의 기준이 흔들림 — 결정 전까지 가정: 상태가 있는 게임만 배지 표시, 상태 없는 게임은 별도 묶음(예: "기록") 또는 끝낸 날짜순 단일 목록. T-210 착수 전에 확정
-- 테마 리뉴얼 후 유틸리티 이름 — 결정 전까지 가정: `neon-` 접두어를 없애고 accent 계열(예: `accent-hover`)로 정리 (T-127에서 확정)
-- 코드 블록 언어 표시 이름 변환표 범위 — 결정 전까지 가정: C#, C++, HLSL, GLSL, TypeScript, JavaScript, JSON, Shell 정도 (T-301에서 확정)
-- 홈 등장 연출 재생 시점 — 결정 전까지 가정: 홈이 그려질 때마다(사이트 안에서 홈으로 돌아올 때 포함) 짧게 재생, 헤더 스태거는 첫 로드만 (PRD 가정, T-123)
-- 카드 기울기 정도 — 결정 전까지 가정: 약 4° 이하, 터치 기기는 기울기 없음 (PRD 가정, T-125)
-- MDX 라이브러리 표기 차이 — PRD 기술 스택은 next-mdx-remote(RSC)를 적었고 ROADMAP은 Next.js 16 공식 가이드 기준 `@next/mdx`를 1순위로 둠. 결정 전까지 가정: T-108 스파이크 결과를 따르고, 확정되면 PRD 기술 스택 문구를 맞춤
+남은 미결 사항 (2026-11-12 정리, 13건 중 10건이 결정됨으로 이동하고 PRD 가정에서 2건 추가):
+
+- 실제 이름·소개·외부 링크 값 — T-201은 "(예시)" 자리표시 값으로 시작하기로 결정됨(아래 결정됨 참고). 실제 값은 운영자가 나중에 `content/*.json`만 고치면 됨. `config/site.ts`의 임시 값을 `profile.json`으로 옮기는 작업은 T-207(푸터 링크)·T-208(히어로) 그대로이며, 값이 자리표시여도 진행 가능
+- Supabase 무료 플랜 한도 — 결정 전까지 가정: 영상은 H.264 MP4 1080p 이하로 압축해 올림. **T-303에서 확인**, T-304 전에 정함
+- 코드 블록 언어 표시 이름 변환표 범위 — 결정 전까지 가정: C#, C++, HLSL, GLSL, TypeScript, JavaScript, JSON, Shell 정도. **T-301 착수 시 확정**
+- (PRD 가정에서 추가) 바 형태 게임 줄에 평점·한 줄 소감을 다시 넣을지 — 결정 전까지 가정: 넣지 않음(T-220 구현 그대로, 데이터 필드는 유지). 급하지 않음, **T-216 착수 전에 사용자 확인하면 좋음**
+- (PRD 가정에서 추가) `/games` 전체 보기에서 게임 줄에 연도를 표시할지 — 결정 전까지 가정: 표시하지 않음. 급하지 않음, **T-216 착수 전에 확인하면 좋음**
 
 ### 결정됨
+
+- 소개 데이터 예시 값과 검증 (2026-11-12, T-201 완료) — 예시 데이터는 "(예시)" 자리표시 값으로 시작. 프로젝트 `thumbnail`·`link`는 선택(없으면 자리표시 / 링크 버튼 숨김). `icon`은 simple-icons slug, 비우면 이니셜, 없는 이름이면 빌드 실패. `photo`는 `/images/profile/`, `thumbnail`은 `/images/projects/` 아래이며 파일이 없으면 빌드 실패. 링크는 http/https만. 중복(skills name, projects slug, 한 프로젝트 stack 안)·미등록 stack·모르는 필드도 빌드 실패. Git 아이콘은 CC-BY-3.0이라 예시에서 GitHub로 대체. 반영: T-201(완료), T-204, T-205 (PRD 데이터 모델 갱신됨)
+- 미결 사항 정리 (2026-11-12) — 아래 10건은 완료 작업에서 확정됨:
+  - frontmatter 처리: YAML + `gray-matter` + `remark-frontmatter` (T-108 완료, `@next/mdx` 확정)
+  - MDX 라이브러리 표기 차이: `@next/mdx` 확정(T-108). **PRD 기술 스택의 next-mdx-remote 문구는 PRD 쪽에서 고쳐야 함**
+  - 기술 브랜드 아이콘 라이브러리: `simple-icons` 본체(`react-icons` 제외), 없는 로고(C# 등)는 이니셜 (T-202 완료, T-204가 적용)
+  - 쓰지 않는 패키지(react-hook-form 등): 지우지 않고 남겨 둠 (T-101 완료)
+  - 단계 1 배포 시 `/games`: 게임 메뉴·sitemap에서 임시로 숨겼다가 T-213·T-214에서 복원 (T-115 완료, 현재 `/games`는 T-219 전체 보기)
+  - `wishlist`에 평점이 있을 때: 빌드 실패 규칙이 없어 허용 (PRD 검증 규칙에 없음, T-209 완료). 바 형태 줄에는 평점이 표시되지 않음(T-220)
+  - 상태가 선택이 된 뒤의 묶음 기준: 상태가 없는 게임은 맨 뒤 "플레이한 게임" 묶음 (T-210 계획, T-211 완료). **PRD의 "기타" 표기는 PRD 쪽에서 맞춤**
+  - 테마 유틸리티 이름: `neon-` 제거, `accent-hover`(+ T-125의 `accent-hover-in-group`) 등 accent 계열 (T-127 완료)
+  - 홈 등장 연출 재생 시점: 홈이 그려질 때마다 짧게 재생, 헤더 스태거는 첫 로드만 (T-121·T-123 완료)
+  - 카드 기울기 정도: 최대 3°(PRD 가정 4° 이하 안), 터치 기기는 기울기 없음 (T-125 완료)
 
 - 페이지 전환 래퍼 위치 (2026-11-12) — 각 `page.tsx`가 아니라 레이아웃 `<main>` 안 한 곳의 `PageTransition`(update 크로스페이드, 하이드레이션 전 `update="none"`)으로 확정. 새 페이지는 따로 감쌀 필요 없음. 반영: T-122(완료)
 
