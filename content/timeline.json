@@ -1,15 +1,27 @@
 [
   {
-    "period": "(예시) 2024.01 – 현재",
-    "title": "(예시) 게임 클라이언트 개발자",
-    "organization": "(예시) 게임 스튜디오",
+    "period": "2025.11 – 현재",
+    "title": "전투 클라이언트 프로그래머",
+    "organization": "빅게임 스튜디오",
     "type": "work",
-    "description": "(예시) 전투 시스템과 UI를 개발합니다."
+    "description": "언리얼 엔진 5 전투 클라이언트 개발"
   },
   {
-    "period": "(예시) 2019.03 – 2023.02",
-    "title": "(예시) 컴퓨터공학 학사",
-    "organization": "(예시) 대학교",
+    "period": "2024.06 – 2025.08",
+    "title": "게임 프로그래밍 과정 (149기)",
+    "organization": "쥬신게임아카데미",
+    "type": "education"
+  },
+  {
+    "period": "2024.06",
+    "title": "정보처리기사",
+    "organization": "한국산업인력공단",
+    "type": "certificate"
+  },
+  {
+    "period": "2019.03 – 2026.02",
+    "title": "컴퓨터학부",
+    "organization": "숭실대학교",
     "type": "education"
   }
 ]

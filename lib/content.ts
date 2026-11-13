@@ -82,7 +82,8 @@ const projectSchema = z
   })
   .strict()
 
-export const TIMELINE_TYPES = ["work", "education"] as const
+// work = 경력, education = 학력·교육 과정, certificate = 자격증
+export const TIMELINE_TYPES = ["work", "education", "certificate"] as const
 
 const timelineSchema = z
   .object({

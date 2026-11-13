@@ -1,8 +1,14 @@
 [
-  { "name": "Unity", "category": "engine", "icon": "unity" },
   { "name": "Unreal Engine", "category": "engine", "icon": "unrealengine" },
-  { "name": "C#", "category": "language" },
+  { "name": "Unity", "category": "engine", "icon": "unity" },
   { "name": "C++", "category": "language", "icon": "cplusplus" },
-  { "name": "Blender", "category": "tool", "icon": "blender" },
-  { "name": "GitHub", "category": "tool", "icon": "github" }
+  { "name": "C#", "category": "language" },
+  { "name": "C", "category": "language", "icon": "c" },
+  { "name": "Rider", "category": "tool", "icon": "rider" },
+  { "name": "Visual Studio", "category": "tool" },
+  { "name": "Git / GitHub", "category": "tool", "icon": "github" },
+  { "name": "Firebase", "category": "tool", "icon": "firebase" },
+  { "name": "Claude", "category": "tool", "icon": "claude" },
+  { "name": "Linux (Ubuntu)", "category": "tool", "icon": "ubuntu" },
+  { "name": "Windows", "category": "tool" }
 ]
