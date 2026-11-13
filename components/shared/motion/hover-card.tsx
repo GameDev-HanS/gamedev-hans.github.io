@@ -20,7 +20,18 @@ import { cn } from "@/lib/utils"
 // 테두리 강조는 CSS라서 동작 줄이기에서도 보입니다.
 // 호버·누름 상태는 바깥에서 받아 안쪽 animate로 직접 넘깁니다.
 // (variant 라벨 전파는 마우스로 호버 중에 누르면 안쪽에 누름이 전달되지 않음 — 테스트에서 확인)
-export function HoverCard({ className, children }: { className?: string; children: ReactNode }) {
+// overlay: 바깥(움직이지 않는) div에 그리는 요소. 게임 줄처럼 링크 대신 카드 전체를 덮는 버튼을 쓸 때,
+// 버튼을 여기 두면 버튼은 제자리에 있고(클릭 영역이 떠오르지 않음) 호버·누름은 바깥 div로 전달됩니다.
+// 이때 바깥의 .group은 쓰는 쪽이 감싸고, 키보드 포커스 강조는 accent-hover-in-group의 :has(:focus-visible)가 켭니다.
+export function HoverCard({
+  className,
+  overlay,
+  children,
+}: {
+  className?: string
+  overlay?: ReactNode
+  children: ReactNode
+}) {
   const reduceMotion = useReducedMotion()
   const [hovered, setHovered] = useState(false)
   const [pressed, setPressed] = useState(false)
@@ -37,6 +48,9 @@ export function HoverCard({ className, children }: { className?: string; childre
 
   function handlePointerMove(event: PointerEvent<HTMLDivElement>) {
     if (reduceMotion || event.pointerType !== "mouse") return
+    // overlay의 팝업(포털)에서 올라온 이벤트는 무시 (React 이벤트는 포털을 지나 부모로 전달되므로,
+    // 팝업이 열린 채 마우스를 움직이면 뒤의 카드가 기울 수 있음)
+    if (!event.currentTarget.contains(event.target as Node)) return
     const rect = event.currentTarget.getBoundingClientRect()
     // 카드 가운데를 0으로 한 마우스 위치 (-0.5 ~ 0.5)
     const x = (event.clientX - rect.left) / rect.width - 0.5
@@ -80,6 +94,7 @@ export function HoverCard({ className, children }: { className?: string; childre
       >
         {children}
       </motion.div>
+      {overlay}
     </motion.div>
   )
 }

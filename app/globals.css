@@ -141,11 +141,12 @@
 }
 
 /* accent-hover와 같은 강조를, 요소 자신이 아니라 바깥 .group(카드 링크)에 마우스를 올리거나 키보드로 포커스할 때 켭니다.
-   카드처럼 링크는 제자리에 두고 안쪽만 떠오르는 경우에 씁니다 (components/shared/motion/hover-card.tsx). */
+   카드처럼 링크는 제자리에 두고 안쪽만 떠오르는 경우에 씁니다 (components/shared/motion/hover-card.tsx).
+   :has(:focus-visible): 게임 줄처럼 .group 안의 버튼이 포커스를 받는 경우에도 켭니다. */
 @utility accent-hover-in-group {
   transition-property: border-color, box-shadow;
   transition-duration: 150ms;
-  :where(.group:hover, .group:focus-visible) & {
+  :where(.group:hover, .group:focus-visible, .group:has(:focus-visible)) & {
     border-color: var(--primary) !important;
     box-shadow: 0 8px 24px -12px color-mix(in oklab, var(--primary) 35%, transparent);
   }

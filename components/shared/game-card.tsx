@@ -2,27 +2,48 @@ import Image from "next/image"
 import { PlayIcon } from "lucide-react"
 
 import { GameTrailerDialog } from "@/components/shared/game-trailer-dialog"
+import { HoverCard } from "@/components/shared/motion/hover-card"
 import { StarRating } from "@/components/shared/star-rating"
 import { Badge } from "@/components/ui/badge"
 import { STATUS_LABEL } from "@/lib/game-status"
 import type { Game } from "@/lib/games"
-import { cn } from "@/lib/utils"
+
+const ROW_CLASS = "flex items-center gap-3 border bg-card px-3 py-2.5"
 
 // 플레이한 게임 한 줄(바 형태). 왼쪽 작은 이니셜(또는 표지) 칸, 가운데 제목·정보, 오른쪽 PV 표시.
-// 값이 없는 항목(상태·평점·소감·시간·날짜)은 숨깁니다. PV(trailer)가 있으면 줄 전체를 덮는 버튼으로 팝업을 엽니다.
+// 값이 없는 항목(상태·평점·소감·시간·날짜)은 숨깁니다.
+// PV(trailer)가 있으면 줄 전체를 덮는 버튼으로 팝업을 열고, 마우스를 올리면 떠오르며 기웁니다 (HoverCard).
+// 버튼은 HoverCard의 overlay(제자리)에 두어 줄이 떠올라도 클릭 영역은 움직이지 않습니다.
+// PV가 없는 줄은 눌러도 반응이 없으므로 움직이지 않습니다.
 export function GameCard({ game }: { game: Game }) {
+  if (!game.trailer) {
+    return (
+      <div className={`${ROW_CLASS} h-full`}>
+        <GameRowContent game={game} />
+      </div>
+    )
+  }
+
+  return (
+    <div className="group h-full">
+      <HoverCard
+        className={`${ROW_CLASS} accent-hover-in-group`}
+        overlay={<GameTrailerDialog videoId={game.trailer} title={game.title} />}
+      >
+        <GameRowContent game={game} />
+      </HoverCard>
+    </div>
+  )
+}
+
+function GameRowContent({ game }: { game: Game }) {
   // "시작 ~ 끝", 끝낸 날이 없으면 "시작 ~", 시작일이 없으면 "~ 끝"
   const dates =
     game.startedAt || game.endedAt ? `${game.startedAt ?? ""} ~ ${game.endedAt ?? ""}`.trim() : null
   const meta = [game.playtime !== undefined ? `${game.playtime}시간` : null, dates].filter(Boolean).join(" · ")
 
   return (
-    <div
-      className={cn(
-        "group relative flex h-full items-center gap-3 border bg-card px-3 py-2.5",
-        game.trailer && "accent-hover"
-      )}
-    >
+    <>
       {/* 작은 이니셜(표지가 있으면 표지) 칸 (장식용) */}
       <div aria-hidden className="relative size-10 shrink-0 overflow-hidden bg-linear-to-br from-primary/20 to-card">
         {game.cover ? (
@@ -67,13 +88,12 @@ export function GameCard({ game }: { game: Game }) {
         // PV가 있다는 표시 (장식, 버튼 이름에 "PV 보기"가 있음)
         <span
           aria-hidden
-          className="flex shrink-0 items-center gap-1 font-mono text-[11px] text-muted-foreground transition-colors group-hover:text-primary"
+          className="flex shrink-0 items-center gap-1 font-mono text-[11px] text-muted-foreground transition-colors group-hover:text-primary group-has-focus-visible:text-primary"
         >
           <PlayIcon className="size-3.5 fill-current" />
           PV
         </span>
       )}
-      {game.trailer && <GameTrailerDialog videoId={game.trailer} title={game.title} />}
-    </div>
+    </>
   )
 }

@@ -1,9 +1,16 @@
 import { PlayIcon } from "lucide-react"
 
 import { GameCard } from "@/components/shared/game-card"
+import { Reveal } from "@/components/shared/motion/reveal"
 import { countGroups, groupGames, type Game } from "@/lib/games"
+import { STAGGER } from "@/lib/motion"
+
+// 데스크톱 한 줄에 놓이는 게임 줄 수 (아래 lg:grid-cols-2와 맞춤)
+const COLUMNS = 2
 
 // 게임을 상태별로 묶어 한 줄(바) 목록으로 보여 줍니다. 맨 위에 묶음별 개수 요약과 PV 안내.
+// 요약·묶음 제목·게임 줄은 스크롤해서 화면에 들어올 때 한 번 나타나고(글 목록과 같은 방식),
+// 같은 줄의 게임은 왼쪽부터 조금씩 늦게 나타납니다.
 export function GameList({ games }: { games: readonly Game[] }) {
   if (games.length === 0) {
     return <p className="py-12 text-center text-sm text-muted-foreground">아직 기록한 게임이 없습니다</p>
@@ -15,7 +22,7 @@ export function GameList({ games }: { games: readonly Game[] }) {
 
   return (
     <div className="flex flex-col gap-10">
-      <div className="flex flex-col gap-1.5">
+      <Reveal className="flex flex-col gap-1.5">
         <p className="font-mono text-xs text-muted-foreground">
           {summary.map(({ label, count }) => `${label} ${count}`).join(" · ")}
         </p>
@@ -25,19 +32,21 @@ export function GameList({ games }: { games: readonly Game[] }) {
             PV 표시가 있는 게임을 누르면 공식 PV(YouTube)가 팝업으로 재생됩니다. 누르기 전에는 YouTube에 연결하지 않습니다.
           </p>
         )}
-      </div>
+      </Reveal>
       {groups.map((group) => (
         <section key={group.key} aria-labelledby={`group-${group.key}`} className="flex flex-col gap-3">
-          <h2 id={`group-${group.key}`} className="flex items-baseline gap-2 font-heading text-base font-semibold">
-            {group.label}
-            <span className="font-mono text-xs font-normal text-muted-foreground">{group.games.length}</span>
-          </h2>
+          <Reveal>
+            <h2 id={`group-${group.key}`} className="flex items-baseline gap-2 font-heading text-base font-semibold">
+              {group.label}
+              <span className="font-mono text-xs font-normal text-muted-foreground">{group.games.length}</span>
+            </h2>
+          </Reveal>
           {/* grid-cols-1: 칸 폭을 화면에 맞춤 (지정하지 않으면 긴 제목만큼 칸이 늘어나 모바일에서 가로로 넘침) */}
           <ul className="grid grid-cols-1 gap-2 lg:grid-cols-2">
-            {group.games.map((game) => (
-              <li key={game.slug}>
+            {group.games.map((game, index) => (
+              <Reveal as="li" key={game.slug} delay={(index % COLUMNS) * STAGGER}>
                 <GameCard game={game} />
-              </li>
+              </Reveal>
             ))}
           </ul>
         </section>

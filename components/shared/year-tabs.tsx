@@ -23,7 +23,7 @@ export function YearTabs({ years, current }: { years: number[]; current: number 
                   "-mb-px inline-block border-b-2 px-3 py-2 font-mono text-sm transition-colors",
                   active
                     ? "border-primary text-primary"
-                    : "border-transparent text-muted-foreground hover:text-foreground"
+                    : "border-transparent text-muted-foreground hover:text-foreground focus-visible:text-foreground"
                 )}
               >
                 {item.label}
