@@ -14,8 +14,9 @@ function getInitials(name: string) {
     .toUpperCase()
 }
 
-// 소개 페이지 상단 프로필. 사진(없으면 이니셜) 왼쪽, 이름·소개·관심 분야·공부 중인 것 오른쪽.
-// 모바일에서는 사진 아래로 글이 쌓입니다. 빈 목록은 줄째 숨깁니다.
+// 홈 히어로 아래의 프로필 (2026-11-13 소개 페이지를 홈으로 합침). 사진(없으면 이니셜) 왼쪽,
+// 이름·소개·관심 분야·공부 중인 것 오른쪽. 모바일에서는 사진 아래로 글이 쌓입니다. 빈 목록은 줄째 숨깁니다.
+// 페이지 제목(h1)은 히어로에 있으므로 이름은 h2입니다.
 export function ProfileIntro({ profile }: { profile: Profile }) {
   const lists = [
     { label: "관심 분야", items: profile.interests },
@@ -26,16 +27,17 @@ export function ProfileIntro({ profile }: { profile: Profile }) {
     <section className="border-b py-12 sm:py-16">
       <Container className="flex flex-col gap-6 sm:flex-row sm:items-center sm:gap-10">
         {/* 사진이 없거나 불러오지 못하면(로드 전 포함) 이니셜이 보입니다. basePath 대응은 T-310 */}
-        <Avatar className="size-24 sm:size-32">
-          {profile.photo && <AvatarImage src={profile.photo} alt={profile.name} />}
-          <AvatarFallback className="bg-linear-to-br from-primary/20 to-card font-heading text-4xl font-bold text-primary sm:text-5xl">
+        {/* 사진 원본 비율(세로 3:4)의 각진 네모. shadcn Avatar 기본 원형·정사각형을 덮어씀 */}
+        <Avatar className="h-28 w-21 rounded-none after:rounded-none sm:h-36 sm:w-27">
+          {profile.photo && <AvatarImage src={profile.photo} alt={profile.name} className="rounded-none" />}
+          <AvatarFallback className="rounded-none bg-linear-to-br from-primary/20 to-card font-heading text-3xl font-bold text-primary sm:text-4xl">
             {getInitials(profile.name)}
           </AvatarFallback>
         </Avatar>
 
         <div className="flex min-w-0 flex-col gap-4">
           <div className="flex flex-col gap-2">
-            <h1 className="font-heading text-3xl font-bold tracking-tight sm:text-4xl">{profile.name}</h1>
+            <h2 className="font-heading text-2xl font-bold tracking-tight sm:text-3xl">{profile.name}</h2>
             <p className="max-w-2xl text-sm text-muted-foreground sm:text-base">{profile.tagline}</p>
           </div>
 

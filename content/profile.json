@@ -1,6 +1,7 @@
 {
   "name": "김한승",
   "tagline": "언리얼 엔진 5 전투 클라이언트 개발자",
+  "photo": "/images/profile/profile.webp",
   "interests": ["전투 클라이언트 프로그래밍", "Unreal Engine 5"],
   "studying": ["Claude AI 활용", "Gameplay Ability System (GAS)"],
   "links": [

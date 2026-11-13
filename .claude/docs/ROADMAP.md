@@ -1,11 +1,11 @@
 # 로드맵: 게임 개발자 개인 블로그
 
-> 기준 PRD: .claude/docs/PRD.md · 작성일: 2026-11-08 · 갱신: 2026-11-09 (F015 배경 음악, F016 UI 애니메이션 반영 / F012 테마를 블랙 + 시안 1색으로 변경 — T-127 추가, 게임 데이터 실제 값 반영 / T-212 완료 조건 실제 구현 반영, 콘텐츠 최소 개수 제약 추가, T-310 게임 표지 포함, T-217 추가 / F017 게임 PV·F014 `/games` 구조 변경 — T-218 추가(완료)) · 갱신: 2026-11-12 (F014 전체·연도별 보기, `earlier.json` — T-219 추가(완료), 4장 다음 작업 정리 / T-219 리뷰 반영, T-218 시절 현재형 설명 정리 / F013 바 형태 목록·F017 PV 안내 문구, 유튜브 썸네일 미사용 — T-220 추가(완료), T-216 "게임 줄 호버"로 변경) · 갱신: 2026-11-12 (T-201 소개용 JSON 스키마·로더 완료, PRD 데이터 모델 검증 규칙 반영, T-204·T-205 완료 조건 조정, 4장·6장 정리) · 갱신: 2026-11-12 (T-120·T-121·T-123·T-124·T-126 애니메이션 묶음 A, T-122 페이지 전환(래퍼를 레이아웃 `<main>` 안 한 곳으로 변경), T-125 HoverCard 구조와 `accent-hover-in-group` 완료 → 단계 1 완료. 6장 미결 사항 정리, 2장 페이지 전환 설명을 구현에 맞춤)
+> 기준 PRD: .claude/docs/PRD.md · 작성일: 2026-11-08 · 갱신: 2026-11-09 (F015 배경 음악, F016 UI 애니메이션 반영 / F012 테마를 블랙 + 시안 1색으로 변경 — T-127 추가, 게임 데이터 실제 값 반영 / T-212 완료 조건 실제 구현 반영, 콘텐츠 최소 개수 제약 추가, T-310 게임 표지 포함, T-217 추가 / F017 게임 PV·F014 `/games` 구조 변경 — T-218 추가(완료)) · 갱신: 2026-11-12 (F014 전체·연도별 보기, `earlier.json` — T-219 추가(완료), 4장 다음 작업 정리 / T-219 리뷰 반영, T-218 시절 현재형 설명 정리 / F013 바 형태 목록·F017 PV 안내 문구, 유튜브 썸네일 미사용 — T-220 추가(완료), T-216 "게임 줄 호버"로 변경) · 갱신: 2026-11-12 (T-201 소개용 JSON 스키마·로더 완료, PRD 데이터 모델 검증 규칙 반영, T-204·T-205 완료 조건 조정, 4장·6장 정리) · 갱신: 2026-11-12 (T-120·T-121·T-123·T-124·T-126 애니메이션 묶음 A, T-122 페이지 전환(래퍼를 레이아웃 `<main>` 안 한 곳으로 변경), T-125 HoverCard 구조와 `accent-hover-in-group` 완료 → 단계 1 완료. 6장 미결 사항 정리, 2장 페이지 전환 설명을 구현에 맞춤) · 갱신: 2026-11-13 (소개 페이지를 없애고 홈에 통합 — 헤더 메뉴 3개, 실제 데이터, skills 분류 5개·timeline `certificate`, 기술 배지 브랜드 색 아이콘. T-203·T-204·T-206 완료, T-205 보류, T-207 축소, T-208·T-215 재정리, `app/loading.tsx` 제거 반영)
 
 ## 1. 개요
 
 - 목표:
-  1. 게임 개발자인 운영자를 소개하는 페이지(프로필·기술 스택·프로젝트·경력)를 만든다 (F001~F004).
+  1. 게임 개발자인 운영자를 소개하는 홈 섹션(프로필·기술 스택·경력·학력·자격증)을 만든다 (F001~F004, 별도 소개 페이지 없음 — 2026-11-13 홈으로 통합).
   2. 글·사진·영상으로 된 개발 기록을 MDX 파일로 쓰고 최신순·태그별로 보여 준다 (F006~F009, F011).
   3. 좋아하고 플레이 중인 게임을 연도별 JSON 기록으로 남기고 전체 보기(`/games`)와 연도별 페이지(`/games/<연도>`)로 보여 준다 (F013, F014).
   4. "블랙 + 차분한 시안 1색"의 모던한 테마를 전 페이지에 적용하고, 게임 개발 콘셉트는 문구(404 "GAME OVER" 등)로 살린다 (F010, F012 — 2026-11-09 시안·마젠타 네온에서 변경).
@@ -16,7 +16,7 @@
   - 모든 페이지가 데스크톱·모바일, 다크·라이트 모드에서 깨지지 않고, 포인트 색 텍스트가 WCAG AA 대비를 만족한다.
   - 운영자가 `content/music.json`과 `public/audio/bgm.mp3`를 넣기만 하면 코드 수정 없이 음악 버튼과 푸터 출처 문구가 나타난다.
   - "동작 줄이기" 설정에서 이동·기울기 애니메이션이 하나도 보이지 않고, 애니메이션 때문에 레이아웃이 흔들리지 않는다.
-- 범위 밖: 로그인·관리자 글쓰기 화면, 댓글·좋아요·구독(RSS), 전체 글 검색·다중 태그 필터·시리즈, 프로젝트 상세 페이지, 문의 폼·이메일 공개, 다국어, 조회수 집계, 코드 블록 복사 버튼·줄 번호·파일 이름, 게임 기록의 상태·플랫폼 필터·게임별 상세 페이지·여러 해 통계·외부 게임 DB(API) 연동, 배경 음악 음량 조절·재생 목록·페이지별 음악·켜짐 상태 기억·재방문 자동 재생, 홈 히어로 타이핑·글리치·패럴랙스·커서 효과 (PRD "MVP 이후 기능")
+- 범위 밖: 로그인·관리자 글쓰기 화면, 댓글·좋아요·구독(RSS), 전체 글 검색·다중 태그 필터·시리즈, 별도 소개 페이지(`/about`), 프로젝트 상세 페이지(프로젝트 카드 섹션은 데이터가 비어 보류), 문의 폼·이메일 공개, 다국어, 조회수 집계, 코드 블록 복사 버튼·줄 번호·파일 이름, 게임 기록의 상태·플랫폼 필터·게임별 상세 페이지·여러 해 통계·외부 게임 DB(API) 연동, 배경 음악 음량 조절·재생 목록·페이지별 음악·켜짐 상태 기억·재방문 자동 재생, 홈 히어로 타이핑·글리치·패럴랙스·커서 효과 (PRD "MVP 이후 기능")
 
 ## 2. 기술 방향
 
@@ -25,7 +25,7 @@
   - 글: `content/posts/<slug>.mdx` (YAML frontmatter: title, date, summary, tags, thumbnail). 사진은 `public/images/posts/<slug>/`.
   - 태그 (결정됨): frontmatter `tags`에는 **영문 slug**(소문자·숫자·하이픈, 예: `shader`)만 쓰고, 화면에 보일 한글 이름은 `content/tags.json`(slug → 표시 이름 대응표)에서 가져온다. 대응표에 없는 태그는 slug를 그대로 표시한다. 주소는 항상 `/blog/tags/<영문 slug>`.
   - "영상 포함" 표시 (결정됨): frontmatter 필드 없이, 로더가 빌드 시 본문에 `<Video` 컴포넌트가 있는지 검사해 `hasVideo`를 계산한다.
-  - 소개 데이터: `content/profile.json`, `skills.json`, `projects.json`, `timeline.json`을 `lib/`의 로더가 zod로 검증한 뒤 섹션 컴포넌트에 넘긴다.
+  - 소개 데이터: `content/profile.json`, `skills.json`, `projects.json`, `timeline.json`을 `lib/`의 로더가 zod로 검증한 뒤 **홈(`app/page.tsx`)**이 섹션 컴포넌트(프로필·기술 스택·경력·학력·자격증)에 넘긴다 (2026-11-13: 별도 `/about` 없음, 헤더 메뉴 3개). skills 분류는 language·engine·os·ide·etc 5개, timeline type은 work·education·certificate(자격증은 홈에서 별도 섹션). `projects.json`은 빈 배열이라 프로젝트 섹션은 화면에 없고, `profile.json`의 `links`는 데이터로만 있다(푸터 연동은 T-207). 기술 배지의 아이콘 경로·브랜드 색은 server-only `lib/tech-icon.ts`가 simple-icons에서 읽는다.
   - 게임 기록 (결정됨): `content/games/<연도>.json`(연도 = 파일 이름, 파일 하나 = 연도 페이지 하나), 표지는 `public/images/games/<연도>/`. `lib/games.ts`가 zod로 검증하고 잘못된 데이터는 빌드 실패. 2026 이전에만 플레이해 정확한 연도가 없는 게임은 `content/games/earlier.json`(표지 `public/images/games/earlier/`, 파일 없어도 됨)에 둔다. 헤더 "게임"(`/games`)은 **전체 보기**로, 모든 연도 파일 + `earlier.json`을 합치고 연도 파일끼리 같은 slug는 가장 최근 연도 것 하나만 보여 준다(2026-11-12 T-219에서 T-218의 "최신 연도 바로 목록"을 대체). `earlier.json`과 연도 파일에 같은 slug가 있으면 빌드 실패(연도 파일끼리 겹침은 해를 넘긴 게임이라 허용). 제목 아래 보기 목록은 '전체 · 2026 · …'이고, 연도별 페이지 `app/games/[year]`(`generateStaticParams` + `dynamicParams = false`, 없는 연도 404)는 그해 파일만 보여 준다. 두 페이지 내용이 달라 canonical은 두지 않고, sitemap에는 `/games`와 모든 `/games/<연도>`가 들어간다. 플랫폼은 한글 표기("PC (Steam)", "PC", "모바일"), 여러 개면 "PC, 모바일" 순서. 정적 내보내기라 리디렉션 없이 링크로만 이동한다. 게임 PV(F017)는 `trailer`(유튜브 영상 ID)를 카드 위 버튼 → Dialog 팝업의 youtube-nocookie iframe으로 재생하고, 팝업이 열렸을 때만 iframe을 그린다. 평점은 1~5 정수, 해를 넘긴 게임은 다음 해 파일에 다시 적는다.
   - 코드 블록 (F007): `rehype-pretty-code`가 붙여 주는 언어 정보(`data-language`)를 `mdx-components.tsx`에서 받아 전용 패널 상단에 표시 이름으로 보여 준다. 서버 컴포넌트로만 처리해 클라이언트 JS가 없다.
   - 동적 경로(`app/blog/[slug]`, `app/blog/tags/[tag]`)는 `generateStaticParams` + `export const dynamicParams = false`로 빌드 시 모두 만들고, 없는 경로는 404가 된다 (정적 내보내기는 `dynamicParams: true`를 지원하지 않음 — `static-exports.md` 확인).
@@ -34,7 +34,7 @@
   - 데이터 흐름: `content/*` → `lib/posts.ts`, `lib/content.ts` (서버 전용, fs 사용) → `app/*/page.tsx` → `components/sections/*`.
   - 배경 음악 (F015): `lib/music.ts`가 빌드 시 `content/music.json`(zod 검증)과 `public/audio/<file>` 존재를 확인해 둘 다 있을 때만 곡 정보를, 하나라도 없으면 `null`(음원 없음)을 돌려준다. `app/layout.tsx`가 이 값을 클라이언트 Provider(`components/providers/bgm-provider.tsx`)에 넘기고, Provider가 `<audio loop>` 하나를 **루트 레이아웃에 한 번만** 둔다. 레이아웃은 사이트 안 링크 이동 때 다시 그려지지 않으므로 음악이 이어지고, 새로고침·새 탭은 새 방문이라 항상 꺼짐에서 시작한다. 켜짐/꺼짐은 React 상태(메모리)에만 두고 localStorage·sessionStorage·쿠키에 저장하지 않는다. 추가 라이브러리 없음.
   - 애니메이션 (F016): 등장·스태거·스크롤 등장·카드 호버는 **Motion**(`motion/react`)의 `"use client"` 래퍼 컴포넌트(`components/shared/motion/`)로 만들고, 페이지·섹션은 서버 컴포넌트로 둔 채 래퍼로 감싸기만 한다. 루트에 `MotionConfig reducedMotion="user"`를 두어 "동작 줄이기" 시 transform(이동·기울기)을 끄고 투명도만 남긴다. 단순 색·밑줄·누름 효과는 Tailwind `transition`·`active:`·`motion-reduce:`로 처리한다 (JS 없음).
-  - 페이지 전환 (F016): React `<ViewTransition>`(`import { ViewTransition } from 'react'`) 크로스페이드를 기본 방식으로 쓴다. 가이드(`node_modules/next/dist/docs/01-app/02-guides/view-transitions.md`) 확인 결과 **App Router에서 설정 없이 동작**하고(실험 플래그 불필요, `next.config` 문서에 관련 옵션 없음), `<ViewTransition>`은 React 19.3에 포함된다 (프로젝트 React 19.3.1 — 메인 세션이 package.json으로 확인). Next.js 라우트 이동은 transition이라 자동으로 활성화된다. 레이아웃은 이동 때 유지되어 enter/exit가 발생하지 않으므로 `<ViewTransition update>`를 쓰는 공통 `PageTransition`을 **레이아웃 `<main>` 안 한 곳**에 두고(새 페이지는 따로 감싸지 않음, 2026-11-12 T-122 확정), 헤더·푸터는 래퍼 바깥이라 움직이지 않는다. `PageTransition`은 하이드레이션 전에는 `update="none"`, 그 뒤에는 `"page-fade"`로 켜서 첫 접속 때 로딩 화면 → 본문 교체에 전환이 걸리지 않게 한다. 지원하지 않는 브라우저는 애니메이션 없이 즉시 전환된다. Motion의 퇴장(exit) 애니메이션은 쓰지 않는다.
+  - 페이지 전환 (F016): React `<ViewTransition>`(`import { ViewTransition } from 'react'`) 크로스페이드를 기본 방식으로 쓴다. 가이드(`node_modules/next/dist/docs/01-app/02-guides/view-transitions.md`) 확인 결과 **App Router에서 설정 없이 동작**하고(실험 플래그 불필요, `next.config` 문서에 관련 옵션 없음), `<ViewTransition>`은 React 19.3에 포함된다 (프로젝트 React 19.3.1 — 메인 세션이 package.json으로 확인). Next.js 라우트 이동은 transition이라 자동으로 활성화된다. 레이아웃은 이동 때 유지되어 enter/exit가 발생하지 않으므로 `<ViewTransition update>`를 쓰는 공통 `PageTransition`을 **레이아웃 `<main>` 안 한 곳**에 두고(새 페이지는 따로 감싸지 않음, 2026-11-12 T-122 확정), 헤더·푸터는 래퍼 바깥이라 움직이지 않는다. `PageTransition`은 하이드레이션 전에는 `update="none"`, 그 뒤에는 `"page-fade"`로 켜서 첫 접속 때 본문이 늦게 보이지 않게 한다. 지원하지 않는 브라우저는 애니메이션 없이 즉시 전환된다. Motion의 퇴장(exit) 애니메이션은 쓰지 않는다. 별도 로딩 화면(`app/loading.tsx`)은 2026-11-13에 제거했다(Windows 로컬 빌드에서 Next 16 export가 세그먼트 프리페치 파일 이름을 역슬래시로 잘못 만들어 이동 때 회색 스켈레톤이 끼어 보였음, Linux CI 빌드는 정상). 이동은 크로스페이드 한 번만 보인다.
 - MDX 방식 (Next.js 16 공식 가이드 `node_modules/next/dist/docs/01-app/02-guides/mdx.md` 확인함):
   - **1순위: `@next/mdx`** (+ `@mdx-js/loader`, `@mdx-js/react`, `@types/mdx`). 공식 가이드의 "Using dynamic imports" 패턴(`await import(\`@/content/posts/${slug}.mdx\`)` + `generateStaticParams` + `dynamicParams = false`)이 이 프로젝트 구조와 그대로 맞는다. 루트에 `mdx-components.tsx`가 **필수**다.
   - 주의 1: `@next/mdx`는 frontmatter를 기본 지원하지 않는다 → 목록용 메타데이터는 `gray-matter`로 원본 파일을 읽고, 렌더링 시 YAML이 본문에 찍히지 않게 `remark-frontmatter`를 쓴다 (또는 MDX 안의 `export const metadata` 방식으로 대체). T-108에서 결정.
@@ -47,7 +47,7 @@
   - `remark-frontmatter` (필요 시 `remark-gfm`) — frontmatter 숨김, 표·체크리스트 지원 — remark 공식 생태계
   - `rehype-pretty-code` + `shiki` — 코드 블록 하이라이트(빌드 시) — 클라이언트 JS 없이 다크/라이트 테마 지원
   - `@tailwindcss/typography` — MDX 본문 기본 서식(`prose`) — 공식 가이드 권장, Tailwind v4는 `globals.css`에 `@plugin`으로 등록 (문서 확인 필요)
-  - `simple-icons` (또는 `react-icons/si`) — 기술 브랜드 아이콘 — 아이콘 데이터 CC0, T-202에서 확정
+  - `simple-icons` — 기술 브랜드 아이콘 (T-202 확정, 본체 사용) — 어두운 테마색 배지 + 브랜드 색 아이콘으로 표시(T-204, 2026-11-13에 T-202의 단색 결정 변경). 쓰는 아이콘 license는 모두 없음(출처 표기 불필요)
   - `motion` (구 Framer Motion, `motion/react`) — F016 등장·스태거·`whileInView`·`whileHover`·기울기 — PRD에서 사용자가 선택, React 19 지원, `MotionConfig reducedMotion="user"`로 동작 줄이기를 한 곳에서 처리. 래퍼는 `components/shared/motion/`, Provider는 `components/providers/` (T-119에서 peerDependencies 확인)
   - (추가 패키지 없음) React `<ViewTransition>` — 페이지 전환 크로스페이드 — React 19.3 내장, 브라우저 View Transitions API 기반
   - (추가 패키지 없음) HTML `<audio>` — 배경 음악 — 한 곡 반복·재생/정지만 필요해 라이브러리가 과함 (음량·재생 목록이 필요해지면 Howler.js 검토)
@@ -77,6 +77,7 @@
 - [x] **T-102** 사이트 설정을 블로그용으로 변경 · P0 · S · 의존: T-101
   - 완료 조건: `siteConfig`의 이름·설명이 블로그 내용으로 바뀌고, `mainNav`가 홈·블로그·게임·소개 4개뿐이며 헤더·모바일 메뉴·sitemap에 같은 4개가 보인다 (`/blog`는 단계 1 T-111, `/games`는 단계 2 T-213에서 만들어짐. 그 전까지 링크 404 허용 — 배포 시 주의는 "5. 위험 요소" 참고).
   - 메모: "mainNav 4개" 중 '게임'은 T-115에서 임시로 숨겼고, T-213(`/games` 페이지)에서 다시 추가한다.
+  - 메모 (2026-11-13): 소개 페이지를 홈으로 통합하면서 '소개'가 `mainNav`에서 빠져 헤더·모바일 메뉴·sitemap은 **홈·블로그·게임 3개**다 (`/about`은 404).
   - 위치: config/site.ts, app/layout.tsx(메타데이터, 기존 파일 확인 필요)
   - 계획: [plans/T-102.md](plans/T-102.md)
 
@@ -183,7 +184,7 @@
   - 완료 조건: ① `import { ViewTransition } from 'react'`로 구현하고 **실험 플래그·`next.config` 변경 없이** 동작한다 (가이드 "View transitions work in the App Router with no configuration. React 19.3 includes the `<ViewTransition>` component" 확인함, React 19.3.1). `@types/react`에 `ViewTransition` 타입이 없어 `npx tsc --noEmit`가 실패하면 타입 패키지 버전을 확인해 계획 문서에 적는다(문서 확인 필요). ② 헤더 메뉴·카드 링크로 이동하면 이전 페이지 본문이 흐려지고 새 본문이 나타난다 (퇴장 약 150ms, 등장 약 210ms). ③ 헤더·푸터는 `<main>` 래퍼 바깥에 있어 전환 때 움직이지 않는다 (필요하면 `viewTransitionName`으로 고정). ④ `::view-transition { pointer-events: none; }`으로 전환 중 클릭이 사라지지 않는다. ⑤ `@media (prefers-reduced-motion: reduce)`에서 전환 애니메이션 시간이 0이다(즉시 전환). ⑥ 음악을 켠 채 이동해도 끊기지 않는다(Provider는 래퍼 바깥). ⑦ 미지원 브라우저에서도 이동은 정상이다. ⑧ 래퍼 위치: 공통 `PageTransition`(`components/shared/page-transition.tsx`, update 크로스페이드)을 페이지마다가 아니라 **레이아웃 `<main>` 안 한 곳**에 둔다. 새 페이지는 따로 감쌀 필요가 없다. Motion의 페이지 등장 애니메이션과 겹치지 않게 본문 전체에는 Motion을 쓰지 않는다.
   - 위치: components/shared/page-transition.tsx, app/layout.tsx, app/globals.css, components/layout/site-header.tsx, site-footer.tsx (규칙: node_modules/next/dist/docs/01-app/02-guides/view-transitions.md)
   - 계획: [plans/T-122.md](plans/T-122.md)
-  - 구현 메모: 래퍼는 레이아웃 `<main>` 안 한 곳(update 크로스페이드)으로 확정. 헤더 메뉴, `/blog`→글, `/games`→`/games/2026` 전환 확인. `PageTransition`은 클라이언트 컴포넌트로, 하이드레이션 전에는 `update="none"`, 그 뒤에는 `"page-fade"`(`useSyncExternalStore`) — 서버 HTML에 전환 속성이 있으면 첫 접속 때 로딩 화면(app/loading.tsx) → 본문 교체에도 전환이 걸려 글꼴·이미지를 기다리느라 본문이 늦게 보이기 때문. 투명도만 바꿈(blur 없음): 퇴장 150ms, 등장 210ms, 본문 상자 크기 변화 애니메이션은 끔. 주의: 하이드레이션 뒤 `<main>` 안에서 `startTransition`으로 DOM을 바꾸면 본문 전체에 전환이 재생되므로, 나중에 본문 안 상태 변경에 transition을 쓰면 확인이 필요.
+  - 구현 메모: 래퍼는 레이아웃 `<main>` 안 한 곳(update 크로스페이드)으로 확정. 헤더 메뉴, `/blog`→글, `/games`→`/games/2026` 전환 확인. `PageTransition`은 클라이언트 컴포넌트로, 하이드레이션 전에는 `update="none"`, 그 뒤에는 `"page-fade"`(`useSyncExternalStore`) — 서버 HTML에 전환 속성이 있으면 첫 접속 때 초기 화면 → 본문 교체에도 전환이 걸려 글꼴·이미지를 기다리느라 본문이 늦게 보이기 때문. (2026-11-13: 당시 있던 `app/loading.tsx`는 Windows 빌드의 프리페치 파일 이름 문제로 제거됨 — "5. 위험 요소" 참고. 지금은 로딩 화면 없이 크로스페이드 한 번만 보임.) 투명도만 바꿈(blur 없음): 퇴장 150ms, 등장 210ms, 본문 상자 크기 변화 애니메이션은 끔. 주의: 하이드레이션 뒤 `<main>` 안에서 `startTransition`으로 DOM을 바꾸면 본문 전체에 전환이 재생되므로, 나중에 본문 안 상태 변경에 transition을 쓰면 확인이 필요.
 - [x] **T-123** 홈 등장 연출 · P1 · S · 의존: T-119, T-114, T-127 · 완료(2026-11-12)
   - 구현 메모: 히어로 delay 0.25초, 최근 글 delay 0.5초, 이동 거리 전체 8px.
   - 완료 조건: 홈이 그려질 때 히어로의 이름 → 한 줄 소개 → 버튼, 이어서 최근 글 카드가 차례로 나타난다. 첫 진입에서는 헤더 스태거 뒤에 이어서 재생되고, 사이트 안에서 홈으로 돌아올 때도 짧게 재생된다 (PRD 가정). 히어로는 이동 거리를 작게(약 8px 이하) 해서 JS가 늦어도 빈 화면이 오래 보이지 않는다. T-208에서 히어로 데이터가 바뀌어도 래퍼 구조는 유지된다.
@@ -206,8 +207,8 @@
   - 위치: app/not-found.tsx (T-119의 Stagger 재사용)
   - 계획: [plans/T-120.md](plans/T-120.md)
 
-### 단계 2: 소개·플레이 게임 페이지와 홈 완성 — 운영자가 누구이고 무엇을 만들고 즐기는지 보여 주기
-완료 기준: `/about`에 프로필·기술 스택·프로젝트·경력 타임라인·외부 링크가 JSON 데이터로 보이고, 홈 히어로와 푸터가 같은 `profile.json`을 쓴다. `/games`에서 지금까지 플레이한 모든 게임(전체 보기)을, `/games/<연도>`에서 그해 게임을 상태별 카드로 볼 수 있고 카드에서 공식 PV를 팝업으로 재생할 수 있으며, 게임 데이터가 잘못되면 빌드가 실패한다.
+### 단계 2: 소개(홈 통합)·플레이 게임 페이지와 홈 완성 — 운영자가 누구이고 무엇을 만들고 즐기는지 보여 주기
+완료 기준: 홈(`/`)에 히어로 → 프로필 → 기술 스택 → 경력·학력 → 자격증 → 최근 글이 JSON 데이터로 보이고(별도 `/about`은 없음, 프로젝트 섹션은 데이터가 비어 보류), 푸터 외부 링크가 `profile.json`의 `links`를 쓴다. `/games`에서 지금까지 플레이한 모든 게임(전체 보기)을, `/games/<연도>`에서 그해 게임을 상태별 카드로 볼 수 있고 카드에서 공식 PV를 팝업으로 재생할 수 있으며, 게임 데이터가 잘못되면 빌드가 실패한다.
 
 #### 에픽 2.1 소개 데이터와 아이콘 (PRD: F011, F002)
 - [x] **T-201** 소개용 JSON 스키마와 로더 · P0 · M · 의존: 단계 1 완료 · 완료(2026-11-12)
@@ -219,29 +220,35 @@
   - 완료 조건: `simple-icons`와 `react-icons/si` 중 하나를 고르고, Unity·Unreal Engine·Godot·C#·C++·Blender·GitHub·YouTube 아이콘이 실제로 있는지, 없는 것(상표 문제로 빠진 로고 등)은 어떻게 대신할지(Lucide 일반 아이콘 또는 텍스트 이니셜)를 표로 기록한다. 라이선스(아이콘 데이터 CC0, 브랜드 상표 지침)와 Lucide 브랜드 아이콘 지원 현황도 함께 적는다.
   - 위치: 계획 문서(plans/T-202.md), package.json
   - 계획: [plans/T-202.md](plans/T-202.md)
+  - 메모 (2026-11-13): 이 작업의 "단색 `currentColor`로 그려 테마를 따른다" 결정은 T-204에서 "테마색 배지 + 브랜드 색 아이콘"으로 바뀜 (상대 휘도로 묻히는 색만 글자색 대체). 아이콘 없는 기술은 C#·Windows·VSCode·Visual Studio.
 
-#### 에픽 2.2 소개 페이지 (PRD: F001, F002, F003, F004)
-- [x] **T-203** 프로필 섹션 · P0 · S · 의존: T-201
-  - 완료 조건: `/about` 상단에 사진(없으면 이름 이니셜 아바타), 이름, 한 줄 소개, 관심 분야, 지금 공부 중인 것 목록이 보이고, `photo`를 비우면 이니셜 아바타로 바뀐다.
-  - 위치: app/about/page.tsx (기존 파일 확인 필요), components/sections/profile-intro.tsx (shadcn Avatar 재사용)
+#### 에픽 2.2 홈의 소개 섹션 (PRD: F001, F002, F003, F004) — 2026-11-13에 별도 소개 페이지(`/about`)를 없애고 홈으로 통합
+- [x] **T-203** 프로필 섹션 · P0 · S · 의존: T-201 · 완료(2026-11-13)
+  - 완료 조건: **홈**의 프로필 섹션에 사진(없으면 이름 첫 글자 이니셜 아바타, 사진은 세로 3:4 각진 네모), 이름(`h2`, 페이지 `h1`은 히어로), 한 줄 소개, 관심 분야, 지금 공부 중인 것 목록이 보이고, `photo`를 비우면 이니셜 아바타로 바뀐다. 배열이 비면 그 줄은 숨겨진다.
+  - 위치: components/sections/profile-intro.tsx (shadcn Avatar 재사용), app/page.tsx (처음엔 `/about`에 만들었으나 T-204에서 홈으로 이동, `app/about/`은 삭제)
+  - 메모 (2026-11-13): 소개 데이터를 실제 값으로 교체 — 이름 김한승(사용자가 실명 공개 결정), 사진 `public/images/profile/profile.webp`(300×400), 공부 중 Claude AI 활용·Gameplay Ability System.
   - 계획: [plans/T-203.md](plans/T-203.md)
-- [ ] **T-204** 기술 스택 배지 · P0 · S · 의존: T-201, T-202
-  - 완료 조건: 엔진 / 언어 / 도구 세 분류 제목 아래에 아이콘이 붙은 배지가 보이고, `icon`을 비운 기술은 이름 이니셜로 깨지지 않게 표시된다(적었는데 없는 slug는 T-201 로더가 빌드 실패시킴). 쓰는 아이콘마다 simple-icons의 `license`·`guidelines` 값을 확인해 계획 문서에 적고, Godot 아이콘은 CC-BY-4.0이므로 출처 표기(소개 페이지 또는 푸터 크레딧)를 넣는다. 아이콘 옆에 이름 글자가 있으면 아이콘은 `aria-hidden`이다 (근거: plans/T-202.md).
-  - 위치: components/shared/tech-badge.tsx, components/sections/skill-stack.tsx
-- [ ] **T-205** 대표 프로젝트 카드 · P0 · S · 의존: T-204
-  - 완료 조건: 프로젝트마다 썸네일(없으면 자리표시)·제목·요약·사용 기술 배지(T-204 재사용)·외부 링크가 보이고, `link`가 없으면 링크 버튼이 숨겨지며, 링크는 `target="_blank" rel="noopener noreferrer"`로 새 탭에서 열린다. 모바일 1열, 데스크톱 2~3열이다.
-  - 위치: components/sections/project-list.tsx
-- [ ] **T-206** 경력·학력 세로 타임라인 · P0 · M · 의존: T-201
-  - 완료 조건: 기간·이름·소속·설명이 세로 타임라인으로 보이고 work/education이 아이콘이나 색으로 구분된다. 모바일에서 글자가 겹치지 않는다.
-  - 위치: components/sections/career-timeline.tsx
-- [ ] **T-207** 외부 링크 버튼과 소개 페이지 조립, 푸터 연동 · P0 · S · 의존: T-203, T-205, T-206
-  - 완료 조건: 소개 페이지에 외부 링크 버튼(새 탭)과 "블로그 보기" 버튼이 보이고, 푸터의 외부 링크가 `profile.json`의 `links`에서 나오며 T-106의 임시 값이 사라진다.
-  - 위치: components/shared/social-links.tsx, components/layout/site-footer.tsx, app/about/page.tsx
+- [x] **T-204** 기술 스택 배지 · P0 · S · 의존: T-201, T-202 · 완료(2026-11-13)
+  - 완료 조건: 홈의 기술 스택 섹션에 언어 / 게임 엔진 / 운영체제 / IDE / 기타 5개 묶음(빈 묶음은 숨김) 제목 아래 어두운 테마색 배지에 브랜드 색 아이콘과 이름이 보이고, 브랜드 색의 상대 휘도가 0.05 미만이면 다크 모드에서, 0.4 초과이면 라이트 모드에서 아이콘이 글자색으로 보인다(Unreal·Rider·GitHub / Unity·C). `icon`을 비운 기술(C#·Windows·VSCode·Visual Studio)은 이름 첫 글자 칸으로 깨지지 않게 표시된다. 사용한 아이콘의 simple-icons `license`가 모두 없어 출처 표기는 필요 없다. 아이콘은 `aria-hidden`이다.
+  - 위치: components/shared/tech-badge.tsx, components/sections/skill-stack.tsx, lib/tech-icon.ts(server-only, simple-icons slug → path·hex·색 처리), lib/content.ts(`SKILL_CATEGORIES` = language·engine·os·ide·etc), content/skills.json(14개), app/page.tsx
+  - 계획: [plans/T-204.md](plans/T-204.md)
+- [ ] **T-205** 대표 프로젝트 카드 (보류 — 사용자 확인 필요) · P2 · S · 의존: T-204
+  - 메모 (2026-11-13): `projects.json`이 빈 배열(`[]`)이라 프로젝트 섹션은 화면에 없다. 데이터가 생길 때까지 보류하거나 범위 밖으로 확정할지는 "6. 미결 사항"에서 사용자 확인. 구현한다면 빈 목록이면 섹션째 숨김이 전제다.
+  - 완료 조건: (보류 해제 시) 프로젝트마다 썸네일(없으면 자리표시)·제목·요약·사용 기술 배지(T-204 `TechBadge` 재사용)·외부 링크가 홈의 새 섹션으로 보이고, `link`가 없으면 링크 버튼이 숨겨지며, 링크는 `target="_blank" rel="noopener noreferrer"`로 새 탭에서 열린다. `projects.json`이 빈 배열이면 섹션 전체가 보이지 않는다. 모바일 1열, 데스크톱 2~3열이다.
+  - 위치: components/sections/project-list.tsx, app/page.tsx
+- [x] **T-206** 경력·학력 세로 타임라인 (+ 자격증 섹션 분리) · P0 · M · 의존: T-201 · 완료(2026-11-13)
+  - 완료 조건: 홈의 경력·학력 섹션에 기간·직함·소속·설명이 세로 타임라인으로 보이고(`timeline.json` 파일 순서대로) 경력(work)·교육(education)이 아이콘(가방·학사모)과 라벨로 구분된다. `type: "certificate"` 항목은 이 타임라인에 나오지 않고 별도 **자격증** 섹션에 보인다(`timeline.json`의 type은 work·education·certificate). 모바일에서 글자가 겹치지 않는다.
+  - 위치: components/sections/career-timeline.tsx, components/sections/certificate-list.tsx, lib/content.ts(`TIMELINE_TYPES`에 `certificate` 추가), content/timeline.json(경력 1·교육 2·자격증 1), app/page.tsx
+  - 계획: [plans/T-204.md](plans/T-204.md)
+- [ ] **T-207** 푸터 외부 링크를 `profile.json` `links`로 옮기기 (solved.ac 포함) · P0 · S · 의존: T-203 (축소: 2026-11-13에 소개 페이지가 없어져 조립·외부 링크 버튼·"블로그 보기" 버튼은 범위에서 뺌)
+  - 완료 조건: 푸터의 외부 링크가 `siteConfig`의 임시 값이 아니라 `profile.json`의 `links`에서 나오고(GitHub·solved.ac 포함, 새 탭 `target="_blank" rel="noopener noreferrer"`), T-106의 임시 값이 코드에서 사라진다. `icon`이 없는 링크(solved.ac는 simple-icons에 없음)도 깨지지 않고 텍스트로 표시된다. 이메일·전화번호는 없다. 홈에는 외부 링크 버튼을 두지 않는다.
+  - 위치: components/layout/site-footer.tsx, app/layout.tsx(`getProfile()`로 읽어 푸터에 전달, 기존 파일 확인 필요), config/site.ts
   - 메모: 푸터 메뉴 링크는 2026-11-09에 제거했으므로 푸터에는 외부 링크만 있다.
 
 #### 에픽 2.3 홈 완성 (PRD: F005)
-- [ ] **T-208** 네온 히어로 완성 · P0 · S · 의존: T-201
-  - 완료 조건: 홈 히어로의 이름·한 줄 소개·지금 공부 중인 것 요약이 `profile.json`에서 나오고, 네온 글로우 강조와 "소개 보기"(`/about`)·"전체 글 보기"(`/blog`) 버튼이 보인다.
+- [ ] **T-208** 홈 히어로 내용 재검토 · P2 · S · 의존: T-201
+  - 메모 (2026-11-13): 프로필(이름·소개·공부 중)은 히어로 아래 프로필 섹션(T-203)이 담당하므로 히어로는 사이트 이름 'HanS Dev Log'와 설명, "전체 글 보기" 버튼만 가진다(소개 버튼은 제거됨). 이미 이 상태라면 추가 작업이 없어 확인만 하고 완료 처리한다. 네온 글로우 강조는 T-127에서 시안 1색 강조로 바뀌어 대상이 아니다.
+  - 완료 조건: 홈 히어로가 사이트 이름·설명(`siteConfig` 또는 정할 값)과 "전체 글 보기"(`/blog`) 버튼만 보여 주고(프로필과 내용이 겹치지 않음), 히어로 문구를 바꿀 필요가 없다고 사용자가 확인하면 완료. 바꾸기로 하면 문구·데이터 출처(`siteConfig` 유지 또는 `profile.json`)를 정한다.
   - 위치: components/sections/hero.tsx, app/page.tsx
 
 #### 에픽 2.4 플레이 게임 기록 (PRD: F013, F014, F017, F011)
@@ -293,10 +300,11 @@
   - 완료 조건: ① 게임이 세로 표지 카드 대신 한 줄(바) 형태로 보이고, 데스크톱 2열·모바일 1열로 배치된다. ② 한 줄에 왼쪽 작은 이니셜 칸(표지가 있으면 작은 표지), 제목·상태 배지, 플레이 시간·날짜·플랫폼, 오른쪽 ▶ PV 표시(PV가 있을 때만)가 보이고, 값이 없는 항목은 빈 자리 없이 숨겨진다. ③ 게임 목록 위에 "PV 표시가 있는 게임을 누르면 공식 PV(YouTube)가 팝업으로 재생됩니다. 누르기 전에는 YouTube에 연결하지 않습니다." 문구가 보인다. ④ PV가 있는 줄을 누르면 T-218의 팝업이 그대로 열리고, 페이지를 연 직후에는 유튜브(썸네일 포함)로 요청이 가지 않는다 (유튜브 썸네일 미사용, 사용자 결정). (완료 2026-11-12)
   - 위치: components/shared/game-card.tsx, components/sections/game-list.tsx
 
-#### 에픽 2.5 소개·게임 페이지 애니메이션 (PRD: F016)
-- [ ] **T-215** 소개 페이지 스크롤 등장과 프로젝트 카드 호버 · P1 · S · 의존: T-207, T-124, T-125
-  - 완료 조건: `/about`에서 기술 스택 배지 묶음·프로젝트 카드·타임라인 항목이 화면에 들어올 때 차례로 한 번만 나타나고, 프로젝트 카드에 T-125의 떠오름·기울기·포인트 색 테두리가 적용된다. 프로젝트 외부 링크가 새 탭으로 그대로 열린다. 동작 줄이기에서는 이동·기울기가 없다. `/about` 페이지에도 레이아웃의 T-122 `PageTransition`이 자동 적용된다.
-  - 위치: components/sections/skill-stack.tsx, project-list.tsx, career-timeline.tsx
+#### 에픽 2.5 프로젝트·게임 페이지 애니메이션 (PRD: F016)
+- [ ] **T-215** 프로젝트 카드 호버 (홈 소개 섹션 스크롤 등장은 적용 완료) · P2 · S · 의존: T-205, T-125
+  - 메모 (2026-11-13): 홈의 프로필·기술 스택·경력·학력·자격증 섹션은 T-204 구현 때 기존 `Reveal`로 스크롤 등장(한 번만)이 이미 적용되어 이 작업의 앞부분은 충족됨(`/test`로 동작 줄이기 확인만 남음). 남은 것은 프로젝트 카드의 호버뿐이라 T-205가 보류인 동안 함께 보류하며, T-205를 범위 밖으로 확정하면 이 작업은 닫는다.
+  - 완료 조건: (T-205 보류 해제 시) 프로젝트 카드에 T-125의 떠오름·기울기·포인트 색 테두리가 적용되고, 프로젝트 외부 링크가 새 탭으로 그대로 열린다. 동작 줄이기에서는 이동·기울기가 없다. 그 전에는 홈 소개 섹션이 `prefers-reduced-motion: reduce` 에뮬레이션에서도 이동 없이 나타남을 `/test`로 확인한다.
+  - 위치: components/sections/project-list.tsx (홈 소개 섹션: components/sections/skill-stack.tsx, career-timeline.tsx, certificate-list.tsx는 적용 완료)
   - 사용법(T-125): `HoverCard`는 링크(`.group`) 안에 두고 테두리는 `className`에 `accent-hover-in-group`을 준다. 주의: `accent-hover-in-group`은 바깥 조상 `.group` 어느 것이든 호버되면 켜지므로, 다른 `.group` 안에 넣으면 named group(`group/card`)으로 바꾼다.
 - [ ] **T-216** 게임 페이지 스크롤 등장과 게임 줄 호버(PV 버튼) · P1 · S · 의존: T-212, T-213, T-125
   - 완료 조건: `/games`와 `/games/<연도>`의 상태별 묶음·게임 줄(T-220 바 형태)이 화면에 들어올 때 차례로 한 번만 나타나고, 게임 줄(PV 버튼, T-218)에 T-125의 떠오름·기울기·포인트 색 테두리가, 연도 탭에 T-120의 호버 전환이 적용된다. 줄 버튼 클릭으로 PV 팝업이 그대로 열린다. 보기 목록('전체 · 2026 · …')으로 전체·다른 연도로 이동할 때 T-122 크로스페이드가 동작한다. 동작 줄이기에서는 이동·기울기가 없다.
@@ -338,7 +346,7 @@
 
 #### 에픽 3.4 마무리 (제안)
 - [ ] **T-309** 태그 페이지 sitemap 추가와 페이지별 메타데이터·OG 정보 (제안) · P2 · S · 의존: T-308
-  - 완료 조건: `out/sitemap.xml`에 태그 페이지가 들어 있고, 소개·블로그·글 상세 페이지에 각각 다른 title·description이 있다.
+  - 완료 조건: `out/sitemap.xml`에 태그 페이지가 들어 있고, 홈·블로그·글 상세 페이지에 각각 다른 title·description이 있다.
   - 위치: app/sitemap.ts, 각 app/*/page.tsx
 - [ ] **T-310** basePath 대응 이미지 경로 처리 (제안) · P2 · S · 의존: 단계 1 완료
   - 완료 조건: `PAGES_BASE_PATH`를 임시로 지정해 빌드했을 때 썸네일·본문 이미지·프로필 사진·게임 표지(`game-card.tsx`의 `next/image` src)가 깨지지 않는다. (현재 basePath가 비어 있으므로 나중으로 미뤄도 됨)
@@ -371,12 +379,10 @@ graph LR
   T201[T-201 JSON 로더] --> T203[T-203 프로필]
   T201 --> T204[T-204 기술 배지]
   T202[T-202 아이콘 스파이크] --> T204
-  T204 --> T205[T-205 프로젝트]
-  T201 --> T206[T-206 타임라인]
-  T203 --> T207[T-207 링크·조립·푸터]
-  T205 --> T207
-  T206 --> T207
-  T201 --> T208[T-208 히어로]
+  T204 --> T205[T-205 프로젝트 카드 보류]
+  T201 --> T206[T-206 타임라인·자격증]
+  T203 --> T207[T-207 푸터 외부 링크]
+  T201 --> T208[T-208 히어로 재검토]
   T101 --> T209[T-209 게임 로더]
   T104 --> T210[T-210 게임 카드]
   T209 --> T210
@@ -426,7 +432,7 @@ graph LR
   T110 --> T125
   T119 --> T126[T-126 404 등장]
   T107 --> T126
-  T207 --> T215[T-215 소개 애니메이션]
+  T205 --> T215[T-215 프로젝트 카드 호버]
   T124 --> T215
   T125 --> T215
   T212 --> T216[T-216 게임 애니메이션]
@@ -434,10 +440,10 @@ graph LR
   T125 --> T216
 ```
 
-- 완료 (2026-11-12 기준): 단계 1의 T-101~T-127 전부(T-120~T-126 포함, T-125가 마지막), 단계 2의 T-201·T-202·T-209~T-214·T-218·T-219·T-220. 완료 38개 / 전체 58개 (단계 1 27/27, 단계 2 11/20, 단계 3 0/11).
-- 단계 1 완료 (T-101~T-127 모두 끝). 남은 것은 단계 2의 9개(T-203~T-208·T-215~T-217)와 단계 3의 11개.
-- **다음 작업: T-203** (프로필 섹션, P0·S). T-201 완료로 열린 T-203·T-204·T-206·T-208 중 P0·번호순 첫 번째.
-- 지금 착수 가능 — 단계 2: T-203·T-204·T-206·T-208(P0, T-201 완료로 열림), T-216(P1, 의존 T-212·T-213·T-125 완료). T-205는 T-204 이후, T-207은 T-203·T-205·T-206 이후, T-215는 T-207 이후. T-217은 **보류** (사용자가 허락된 이미지를 준비하면 진행).
+- 완료 (2026-11-13 기준): 단계 1의 T-101~T-127 전부, 단계 2의 T-201·T-202·T-203·T-204·T-206·T-209~T-214·T-218·T-219·T-220. 완료 41개 / 전체 58개 (단계 1 27/27, 단계 2 14/20, 단계 3 0/11).
+- 단계 1 완료. 남은 것은 단계 2의 6개(T-205·T-207·T-208·T-215·T-216·T-217)와 단계 3의 11개.
+- **다음 작업: T-207** (푸터 외부 링크를 `profile.json` `links`로 옮기기, P0·S). 의존 T-203 완료로 열린 P0 중 보류가 아닌 번호순 첫 번째 (T-205는 보류, T-208은 P2 확인 작업).
+- 지금 착수 가능 — 단계 2: T-207(P0), T-208(P2, 확인만), T-216(P1, 의존 T-212·T-213·T-125 완료). T-205(프로젝트 카드)는 **보류**(데이터 없음, 사용자 확인 필요)이고 T-215는 T-205와 함께 보류. T-217도 **보류** (사용자가 허락된 이미지를 준비하면 진행).
 - 지금 착수 가능 — 단계 3: T-301·T-302·T-306(P0), T-310(P2, 제안). T-307·T-308은 T-306 이후, T-304는 T-303 이후. T-303(Supabase 준비)은 의존이 없어 언제든 가능(운영자 작업 포함).
 
 ## 5. 위험 요소
@@ -457,6 +463,8 @@ graph LR
 | `PAGES_BASE_PATH`를 나중에 쓰면 `public/` 이미지 경로 깨짐 | 이미지 누락 | T-310에서 대응 (basePath를 쓰기 전까지는 영향 없음, 게임 표지 포함) |
 | T-102로 `mainNav`가 4개가 되어 sitemap·헤더에 아직 없는 `/blog`(T-111 전)·`/games`(T-213 전)가 들어감 | 배포하면 검색엔진·방문자가 404를 만남 | 해당 페이지가 생기기 전에는 배포하지 않거나, sitemap에서 임시로 제외 (T-115에서 결정, T-214에서 되돌림) |
 | 게임 표지는 저작권이 있는 이미지 | 저작권 문제 제기 가능성, 공개 저장소라 푸시 후 지워도 git 기록에 남음 | Steam 상점 이미지 사용은 보류(2026-11-09). 허락된 이미지(직접 찍은 스크린샷, 이용 조건을 확인한 공식 프레스 킷)만 쓰고, 연도 페이지 아래에 "표지 이미지 저작권은 각 게임사에 있습니다"와 게임별 `coverCredit` 출처 목록 표시 (T-212, T-217). 이미지가 없으면 이니셜 자리표시 유지. 커밋 전에 이미지 출처를 확인 |
+| Windows 로컬 빌드의 프리페치 파일 이름 문제: Next 16 export가 세그먼트 프리페치 파일 이름을 역슬래시로 잘못 만듦 (예: `about/__next.about/__PAGE__.txt`) — `app/loading.tsx`가 있을 때 이동 중 회색 스켈레톤이 끼어 보였음 | 로컬(Windows)에서 `out/`을 확인할 때 이동이 어색하게 보일 수 있음. 배포는 Linux CI(GitHub Actions)라 영향 없음 | 2026-11-13에 `app/loading.tsx`를 제거해 이동을 크로스페이드 한 번으로 정리. 새 로딩 화면을 만들지 않고, Windows 로컬 `out/`에서 이동 문제가 보이면 Linux CI 빌드로 판단 |
+| 소개 페이지를 없앴는데 옛 `/about` 링크가 남음 | 방문자가 404를 만남 | 헤더·sitemap은 `mainNav`에서 자동으로 빠짐. `/test` 기본 테스트가 홈 소개 섹션과 `/about` 404를 확인함. 코드·문서에서 `/about` 링크를 검색해 남은 곳을 정리 |
 | 게임 JSON 수기 입력 실수(상태 오타, 평점 4.5 등) | 화면 깨짐·잘못된 표시 | T-209의 zod 검증으로 빌드 실패시키고 메시지에 파일 이름 표시 |
 | shiki가 HLSL 등 일부 언어를 지원하지 않음 | 해당 블록 하이라이트 없음 | T-301에서 언어 목록 확인, 미지원 언어는 하이라이트 없이 패널·언어 이름만 표시 |
 | 음원을 넣고도 다시 빌드하지 않음, 또는 `music.json`의 `file` 이름이 실제 파일과 다름 | 음악 버튼·출처가 계속 숨겨짐 | 숨김이 정상 동작임을 T-116에 명시, T-311 가이드에 "음원 추가 → 커밋·푸시(재빌드)" 절차와 파일 이름 일치 확인 추가 |
@@ -472,7 +480,9 @@ graph LR
 
 남은 미결 사항 (2026-11-12 정리, 13건 중 10건이 결정됨으로 이동하고 PRD 가정에서 2건 추가):
 
-- 실제 이름·소개·외부 링크 값 — T-201은 "(예시)" 자리표시 값으로 시작하기로 결정됨(아래 결정됨 참고). 실제 값은 운영자가 나중에 `content/*.json`만 고치면 됨. `config/site.ts`의 임시 값을 `profile.json`으로 옮기는 작업은 T-207(푸터 링크)·T-208(히어로) 그대로이며, 값이 자리표시여도 진행 가능
+- (2026-11-13 추가) 프로젝트 카드(T-205)·프로젝트 카드 호버(T-215) — `projects.json`이 빈 배열이라 프로젝트 섹션이 화면에 없음. 결정 전까지 가정: **보류**(프로젝트가 생기면 T-205부터 진행). 범위 밖으로 확정해 두 작업을 닫을지 **사용자 확인 필요**
+- (2026-11-13 추가) 홈 히어로(T-208) 문구를 지금 그대로 둘지 — 히어로는 'HanS Dev Log'와 설명, "전체 글 보기"만 있고 프로필은 아래 섹션이 담당. 결정 전까지 가정: 그대로 유지(확인만 하고 완료). 급하지 않음
+- 실제 이름·소개·외부 링크 값 — (2026-11-13 갱신) 이름 김한승(실명 공개는 사용자 결정), 경력·교육·자격증·기술·공부 중인 것은 실제 값으로 교체됨. 남은 것은 푸터가 아직 `config/site.ts`의 임시 외부 링크를 쓰는 점으로, `profile.json`의 `links`(GitHub·solved.ac)로 옮기는 T-207이 처리
 - Supabase 무료 플랜 한도 — 결정 전까지 가정: 영상은 H.264 MP4 1080p 이하로 압축해 올림. **T-303에서 확인**, T-304 전에 정함
 - 코드 블록 언어 표시 이름 변환표 범위 — 결정 전까지 가정: C#, C++, HLSL, GLSL, TypeScript, JavaScript, JSON, Shell 정도. **T-301 착수 시 확정**
 - (PRD 가정에서 추가) 바 형태 게임 줄에 평점·한 줄 소감을 다시 넣을지 — 결정 전까지 가정: 넣지 않음(T-220 구현 그대로, 데이터 필드는 유지). 급하지 않음, **T-216 착수 전에 사용자 확인하면 좋음**
@@ -480,11 +490,16 @@ graph LR
 
 ### 결정됨
 
+- 소개를 홈에 통합 (2026-11-13, 사용자 결정, T-203·T-204 계획) — 별도 소개 페이지(`/about`) 삭제(404), 헤더 메뉴·sitemap은 홈·블로그·게임 3개, 홈 순서는 히어로('HanS Dev Log', "전체 글 보기" 버튼만) → 프로필 → 기술 스택 → 경력·학력 → 자격증 → 최근 글. 홈에는 외부 링크 버튼 없음(푸터 GitHub 유지, `profile.json` `links`는 데이터만). 이름 김한승은 사용자가 실명 공개 결정, 프로필 사진은 세로 3:4 각진 네모. 반영: T-203(완료)·T-204(완료)·T-206(완료), T-205 보류, T-207 축소, T-208·T-215 재정리, PRD F001~F005·메뉴·여정
+- 기술 스택 분류와 배지 (2026-11-13, T-204 완료) — skills category는 language·engine·os·ide·etc 5개(라벨 언어/게임 엔진/운영체제/IDE/기타, 기존 engine/language/tool 대체), 배지는 테마색(어두운 배지) + 브랜드 색 아이콘(T-202의 "단색 `currentColor`" 결정 변경). 상대 휘도 0.05 미만은 다크 모드에서, 0.4 초과는 라이트 모드에서 글자색. 아이콘 없는 기술(C#·Windows·VSCode·Visual Studio)은 첫 글자 칸. 쓰는 아이콘 license는 모두 없어 출처 표기 불필요(Godot 아이콘은 쓰지 않음). 반영: T-204
+- 자격증 분리 (2026-11-13, T-206 완료) — `timeline.json`의 type에 `certificate` 추가(work·education·certificate), 홈에서 certificate는 경력·학력 타임라인이 아니라 별도 '자격증' 섹션(`certificate-list.tsx`). 반영: T-206
+- 페이지 전환 로딩 화면 제거 (2026-11-13) — `app/loading.tsx` 삭제. Windows 로컬 빌드의 프리페치 파일 이름 문제로 이동 때 회색 스켈레톤이 보였고(Linux CI는 정상), 제거 후 크로스페이드 한 번만 보임. 반영: 2장 페이지 전환, T-122 메모, 5장 위험 요소
+- `/test` 기본 테스트 (2026-11-13) — `/about` 항목을 홈 소개 섹션 확인과 `/about` 404 확인으로 교체 (참고, 작업 아님)
 - 소개 데이터 예시 값과 검증 (2026-11-12, T-201 완료) — 예시 데이터는 "(예시)" 자리표시 값으로 시작. 프로젝트 `thumbnail`·`link`는 선택(없으면 자리표시 / 링크 버튼 숨김). `icon`은 simple-icons slug, 비우면 이니셜, 없는 이름이면 빌드 실패. `photo`는 `/images/profile/`, `thumbnail`은 `/images/projects/` 아래이며 파일이 없으면 빌드 실패. 링크는 http/https만. 중복(skills name, projects slug, 한 프로젝트 stack 안)·미등록 stack·모르는 필드도 빌드 실패. Git 아이콘은 CC-BY-3.0이라 예시에서 GitHub로 대체. 반영: T-201(완료), T-204, T-205 (PRD 데이터 모델 갱신됨)
 - 미결 사항 정리 (2026-11-12) — 아래 10건은 완료 작업에서 확정됨:
   - frontmatter 처리: YAML + `gray-matter` + `remark-frontmatter` (T-108 완료, `@next/mdx` 확정)
   - MDX 라이브러리 표기 차이: `@next/mdx` 확정(T-108). **PRD 기술 스택의 next-mdx-remote 문구는 PRD 쪽에서 고쳐야 함**
-  - 기술 브랜드 아이콘 라이브러리: `simple-icons` 본체(`react-icons` 제외), 없는 로고(C# 등)는 이니셜 (T-202 완료, T-204가 적용)
+  - 기술 브랜드 아이콘 라이브러리: `simple-icons` 본체(`react-icons` 제외), 없는 로고(C# 등)는 첫 글자 칸 (T-202 완료, T-204가 적용 — 색은 2026-11-13에 브랜드 색으로 변경)
   - 쓰지 않는 패키지(react-hook-form 등): 지우지 않고 남겨 둠 (T-101 완료)
   - 단계 1 배포 시 `/games`: 게임 메뉴·sitemap에서 임시로 숨겼다가 T-213·T-214에서 복원 (T-115 완료, 현재 `/games`는 T-219 전체 보기)
   - `wishlist`에 평점이 있을 때: 빌드 실패 규칙이 없어 허용 (PRD 검증 규칙에 없음, T-209 완료). 바 형태 줄에는 평점이 표시되지 않음(T-220)

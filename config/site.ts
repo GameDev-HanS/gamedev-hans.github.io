@@ -8,7 +8,6 @@ export const siteConfig = {
     { title: "홈", href: "/" },
     { title: "블로그", href: "/blog" },
     { title: "게임", href: "/games" },
-    { title: "소개", href: "/about" },
   ],
   // 푸터 외부 링크 (T-207에서 content/profile.json으로 옮길 예정). 이메일·전화번호는 넣지 않습니다.
   links: [{ title: "GitHub", href: "https://github.com/GameDev-HanS" }],

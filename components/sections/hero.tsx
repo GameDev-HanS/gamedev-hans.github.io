@@ -6,10 +6,9 @@ import { Stagger, StaggerItem } from "@/components/shared/motion/stagger"
 import { Badge } from "@/components/ui/badge"
 import { buttonVariants } from "@/components/ui/button"
 import { siteConfig } from "@/config/site"
-import { cn } from "@/lib/utils"
 
-// 홈 상단 영역. 배지 → 이름 → 소개 → 버튼이 차례로 나타납니다.
-// 소개 데이터(T-201~)가 생기면 이름·소개 문구를 그쪽에서 가져옵니다.
+// 홈 상단 영역. 배지 → 사이트 이름 → 설명 → 버튼이 차례로 나타납니다.
+// 운영자 소개(프로필·기술 스택·경력)는 바로 아래 섹션들이 맡습니다 (2026-11-13 /about을 홈으로 합침).
 export function Hero() {
   return (
     <section className="border-b py-20 sm:py-28">
@@ -38,12 +37,6 @@ export function Hero() {
             <Link href="/blog" className={buttonVariants({ size: "lg" })}>
               전체 글 보기
               <ArrowRightIcon data-icon="inline-end" />
-            </Link>
-            <Link
-              href="/about"
-              className={cn(buttonVariants({ variant: "outline", size: "lg" }), "accent-hover")}
-            >
-              소개
             </Link>
           </StaggerItem>
         </Stagger>

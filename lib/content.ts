@@ -58,7 +58,8 @@ const profileSchema = z
   })
   .strict()
 
-export const SKILL_CATEGORIES = ["engine", "language", "tool"] as const
+// language = 언어, engine = 게임 엔진, os = 운영체제, ide = IDE, etc = 기타 (화면 순서도 이 순서)
+export const SKILL_CATEGORIES = ["language", "engine", "os", "ide", "etc"] as const
 export type SkillCategory = (typeof SKILL_CATEGORIES)[number]
 
 const skillSchema = z
