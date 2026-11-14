@@ -1,13 +1,13 @@
-import type { Metadata } from "next"
-
 import { Container } from "@/components/layout/container"
 import { GameYearView } from "@/components/sections/game-year-view"
 import { getAllGames, getGameYears } from "@/lib/games"
+import { pageMetadata } from "@/lib/metadata"
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "게임",
   description: "지금까지 플레이한 게임 기록",
-}
+  path: "/games",
+})
 
 // 헤더 '게임'으로 들어오면 전체 보기(모든 연도 + 2026 이전 게임). 연도별 보기는 보기 목록에서 선택.
 // 연도 파일은 최소 1개 있어야 합니다 (없으면 /games/[year]의 generateStaticParams 때문에 빌드 실패).

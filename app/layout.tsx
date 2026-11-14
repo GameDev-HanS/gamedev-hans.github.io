@@ -12,6 +12,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { siteConfig } from "@/config/site";
 import { getProfile } from "@/lib/content";
+import { baseOpenGraph } from "@/lib/metadata";
 import { getBackgroundMusic } from "@/lib/music";
 import { cn } from "@/lib/utils";
 
@@ -33,10 +34,8 @@ export const metadata: Metadata = {
   },
   description: siteConfig.description,
   openGraph: {
-    type: "website",
-    locale: "ko_KR",
+    ...baseOpenGraph,
     url: siteConfig.url,
-    siteName: siteConfig.name,
     title: siteConfig.name,
     description: siteConfig.description,
   },

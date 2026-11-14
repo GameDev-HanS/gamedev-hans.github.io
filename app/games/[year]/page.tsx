@@ -4,6 +4,7 @@ import { notFound } from "next/navigation"
 import { Container } from "@/components/layout/container"
 import { GameYearView } from "@/components/sections/game-year-view"
 import { getGameYears, getGamesByYear } from "@/lib/games"
+import { pageMetadata } from "@/lib/metadata"
 
 // 빌드 시 기록이 있는 연도마다 정적 페이지를 만들고, 그 밖의 연도는 404(GAME OVER)
 export function generateStaticParams() {
@@ -20,7 +21,11 @@ function parseYear(value: string): number | null {
 export async function generateMetadata({ params }: PageProps<"/games/[year]">): Promise<Metadata> {
   const year = parseYear((await params).year)
   if (year === null || !getGamesByYear(year)) return {}
-  return { title: `${year} 플레이 게임`, description: `${year}년에 플레이한 게임 기록` }
+  return pageMetadata({
+    title: `${year} 플레이 게임`,
+    description: `${year}년에 플레이한 게임 기록`,
+    path: `/games/${year}`,
+  })
 }
 
 export default async function GameYearPage({ params }: PageProps<"/games/[year]">) {

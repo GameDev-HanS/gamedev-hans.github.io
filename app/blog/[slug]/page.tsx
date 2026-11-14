@@ -7,6 +7,7 @@ import { Container } from "@/components/layout/container"
 import { PostHeader } from "@/components/sections/post-header"
 import { PostNav } from "@/components/sections/post-nav"
 import { buttonVariants } from "@/components/ui/button"
+import { pageMetadata } from "@/lib/metadata"
 import { getAdjacentPosts, getAllPosts, getPostBySlug } from "@/lib/posts"
 import { cn } from "@/lib/utils"
 
@@ -17,12 +18,22 @@ export function generateStaticParams() {
 
 export const dynamicParams = false
 
-// 브라우저 탭 제목 = 글 제목, 검색 설명 = 요약
+// 브라우저 탭 제목 = 글 제목, 검색 설명 = 요약, 공유 미리보기는 글(article) 정보 + 대표 이미지(있을 때만)
 export async function generateMetadata({ params }: PageProps<"/blog/[slug]">): Promise<Metadata> {
   const { slug } = await params
   const post = getPostBySlug(slug)
   if (!post) return {}
-  return { title: post.title, description: post.summary }
+  return pageMetadata({
+    title: post.title,
+    description: post.summary,
+    path: `/blog/${post.slug}`,
+    openGraph: {
+      type: "article",
+      publishedTime: `${post.date}T00:00:00Z`,
+      tags: post.tags.map((tag) => tag.label),
+      ...(post.thumbnail && { images: [post.thumbnail] }),
+    },
+  })
 }
 
 export default async function PostPage({ params }: PageProps<"/blog/[slug]">) {

@@ -5,6 +5,7 @@ import { Container } from "@/components/layout/container"
 import { PostList } from "@/components/sections/post-list"
 import { PageHeader } from "@/components/shared/page-header"
 import { TagFilter } from "@/components/shared/tag-list"
+import { pageMetadata } from "@/lib/metadata"
 import { getAllPosts, getAllTags, getPostsByTag } from "@/lib/posts"
 
 // 빌드 시 글에 쓰인 태그마다 정적 페이지를 만들고, 그 밖의 주소는 404(GAME OVER)
@@ -25,7 +26,11 @@ const describe = (label: string, count: number) => `'${label}' 태그 글 ${coun
 export async function generateMetadata({ params }: PageProps<"/blog/tags/[tag]">): Promise<Metadata> {
   const tag = findTag((await params).tag)
   if (!tag) return {}
-  return { title: `#${tag.label}`, description: describe(tag.label, tag.count) }
+  return pageMetadata({
+    title: `#${tag.label}`,
+    description: describe(tag.label, tag.count),
+    path: `/blog/tags/${tag.slug}`,
+  })
 }
 
 // 태그별 글 목록: /blog와 같은 구성(제목 → 태그 선택 → 글 카드)이고, 태그 선택에서 이 태그가 강조됩니다.

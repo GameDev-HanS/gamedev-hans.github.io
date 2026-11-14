@@ -1,15 +1,15 @@
-import type { Metadata } from "next"
-
 import { Container } from "@/components/layout/container"
 import { PostList } from "@/components/sections/post-list"
 import { PageHeader } from "@/components/shared/page-header"
 import { TagFilter } from "@/components/shared/tag-list"
+import { pageMetadata } from "@/lib/metadata"
 import { getAllPosts, getAllTags } from "@/lib/posts"
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "블로그",
   description: "게임 개발 공부와 개발 과정, 일상 기록",
-}
+  path: "/blog",
+})
 
 export default function BlogPage() {
   const posts = getAllPosts()
