@@ -1,10 +1,10 @@
-import Link from "next/link"
 import { BoxIcon } from "lucide-react"
 
 import { Container } from "@/components/layout/container"
 import { MainNav } from "@/components/layout/main-nav"
 import { MobileNav } from "@/components/layout/mobile-nav"
 import { BgmToggle } from "@/components/shared/bgm-toggle"
+import { HomeLink } from "@/components/shared/home-link"
 import { LanguageToggle } from "@/components/shared/language-toggle"
 import { Stagger, StaggerItem } from "@/components/shared/motion/stagger"
 import { ThemeToggle } from "@/components/shared/theme-toggle"
@@ -24,10 +24,11 @@ export function SiteHeader({ englishSlugs }: { englishSlugs: readonly string[] }
             <MobileNav />
           </StaggerItem>
           <StaggerItem>
-            <Link href="/" className="mr-4 flex items-center gap-2 font-mono text-sm font-semibold">
+            {/* 영어 페이지에서는 /en으로 (v1.1.1) */}
+            <HomeLink className="mr-4 flex items-center gap-2 font-mono text-sm font-semibold">
               <BoxIcon className="size-5 text-primary" />
               {siteConfig.name}
-            </Link>
+            </HomeLink>
           </StaggerItem>
           <MainNav />
           <StaggerItem className="ml-auto flex items-center gap-1">
