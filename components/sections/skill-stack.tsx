@@ -1,4 +1,4 @@
-import { Reveal } from "@/components/shared/motion/reveal"
+import { Stagger, StaggerItem } from "@/components/shared/motion/stagger"
 import { Section } from "@/components/shared/section"
 import { TechBadge } from "@/components/shared/tech-badge"
 import { SKILL_CATEGORIES, type Skill, type SkillCategory } from "@/lib/content"
@@ -25,16 +25,19 @@ export function SkillStack({ skills }: { skills: readonly Skill[] }) {
     <Section title="기술 스택" className="border-b">
       <dl className="flex flex-col gap-5">
         {groups.map((group, index) => (
-          // dl 안에서는 dt·dd를 div 하나로만 묶을 수 있어 Reveal(div)이 그 묶음 역할을 합니다
-          <Reveal
+          // dl 안에서는 dt·dd를 div 한 겹으로만 묶을 수 있어, Stagger(div, 움직이지 않음)가 묶음이자
+          // 스크롤 감시를 맡고 dt·dd가 함께(gap 0) 움직입니다 (T-128)
+          <Stagger
             key={group.category}
+            inView
             delay={index * 0.05}
+            gap={0}
             className="flex flex-col gap-2 sm:flex-row sm:items-start sm:gap-4"
           >
-            <dt className="shrink-0 pt-1.5 text-xs font-medium text-muted-foreground sm:w-24">
+            <StaggerItem as="dt" className="shrink-0 pt-1.5 text-xs font-medium text-muted-foreground sm:w-24">
               {CATEGORY_LABEL[group.category]}
-            </dt>
-            <dd>
+            </StaggerItem>
+            <StaggerItem as="dd">
               <ul className="flex flex-wrap gap-1.5">
                 {group.items.map((skill) => (
                   <li key={skill.name}>
@@ -42,8 +45,8 @@ export function SkillStack({ skills }: { skills: readonly Skill[] }) {
                   </li>
                 ))}
               </ul>
-            </dd>
-          </Reveal>
+            </StaggerItem>
+          </Stagger>
         ))}
       </dl>
     </Section>

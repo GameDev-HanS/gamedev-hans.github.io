@@ -9,7 +9,7 @@ import { STAGGER } from "@/lib/motion"
 const COLUMNS = 2
 
 // 게임을 상태별로 묶어 한 줄(바) 목록으로 보여 줍니다. 맨 위에 묶음별 개수 요약과 PV 안내.
-// 요약·묶음 제목·게임 줄은 스크롤해서 화면에 들어올 때 한 번 나타나고(글 목록과 같은 방식),
+// 요약·묶음 제목·게임 줄은 스크롤해서 화면에 들어올 때마다 나타나고(글 목록과 같은 방식),
 // 같은 줄의 게임은 왼쪽부터 조금씩 늦게 나타납니다.
 export function GameList({ games }: { games: readonly Game[] }) {
   if (games.length === 0) {
