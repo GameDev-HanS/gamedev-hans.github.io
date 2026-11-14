@@ -11,9 +11,8 @@ import {
   NavigationMenuList,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu"
-import { siteConfig } from "@/config/site"
 import { fadeUp } from "@/lib/motion"
-import { isNavActive } from "@/lib/nav"
+import { getNavItems, isNavActive } from "@/lib/nav"
 import { cn } from "@/lib/utils"
 
 export function MainNav() {
@@ -22,7 +21,7 @@ export function MainNav() {
   return (
     <NavigationMenu className="hidden md:flex">
       <NavigationMenuList>
-        {siteConfig.mainNav.map((item) => {
+        {getNavItems(pathname).map((item) => {
           const active = isNavActive(pathname, item.href)
           return (
             // 메뉴 항목이 헤더 Stagger 안에서 왼쪽부터 차례로 나타남 (data-motion: JS가 꺼지면 바로 보임)

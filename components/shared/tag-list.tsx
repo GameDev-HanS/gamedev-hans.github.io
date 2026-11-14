@@ -1,6 +1,7 @@
 import Link from "next/link"
 
 import { Badge } from "@/components/ui/badge"
+import { UI, type Locale } from "@/lib/i18n"
 import type { Tag } from "@/lib/posts"
 import { cn } from "@/lib/utils"
 
@@ -8,9 +9,10 @@ const tagHref = (slug: string) => `/blog/tags/${slug}`
 
 // 글 하나의 태그 칩 (#표시 이름). linked면 칩을 누르면 태그별 글 목록으로 갑니다.
 // 글 카드는 카드 전체가 글 상세 링크라 링크 안 링크가 되지 않도록 linked 없이 표시만 합니다.
-export function TagList({ tags, linked = false }: { tags: Tag[]; linked?: boolean }) {
+// 영어판(locale "en")은 태그 페이지가 없어 linked 없이 쓰고, 목록 이름만 영어로 읽힙니다.
+export function TagList({ tags, linked = false, locale = "ko" }: { tags: Tag[]; linked?: boolean; locale?: Locale }) {
   return (
-    <ul className="flex flex-wrap gap-1.5 font-mono" aria-label="태그">
+    <ul className="flex flex-wrap gap-1.5 font-mono" aria-label={UI[locale].tags}>
       {tags.map((tag) => (
         <li key={tag.slug}>
           {linked ? (

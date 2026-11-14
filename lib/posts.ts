@@ -72,6 +72,8 @@ export type Post = Omit<z.infer<typeof frontmatterSchema>, "tags"> & {
   tags: Tag[]
   /** 본문에 <Video> 컴포넌트가 있는지 (빌드 시 계산, 목록 카드의 "영상" 표시) */
   hasVideo: boolean
+  /** 영어 번역본(content/posts/en/<slug>.mdx)이 있는지 (목록 카드의 "EN" 표시, 언어 전환) */
+  hasEnglish: boolean
 }
 
 // MDX 본문을 문법 트리로 읽는 파서. MDX 빌드(next.config.ts)와 같은 문법 규칙(remark-mdx + remark-gfm)을 씁니다.
@@ -140,6 +142,12 @@ function toTag(slug: string): Tag {
   return { slug, label: Object.hasOwn(labels, slug) ? labels[slug] : slug }
 }
 
+/** 글 폴더의 .mdx 파일 이름 목록 (en/ 같은 하위 폴더는 .mdx로 끝나지 않아 빠짐) */
+function listMdx(dir: string): string[] {
+  if (!fs.existsSync(dir)) return []
+  return fs.readdirSync(dir).filter((file) => file.endsWith(".mdx"))
+}
+
 function readPost(file: string): Post {
   const where = `content/posts/${file}`
   const slug = file.replace(/\.mdx$/, "")
@@ -158,21 +166,91 @@ function readPost(file: string): Post {
     throw new Error(`${where}: thumbnail 파일이 없습니다 — public${thumbnail}`)
   }
 
-  return { slug, ...parsed.data, tags: parsed.data.tags.map(toTag), hasVideo: hasVideoTag(content, where) }
+  return {
+    slug,
+    ...parsed.data,
+    tags: parsed.data.tags.map(toTag),
+    hasVideo: hasVideoTag(content, where),
+    hasEnglish: getEnglishEntries().has(slug),
+  }
 }
 
 /**
  * 모든 글을 최신순(날짜 내림차순, 같은 날이면 slug순)으로 돌려줍니다. 글 폴더가 없으면 빈 배열.
  * React cache로 한 번의 렌더(페이지·generateMetadata) 안에서는 파일을 한 번만 읽습니다.
  */
-export const getAllPosts = cache((): Post[] => {
-  if (!fs.existsSync(POSTS_DIR)) return []
-  return fs
-    .readdirSync(POSTS_DIR)
-    .filter((file) => file.endsWith(".mdx"))
+export const getAllPosts = cache((): Post[] =>
+  listMdx(POSTS_DIR)
     .map(readPost)
     .sort((a, b) => b.date.localeCompare(a.date) || a.slug.localeCompare(b.slug))
+)
+
+// ── 영어판 (v1.1.0) ────────────────────────────────────────────────
+// content/posts/en/<slug>.mdx: 한국어 글과 같은 파일 이름으로 번역본을 둡니다.
+// frontmatter에는 title·summary만 적고, 날짜·태그·대표 이미지는 한국어 원문 것을 씁니다.
+const EN_POSTS_DIR = path.join(POSTS_DIR, "en")
+
+const enFrontmatterSchema = z
+  .object({
+    title: z.string(required("title: Understanding the Game Loop")).trim().min(1, "제목이 비어 있습니다"),
+    summary: z.string(required("summary: One-line summary")).trim().min(1, "요약이 비어 있습니다"),
+  })
+  // date·tags 등을 적으면 원문과 어긋날 수 있으므로 막습니다 (원문 값을 씀)
+  .strict()
+
+type EnglishEntry = z.infer<typeof enFrontmatterSchema> & { hasVideo: boolean }
+
+/** 번역본 slug → 제목·요약·영상 여부. 원문(content/posts/<slug>.mdx)이 없는 번역본은 빌드 실패. */
+const getEnglishEntries = cache((): Map<string, EnglishEntry> => {
+  const koSlugs = new Set(listMdx(POSTS_DIR).map((file) => file.replace(/\.mdx$/, "")))
+  const entries = new Map<string, EnglishEntry>()
+  for (const file of listMdx(EN_POSTS_DIR)) {
+    const where = `content/posts/en/${file}`
+    const slug = file.replace(/\.mdx$/, "")
+    if (!koSlugs.has(slug)) {
+      throw new Error(`${where}: 같은 이름의 한국어 원문(content/posts/${file})이 없습니다 — 번역본은 원문과 같은 파일 이름으로 둡니다`)
+    }
+    const { data, content } = matter(fs.readFileSync(path.join(EN_POSTS_DIR, file), "utf8"))
+    const parsed = enFrontmatterSchema.safeParse(data)
+    if (!parsed.success) {
+      throw new Error(
+        `${where}: 영어 글 정보(frontmatter)가 올바르지 않습니다 (title·summary만 적습니다) — ${formatIssues(parsed.error)}`
+      )
+    }
+    entries.set(slug, { ...parsed.data, hasVideo: hasVideoTag(content, where) })
+  }
+  return entries
 })
+
+/** 원문 글을 영어판으로: 제목·요약·영상 여부는 번역본, 태그는 영문 slug를 그대로 표시 이름으로 */
+function toEnglish(post: Post, entry: EnglishEntry): Post {
+  return {
+    ...post,
+    title: entry.title,
+    summary: entry.summary,
+    hasVideo: entry.hasVideo,
+    tags: post.tags.map((tag) => ({ slug: tag.slug, label: tag.slug })),
+  }
+}
+
+/** 번역본이 있는 글을 영어판으로, 최신순(getAllPosts()와 같은 순서)으로 돌려줍니다. */
+export const getAllEnglishPosts = cache((): Post[] => {
+  const entries = getEnglishEntries()
+  return getAllPosts().flatMap((post) => {
+    const entry = entries.get(post.slug)
+    return entry ? [toEnglish(post, entry)] : []
+  })
+})
+
+/** slug의 영어판 글. 번역본이 없으면 null. */
+export function getEnglishPostBySlug(slug: string): Post | null {
+  return getAllEnglishPosts().find((post) => post.slug === slug) ?? null
+}
+
+/** 영어판 글 사이의 앞뒤 글 (번역본이 있는 글끼리만, getAdjacentPosts와 같은 방향) */
+export function getAdjacentEnglishPosts(slug: string): { prev: Post | null; next: Post | null } {
+  return adjacent(getAllEnglishPosts(), slug)
+}
 
 /**
  * 글에 쓰인 모든 태그와 글 수. 글 수가 많은 순, 같으면 slug순입니다.
@@ -205,7 +283,10 @@ export function getPostBySlug(slug: string): Post | null {
  * 순서는 getAllPosts()와 같습니다 (같은 날이면 slug순).
  */
 export function getAdjacentPosts(slug: string): { prev: Post | null; next: Post | null } {
-  const posts = getAllPosts()
+  return adjacent(getAllPosts(), slug)
+}
+
+function adjacent(posts: Post[], slug: string): { prev: Post | null; next: Post | null } {
   const index = posts.findIndex((post) => post.slug === slug)
   if (index === -1) return { prev: null, next: null }
   return {

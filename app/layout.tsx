@@ -14,6 +14,7 @@ import { siteUrl } from "@/lib/base-path";
 import { getProfile } from "@/lib/content";
 import { baseOpenGraph } from "@/lib/metadata";
 import { getBackgroundMusic } from "@/lib/music";
+import { getAllEnglishPosts } from "@/lib/posts";
 import { cn } from "@/lib/utils";
 
 const geistSans = Geist({
@@ -47,6 +48,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   const music = getBackgroundMusic();
   // 푸터 외부 링크 (content/profile.json, T-207)
   const { links } = getProfile();
+  // 영어 번역본이 있는 글 (헤더 KR/EN 전환이 짝 페이지를 고를 때 씀, v1.1.0)
+  const englishSlugs = getAllEnglishPosts().map((post) => post.slug);
 
   return (
     // suppressHydrationWarning: next-themes가 렌더 전에 <html> class를 바꾸기 때문에 필요
@@ -73,7 +76,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <MotionProvider>
             <BgmProvider src={music?.src ?? null}>
               <TooltipProvider>
-                <SiteHeader />
+                <SiteHeader englishSlugs={englishSlugs} />
                 {/* 페이지 전환 애니메이션 없음: 이동 때 이전 화면이 잠깐 남아 보여서 2026-11-14에 제거 */}
                 <main className="flex flex-1 flex-col">{children}</main>
                 <SiteFooter links={links} music={music} />

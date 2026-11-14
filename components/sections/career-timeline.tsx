@@ -3,24 +3,28 @@ import { AwardIcon, BriefcaseIcon, GraduationCapIcon, type LucideIcon } from "lu
 import { Reveal } from "@/components/shared/motion/reveal"
 import { Section } from "@/components/shared/section"
 import type { TimelineItem } from "@/lib/content"
+import { UI, type Locale } from "@/lib/i18n"
 
-const TYPE_INFO: Record<TimelineItem["type"], { label: string; icon: LucideIcon }> = {
-  work: { label: "경력", icon: BriefcaseIcon },
-  education: { label: "교육", icon: GraduationCapIcon },
-  certificate: { label: "자격증", icon: AwardIcon },
+// 종류별 아이콘 (라벨 글자는 lib/i18n.ts의 timelineType)
+const TYPE_ICON: Record<TimelineItem["type"], LucideIcon> = {
+  work: BriefcaseIcon,
+  education: GraduationCapIcon,
+  certificate: AwardIcon,
 }
 
 // 홈의 경력·학력 세로 타임라인 (T-206). timeline.json에 적은 순서 그대로 보여 줍니다.
 // 왼쪽 세로 선 위의 아이콘과 라벨로 경력·교육을 구분합니다. 자격증은 홈에서 CertificateList로 따로 보여 주지만,
 // 혹시 넘어와도 깨지지 않게 라벨·아이콘은 남겨 둡니다.
-export function CareerTimeline({ items }: { items: readonly TimelineItem[] }) {
+export function CareerTimeline({ items, locale = "ko" }: { items: readonly TimelineItem[]; locale?: Locale }) {
   if (items.length === 0) return null
+  const t = UI[locale]
 
   return (
-    <Section title="경력·학력" className="border-b">
+    <Section title={t.careerTitle} className="border-b">
       <ol className="relative flex flex-col gap-8 border-l border-border pl-8 sm:ml-2">
         {items.map((item) => {
-          const { label, icon: Icon } = TYPE_INFO[item.type]
+          const Icon = TYPE_ICON[item.type]
+          const label = t.timelineType[item.type]
           return (
             <Reveal as="li" key={`${item.period}-${item.title}`} className="relative">
               {/* 세로 선 위의 아이콘 칸 (장식용 — 라벨 글자가 함께 있음) */}

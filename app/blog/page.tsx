@@ -9,6 +9,7 @@ export const metadata = pageMetadata({
   title: "블로그",
   description: "게임 개발 공부와 개발 과정, 일상 기록",
   path: "/blog",
+  languages: { ko: "/blog", en: "/en/blog" },
 })
 
 export default function BlogPage() {

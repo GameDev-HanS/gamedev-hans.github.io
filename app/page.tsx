@@ -8,8 +8,8 @@ import { getProfile, getSkills, getTimeline } from "@/lib/content"
 import { pageMetadata } from "@/lib/metadata"
 import { getAllPosts } from "@/lib/posts"
 
-// 제목·설명은 사이트 기본값(siteConfig), canonical·og:url만 홈 주소로
-export const metadata = pageMetadata({ path: "/" })
+// 제목·설명은 사이트 기본값(siteConfig), canonical·og:url만 홈 주소로. 영어 홈(/en)을 hreflang으로 연결
+export const metadata = pageMetadata({ path: "/", languages: { ko: "/", en: "/en" } })
 
 // 홈: 히어로 → 프로필 → 기술 스택 → 경력·학력 → 자격증 → 최근 글 (2026-11-13 소개 페이지를 홈으로 합침)
 export default function Home() {

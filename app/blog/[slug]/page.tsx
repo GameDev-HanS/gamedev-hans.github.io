@@ -6,6 +6,7 @@ import { ArrowLeftIcon } from "lucide-react"
 import { Container } from "@/components/layout/container"
 import { PostHeader } from "@/components/sections/post-header"
 import { PostNav } from "@/components/sections/post-nav"
+import { PostProse } from "@/components/shared/post-prose"
 import { buttonVariants } from "@/components/ui/button"
 import { pageMetadata } from "@/lib/metadata"
 import { getAdjacentPosts, getAllPosts, getPostBySlug } from "@/lib/posts"
@@ -27,6 +28,8 @@ export async function generateMetadata({ params }: PageProps<"/blog/[slug]">): P
     title: post.title,
     description: post.summary,
     path: `/blog/${post.slug}`,
+    // 영어 번역본이 있으면 hreflang으로 연결
+    ...(post.hasEnglish && { languages: { ko: `/blog/${post.slug}`, en: `/en/blog/${post.slug}` } }),
     openGraph: {
       type: "article",
       publishedTime: `${post.date}T00:00:00Z`,
@@ -46,11 +49,10 @@ export default async function PostPage({ params }: PageProps<"/blog/[slug]">) {
   return (
     <Container className="max-w-3xl py-12">
       <article className="flex flex-col gap-10">
-        <PostHeader post={post} />
-        {/* 본문 서식: @tailwindcss/typography의 prose + 포인트 색(시안) 링크 */}
-        <div className="prose prose-neutral max-w-none dark:prose-invert prose-headings:font-heading prose-headings:tracking-tight prose-a:text-primary prose-a:underline-offset-4 prose-blockquote:border-primary prose-blockquote:not-italic prose-code:rounded prose-code:bg-muted prose-code:px-1 prose-code:py-0.5 prose-code:font-normal prose-code:before:content-none prose-code:after:content-none prose-img:mx-auto">
+        <PostHeader post={post} hasOtherLanguage={post.hasEnglish} />
+        <PostProse>
           <Body />
-        </div>
+        </PostProse>
       </article>
       <div className="mt-12 flex flex-col items-start gap-8 border-t pt-8">
         <PostNav {...getAdjacentPosts(slug)} />

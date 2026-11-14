@@ -6,10 +6,13 @@ import { Stagger, StaggerItem } from "@/components/shared/motion/stagger"
 import { Badge } from "@/components/ui/badge"
 import { buttonVariants } from "@/components/ui/button"
 import { siteConfig } from "@/config/site"
+import { UI, localePath, type Locale } from "@/lib/i18n"
 
 // 홈 상단 영역. 배지 → 사이트 이름 → 설명 → 버튼이 차례로 나타납니다.
 // 운영자 소개(프로필·기술 스택·경력)는 바로 아래 섹션들이 맡습니다 (2026-11-13 /about을 홈으로 합침).
-export function Hero() {
+// locale: 영어 홈(/en)이면 설명·버튼이 영어이고 버튼은 /en/blog로 갑니다 (v1.1.0)
+export function Hero({ locale = "ko" }: { locale?: Locale }) {
+  const t = UI[locale]
   return (
     <section className="border-b py-20 sm:py-28">
       <Container>
@@ -30,12 +33,12 @@ export function Hero() {
           </StaggerItem>
           <StaggerItem>
             <p className="max-w-2xl text-sm text-muted-foreground sm:text-base">
-              {siteConfig.description}
+              {t.siteDescription}
             </p>
           </StaggerItem>
           <StaggerItem className="flex flex-wrap gap-3">
-            <Link href="/blog" className={buttonVariants({ size: "lg" })}>
-              전체 글 보기
+            <Link href={localePath(locale, "/blog")} className={buttonVariants({ size: "lg" })}>
+              {t.allPosts}
               <ArrowRightIcon data-icon="inline-end" />
             </Link>
           </StaggerItem>

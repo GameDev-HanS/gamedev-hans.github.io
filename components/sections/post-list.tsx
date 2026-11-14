@@ -1,6 +1,7 @@
 import { Reveal } from "@/components/shared/motion/reveal"
 import { PostCard } from "@/components/shared/post-card"
 import { STAGGER } from "@/lib/motion"
+import { UI, type Locale } from "@/lib/i18n"
 import type { Post } from "@/lib/posts"
 
 // 블로그 글 목록 (최신순 그리드). 카드마다 스크롤해서 화면에 들어올 때마다 나타나고,
@@ -8,10 +9,10 @@ import type { Post } from "@/lib/posts"
 // 글이 없으면 안내 문구를 보여 줍니다. 태그별 글 목록(T-308)도 이 섹션을 그대로 씁니다.
 const COLUMNS = 3
 
-export function PostList({ posts }: { posts: Post[] }) {
+export function PostList({ posts, locale = "ko" }: { posts: Post[]; locale?: Locale }) {
   if (posts.length === 0) {
     return (
-      <p className="py-16 text-center text-sm text-muted-foreground">아직 글이 없습니다.</p>
+      <p className="py-16 text-center text-sm text-muted-foreground">{UI[locale].noPosts}</p>
     )
   }
 
@@ -19,7 +20,7 @@ export function PostList({ posts }: { posts: Post[] }) {
     <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {posts.map((post, index) => (
         <Reveal as="li" key={post.slug} delay={(index % COLUMNS) * STAGGER}>
-          <PostCard post={post} />
+          <PostCard post={post} locale={locale} />
         </Reveal>
       ))}
     </ul>

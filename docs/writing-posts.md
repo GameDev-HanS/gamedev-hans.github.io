@@ -13,6 +13,7 @@
 | 게임 기록 | `content/games/<연도>.json`, 연도를 모르는 옛날 게임은 `content/games/earlier.json` |
 | 게임 표지 | `public/images/games/<연도>/` (earlier는 `public/images/games/earlier/`) |
 | 배경 음악 | `public/audio/<파일>.mp3` + `content/music.json` |
+| 영어판 (선택) | `content/posts/en/<slug>.mdx`, `content/en/profile.json`, `content/en/timeline.json` ([6. 영어판 넣기](#6-영어판-넣기-선택)) |
 
 - 파일을 추가하고 커밋·푸시하면 GitHub Actions가 사이트를 다시 빌드해 배포합니다.
 - 형식이 틀리면 **빌드가 실패**하고 배포되지 않습니다. 오류 메시지 맨 앞에 파일 이름이 나옵니다 ([빌드가 실패했을 때](#빌드가-실패했을-때)).
@@ -269,7 +270,43 @@ ffmpeg -i 원본.mp4 -vf "scale=-2:'min(1080,ih)'" -c:v libx264 -preset slow -cr
 
 ---
 
-## 6. 기타
+## 6. 영어판 넣기 (선택)
+
+한국어 글과 홈 소개에 영어판을 둘 수 있습니다. 영어 페이지는 `/en` 아래에 있고, 헤더의 **EN / KR** 버튼으로 오갑니다.
+
+| 무엇 | 어디에 | 주소 |
+| ---- | ------ | ---- |
+| 영어 글 | `content/posts/en/<slug>.mdx` (한국어 글과 **같은 파일 이름**) | `/en/blog/<slug>` |
+| 영어 프로필 | `content/en/profile.json` | `/en` |
+| 영어 경력·학력·자격증 | `content/en/timeline.json` | `/en` |
+
+### 영어 글
+
+```mdx
+---
+title: Understanding the Game Loop
+summary: One-line summary in English.
+---
+
+## First heading
+
+Body text in English...
+```
+
+- frontmatter에는 **`title`과 `summary`만** 적습니다. 날짜·태그·대표 이미지는 한국어 원문 것을 그대로 씁니다 (다른 필드를 적으면 빌드 실패).
+- 본문은 한국어 글과 같은 순서로 옮깁니다. 코드 블록은 코드는 그대로 두고 **주석만** 번역합니다. `<Video title>`도 영어로 적습니다.
+- 같은 이름의 한국어 원문이 없으면 빌드 실패입니다.
+- 번역본이 있는 글은 `/blog` 카드에 **EN** 표시가 붙고, 글 상단에 "Read in English" 링크가 생깁니다. 영어판에는 태그별 글 목록이 없어 태그 칩은 영문 slug로 표시만 됩니다.
+
+### 영어 소개
+
+- `content/en/profile.json`: `name`, `tagline`, `interests`, `studying`만 적습니다. 사진·링크는 `content/profile.json` 것을 씁니다.
+- `content/en/timeline.json`: `content/timeline.json`과 **항목 수·순서·`type`이 같아야** 합니다 (다르면 빌드 실패). 한국어 쪽에 항목을 추가하면 영어 쪽에도 같은 자리에 추가합니다.
+- 기술 스택 이름은 원래 영어라서 따로 번역할 파일이 없습니다.
+
+---
+
+## 7. 기타
 
 - **`PAGES_BASE_PATH`**: 배포 워크플로(`.github/workflows/deploy.yml`)가 자동으로 넣으므로 보통은 신경 쓰지 않습니다. 지금 사이트(`<사용자>.github.io`)는 빈 값입니다. 로컬에서 직접 지정해 확인할 때는 **앞 슬래시 필수, 끝 슬래시 금지** 형식으로 씁니다. 예: `/repo` (`repo`, `/repo/`는 틀림)
 
@@ -293,3 +330,5 @@ ffmpeg -i 원본.mp4 -vf "scale=-2:'min(1080,ih)'" -c:v libx264 -preset slow -cr
 | `content/games/earlier.json: 연도 파일에도 있는 게임입니다 — …` | earlier.json에서 그 게임 지우기 |
 | `<Video>: src는 https:// 주소여야 합니다` / `title(영상 이름)을 적어 주세요` | `<Video>` 속성 확인 |
 | `content/music.json: 배경 음악 정보가 올바르지 않습니다 — file: …` | `file`에 파일 이름만 적기 |
+| `content/posts/en/a.mdx: 같은 이름의 한국어 원문(content/posts/a.mdx)이 없습니다` | 영어 글 파일 이름을 원문과 같게 |
+| `content/en/timeline.json: 항목 수가 timeline.json과 다릅니다` | 한국어·영어 timeline 항목을 같은 순서로 맞추기 |

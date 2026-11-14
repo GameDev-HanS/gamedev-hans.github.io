@@ -3,13 +3,14 @@ import { AwardIcon } from "lucide-react"
 import { Reveal } from "@/components/shared/motion/reveal"
 import { Section } from "@/components/shared/section"
 import type { TimelineItem } from "@/lib/content"
+import { UI, type Locale } from "@/lib/i18n"
 
 // 홈의 자격증 목록. timeline.json에서 type이 certificate인 항목만 받아 경력·학력과 따로 보여 줍니다.
-export function CertificateList({ items }: { items: readonly TimelineItem[] }) {
+export function CertificateList({ items, locale = "ko" }: { items: readonly TimelineItem[]; locale?: Locale }) {
   if (items.length === 0) return null
 
   return (
-    <Section title="자격증" className="border-b">
+    <Section title={UI[locale].certificates} className="border-b">
       <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((item, index) => (
           <Reveal as="li" key={`${item.period}-${item.title}`} delay={index * 0.05}>

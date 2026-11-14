@@ -1,0 +1,61 @@
+---
+title: Starting HanS Dev Log
+summary: The first post on a blog where I document my game development studies and everyday life.
+---
+
+## First Post
+
+On this blog, I write about what I learn and what I build while studying **game development**.
+
+Topics I plan to cover:
+
+- Engines and graphics
+- Gameplay programming
+- Devlogs
+
+| Category | What it covers |
+| -------- | -------------- |
+| Study | Notes on new concepts I've learned |
+| Development | Features I've built and how I built them |
+
+## Code Example
+
+Here is a simple C# script that rotates an object in Unity.
+
+```csharp
+using UnityEngine;
+
+public class Spinner : MonoBehaviour
+{
+    [SerializeField] private float speed = 90f; // rotation in degrees per second
+
+    private void Update()
+    {
+        transform.Rotate(Vector3.up, speed * Time.deltaTime);
+    }
+}
+```
+
+Here is an HLSL shader function that multiplies a texture's color by a brightness value.
+
+```hlsl
+float4 ApplyBrightness(Texture2D tex, SamplerState samp, float2 uv, float brightness)
+{
+    float4 color = tex.Sample(samp, uv);
+    return float4(color.rgb * brightness, color.a);
+}
+```
+
+Code blocks without a language specified are shown without syntax highlighting.
+
+```
+Build → Test → Deploy
+```
+
+## Video Example
+
+I keep a record of my gameplay as video.
+
+<Video src="https://kasyejrysxnrdgczvbjs.supabase.co/storage/v1/object/public/videos/15_win_streak.mp4" title="15-win streak gameplay video" />
+
+You can find my other work on [GitHub](https://github.com/GameDev-HanS).

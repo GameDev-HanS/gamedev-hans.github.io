@@ -1,0 +1,27 @@
+[
+  {
+    "period": "2025.11 – Present",
+    "title": "Combat Client Programmer",
+    "organization": "Vic Game Studio",
+    "type": "work",
+    "description": "Combat client development in Unreal Engine 5"
+  },
+  {
+    "period": "2019.03 – 2026.02",
+    "title": "School of Computer Science and Engineering",
+    "organization": "Soongsil University",
+    "type": "education"
+  },
+  {
+    "period": "2024.06 – 2025.08",
+    "title": "Game Programming Course (Cohort 149)",
+    "organization": "Jusin Game Academy",
+    "type": "education"
+  },
+  {
+    "period": "2024.06",
+    "title": "Engineer Information Processing",
+    "organization": "HRD Korea",
+    "type": "certificate"
+  }
+]

@@ -14,7 +14,8 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 import { siteConfig } from "@/config/site"
-import { isNavActive } from "@/lib/nav"
+import { isEnglishPath } from "@/lib/i18n"
+import { getNavItems, isNavActive } from "@/lib/nav"
 import { cn } from "@/lib/utils"
 
 export function MobileNav() {
@@ -29,14 +30,14 @@ export function MobileNav() {
         }
       >
         <MenuIcon />
-        <span className="sr-only">메뉴 열기</span>
+        <span className="sr-only">{isEnglishPath(pathname) ? "Open menu" : "메뉴 열기"}</span>
       </SheetTrigger>
       <SheetContent side="left">
         <SheetHeader>
           <SheetTitle>{siteConfig.name}</SheetTitle>
         </SheetHeader>
         <nav className="flex flex-col gap-1 px-4">
-          {siteConfig.mainNav.map((item) => {
+          {getNavItems(pathname).map((item) => {
             const active = isNavActive(pathname, item.href)
             return (
               <Link

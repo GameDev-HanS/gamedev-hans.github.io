@@ -3,6 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { withBasePath } from "@/lib/base-path"
 import type { Profile } from "@/lib/content"
+import { UI, type Locale } from "@/lib/i18n"
 
 // 이름 이니셜. 한 단어면 첫 글자 1자("HanS" → "H"), 띄어쓰기로 나뉘면 앞 두 단어의 첫 글자("Han Seo" → "HS").
 // Array.from으로 나눠 한글·이모지도 한 글자로 셉니다.
@@ -18,10 +19,11 @@ function getInitials(name: string) {
 // 홈 히어로 아래의 프로필 (2026-11-13 소개 페이지를 홈으로 합침). 사진(없으면 이니셜) 왼쪽,
 // 이름·소개·관심 분야·공부 중인 것 오른쪽. 모바일에서는 사진 아래로 글이 쌓입니다. 빈 목록은 줄째 숨깁니다.
 // 페이지 제목(h1)은 히어로에 있으므로 이름은 h2입니다.
-export function ProfileIntro({ profile }: { profile: Profile }) {
+export function ProfileIntro({ profile, locale = "ko" }: { profile: Profile; locale?: Locale }) {
+  const t = UI[locale]
   const lists = [
-    { label: "관심 분야", items: profile.interests },
-    { label: "지금 공부 중", items: profile.studying },
+    { label: t.interests, items: profile.interests },
+    { label: t.studying, items: profile.studying },
   ].filter((list) => list.items.length > 0)
 
   return (

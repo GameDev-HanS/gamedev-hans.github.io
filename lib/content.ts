@@ -8,6 +8,7 @@ import { cache } from "react"
 import * as simpleIcons from "simple-icons"
 import { z } from "zod"
 
+import type { Locale } from "./i18n"
 import { SLUG, SLUG_MESSAGE, formatIssues, required } from "./schema"
 
 // 소개 데이터 로더 (F001~F004). content/의 profile·skills·projects·timeline.json을 읽고 검증합니다.
@@ -148,8 +149,22 @@ function assertFile(file: string, owner: string, src: string) {
   }
 }
 
-/** 프로필 (이름·한 줄 소개·사진·관심 분야·공부 중인 것·외부 링크) */
-export const getProfile = cache((): Profile => {
+// 영어판(v1.1.0) content/en/profile.json: 글자 항목만 번역하고 사진·링크는 한국어 파일 것을 씁니다
+const enProfileSchema = profileSchema.pick({ name: true, tagline: true, interests: true, studying: true }).strict()
+
+/** 프로필 (이름·한 줄 소개·사진·관심 분야·공부 중인 것·외부 링크). en이면 글자 항목을 영어판으로 바꿉니다. */
+export const getProfile = cache((locale: Locale = "ko"): Profile => {
+  const base = getKoProfile()
+  if (locale === "ko") return base
+  const file = "en/profile.json"
+  const parsed = enProfileSchema.safeParse(readJson(file))
+  if (!parsed.success) {
+    throw new Error(`content/${file}: 영어 프로필이 올바르지 않습니다 — ${formatIssues(parsed.error)}`)
+  }
+  return { ...base, ...parsed.data }
+})
+
+const getKoProfile = cache((): Profile => {
   const file = "profile.json"
   const parsed = profileSchema.safeParse(readJson(file))
   if (!parsed.success) {
@@ -193,5 +208,24 @@ export const getProjects = cache((): readonly Project[] => {
   return projects
 })
 
-/** 경력·학력 (파일에 적은 순서 = 화면 순서, 읽기 전용) */
-export const getTimeline = cache((): readonly TimelineItem[] => readList("timeline.json", timelineSchema, "경력·학력"))
+/**
+ * 경력·학력 (파일에 적은 순서 = 화면 순서, 읽기 전용). en이면 content/en/timeline.json을 읽고,
+ * 한국어 파일과 항목 수·순서별 type이 같은지 확인합니다 (번역 누락·순서 어긋남을 빌드에서 잡음).
+ */
+export const getTimeline = cache((locale: Locale = "ko"): readonly TimelineItem[] => {
+  const ko = readList("timeline.json", timelineSchema, "경력·학력")
+  if (locale === "ko") return ko
+  const file = "en/timeline.json"
+  const en = readList(file, timelineSchema, "경력·학력")
+  if (en.length !== ko.length) {
+    throw new Error(`content/${file}: 항목 수가 timeline.json과 다릅니다 (한국어 ${ko.length}개, 영어 ${en.length}개)`)
+  }
+  en.forEach((item, index) => {
+    if (item.type !== ko[index].type) {
+      throw new Error(
+        `content/${file}: ${index + 1}번째 항목의 type이 timeline.json과 다릅니다 (한국어 ${ko[index].type}, 영어 ${item.type}) — 같은 순서로 적어 주세요`
+      )
+    }
+  })
+  return en
+})
