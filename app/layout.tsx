@@ -7,7 +7,6 @@ import { SiteHeader } from "@/components/layout/site-header";
 import { BgmProvider } from "@/components/providers/bgm-provider";
 import { MotionProvider } from "@/components/providers/motion-provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
-import { PageTransition } from "@/components/shared/page-transition";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { siteConfig } from "@/config/site";
@@ -73,9 +72,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <BgmProvider src={music?.src ?? null}>
               <TooltipProvider>
                 <SiteHeader />
-                <main className="flex flex-1 flex-col">
-                  <PageTransition>{children}</PageTransition>
-                </main>
+                {/* 페이지 전환 애니메이션 없음: 이동 때 이전 화면이 잠깐 남아 보여서 2026-11-14에 제거 */}
+                <main className="flex flex-1 flex-col">{children}</main>
                 <SiteFooter links={links} music={music} />
                 <Toaster />
               </TooltipProvider>

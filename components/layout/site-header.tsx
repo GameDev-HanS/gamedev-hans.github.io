@@ -15,11 +15,7 @@ const HEADER_GAP = 0.05
 
 export function SiteHeader() {
   return (
-    // viewTransitionName: 페이지 전환(T-122) 중에도 헤더는 그대로 두기 위한 이름 (globals.css)
-    <header
-      className="sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur supports-backdrop-filter:bg-background/60"
-      style={{ viewTransitionName: "site-header" }}
-    >
+    <header className="sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur supports-backdrop-filter:bg-background/60">
       <Container>
         <Stagger gap={HEADER_GAP} className="flex h-14 items-center gap-2">
           <StaggerItem className="md:hidden">
