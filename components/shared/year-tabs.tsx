@@ -1,16 +1,29 @@
 import Link from "next/link"
 
+import { UI, localePath, type Locale } from "@/lib/i18n"
 import { cn } from "@/lib/utils"
 
 // 보기 목록: '전체'(/games) + 기록이 있는 연도(최신순, /games/<연도>). 현재 보기는 포인트 색 밑줄.
-export function YearTabs({ years, current }: { years: number[]; current: number | "all" }) {
+// 영어판(v1.1.2)은 All과 /en/games 아래 주소로 연결합니다.
+export function YearTabs({
+  years,
+  current,
+  locale = "ko",
+}: {
+  years: number[]
+  current: number | "all"
+  locale?: Locale
+}) {
+  const t = UI[locale].games
   const items = [
-    { key: "all" as const, label: "전체", href: "/games" },
-    ...years.toSorted((a, b) => b - a).map((year) => ({ key: year, label: String(year), href: `/games/${year}` })),
+    { key: "all" as const, label: t.all, href: localePath(locale, "/games") },
+    ...years
+      .toSorted((a, b) => b - a)
+      .map((year) => ({ key: year, label: String(year), href: localePath(locale, `/games/${year}`) })),
   ]
 
   return (
-    <nav aria-label="보기 선택">
+    <nav aria-label={t.viewNav}>
       <ul className="flex flex-wrap gap-1 border-b">
         {items.map((item) => {
           const active = item.key === current

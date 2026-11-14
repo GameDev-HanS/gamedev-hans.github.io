@@ -2,6 +2,7 @@
   {
     "slug": "clair-obscur-expedition-33",
     "title": "클레르 옵스퀴르: 33원정대",
+    "titleEn": "Clair Obscur: Expedition 33",
     "platforms": ["PC (Steam)"],
     "playtime": 24.2,
     "startedAt": "2026-01-01",
@@ -11,6 +12,7 @@
   {
     "slug": "yakuza-0",
     "title": "용과 같이 제로",
+    "titleEn": "Yakuza 0",
     "platforms": ["PC (Steam)"],
     "status": "cleared",
     "playtime": 23,
@@ -21,6 +23,7 @@
   {
     "slug": "stellar-blade",
     "title": "스텔라 블레이드",
+    "titleEn": "Stellar Blade",
     "platforms": ["PC (Steam)"],
     "status": "cleared",
     "playtime": 21.1,
@@ -31,6 +34,7 @@
   {
     "slug": "yakuza-kiwami",
     "title": "용과 같이 극",
+    "titleEn": "Yakuza Kiwami",
     "platforms": ["PC (Steam)"],
     "status": "cleared",
     "playtime": 15.5,
@@ -41,6 +45,7 @@
   {
     "slug": "pragmata",
     "title": "프래그마타",
+    "titleEn": "PRAGMATA",
     "platforms": ["PC (Steam)"],
     "status": "cleared",
     "playtime": 11.5,
@@ -51,6 +56,7 @@
   {
     "slug": "metaphor-refantazio",
     "title": "메타포: 리판타지오",
+    "titleEn": "Metaphor: ReFantazio",
     "platforms": ["PC (Steam)"],
     "playtime": 60.9,
     "startedAt": "2026-06-30",
@@ -69,6 +75,7 @@
   {
     "slug": "call-of-duty-modern-warfare-4",
     "title": "콜 오브 듀티: 모던 워페어 4 (캠페인)",
+    "titleEn": "Call of Duty: Modern Warfare 4 (Campaign)",
     "platforms": ["PC (Steam)"],
     "status": "cleared",
     "playtime": 8,
@@ -79,6 +86,7 @@
   {
     "slug": "phantom-blade-zero",
     "title": "팬텀 블레이드 제로",
+    "titleEn": "Phantom Blade Zero",
     "platforms": ["PC (Steam)"],
     "status": "playing",
     "playtime": 15.1,
@@ -95,6 +103,7 @@
   {
     "slug": "league-of-legends",
     "title": "리그 오브 레전드",
+    "titleEn": "League of Legends",
     "platforms": ["PC"],
     "status": "playing",
     "trailer": "e3D7Fj1PsWk"
@@ -102,18 +111,21 @@
   {
     "slug": "teamfight-tactics",
     "title": "전략적 팀 전투 (TFT)",
+    "titleEn": "Teamfight Tactics (TFT)",
     "platforms": ["PC", "모바일"],
     "trailer": "liNLLx874g4"
   },
   {
     "slug": "starcraft",
     "title": "스타크래프트",
+    "titleEn": "StarCraft",
     "platforms": ["PC"],
     "trailer": "1BzNM2pyzW8"
   },
   {
     "slug": "chaos-zero-nightmare",
     "title": "카오스 제로 나이트메어",
+    "titleEn": "Chaos Zero Nightmare",
     "platforms": ["PC", "모바일"],
     "status": "playing",
     "trailer": "0nydDSWNwMA"
@@ -121,24 +133,28 @@
   {
     "slug": "goddess-of-victory-nikke",
     "title": "승리의 여신: 니케",
+    "titleEn": "Goddess of Victory: NIKKE",
     "platforms": ["PC", "모바일"],
     "trailer": "JjcR8wuWEC4"
   },
   {
     "slug": "zenless-zone-zero",
     "title": "젠레스 존 제로",
+    "titleEn": "Zenless Zone Zero",
     "platforms": ["모바일"],
     "trailer": "C5WS9Ohb-fI"
   },
   {
     "slug": "arknights-endfield",
     "title": "명일방주: 엔드필드",
+    "titleEn": "Arknights: Endfield",
     "platforms": ["모바일"],
     "trailer": "5Xm45NwWOlo"
   },
   {
     "slug": "neverness-to-everness",
     "title": "이환",
+    "titleEn": "Neverness to Everness",
     "platforms": ["모바일"],
     "trailer": "Rwb4SjpjR2A"
   }

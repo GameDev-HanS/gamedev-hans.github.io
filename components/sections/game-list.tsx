@@ -3,6 +3,7 @@ import { PlayIcon } from "lucide-react"
 import { GameCard } from "@/components/shared/game-card"
 import { Reveal } from "@/components/shared/motion/reveal"
 import { countGroups, groupGames, type Game } from "@/lib/games"
+import { UI, type Locale } from "@/lib/i18n"
 import { STAGGER } from "@/lib/motion"
 
 // 데스크톱 한 줄에 놓이는 게임 줄 수 (아래 lg:grid-cols-2와 맞춤)
@@ -11,13 +12,15 @@ const COLUMNS = 2
 // 게임을 상태별로 묶어 한 줄(바) 목록으로 보여 줍니다. 맨 위에 묶음별 개수 요약과 PV 안내.
 // 요약·묶음 제목·게임 줄은 스크롤해서 화면에 들어올 때마다 나타나고(글 목록과 같은 방식),
 // 같은 줄의 게임은 왼쪽부터 조금씩 늦게 나타납니다.
-export function GameList({ games }: { games: readonly Game[] }) {
+// games는 화면 언어에 맞춘 목록(localizeGames)을 받습니다.
+export function GameList({ games, locale = "ko" }: { games: readonly Game[]; locale?: Locale }) {
+  const t = UI[locale].games
   if (games.length === 0) {
-    return <p className="py-12 text-center text-sm text-muted-foreground">아직 기록한 게임이 없습니다</p>
+    return <p className="py-12 text-center text-sm text-muted-foreground">{t.empty}</p>
   }
 
-  const groups = groupGames(games)
-  const summary = countGroups(games)
+  const groups = groupGames(games, locale)
+  const summary = countGroups(games, locale)
   const hasTrailer = games.some((game) => game.trailer)
 
   return (
@@ -29,7 +32,7 @@ export function GameList({ games }: { games: readonly Game[] }) {
         {hasTrailer && (
           <p className="flex items-start gap-1.5 text-xs text-muted-foreground">
             <PlayIcon aria-hidden className="mt-0.5 size-3 shrink-0 fill-current text-primary" />
-            PV 표시가 있는 게임을 누르면 공식 PV(YouTube)가 팝업으로 재생됩니다. 누르기 전에는 YouTube에 연결하지 않습니다.
+            {t.trailerNotice}
           </p>
         )}
       </Reveal>
@@ -45,7 +48,7 @@ export function GameList({ games }: { games: readonly Game[] }) {
           <ul className="grid grid-cols-1 gap-2 lg:grid-cols-2">
             {group.games.map((game, index) => (
               <Reveal as="li" key={game.slug} delay={(index % COLUMNS) * STAGGER}>
-                <GameCard game={game} />
+                <GameCard game={game} locale={locale} />
               </Reveal>
             ))}
           </ul>

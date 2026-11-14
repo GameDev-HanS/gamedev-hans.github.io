@@ -42,18 +42,21 @@ export default function sitemap(): MetadataRoute.Sitemap {
     url: `${siteUrl}/blog/tags/${tag.slug}`,
     lastModified: new Date(`${getPostsByTag(tag.slug)[0].date}T00:00:00Z`),
   }))
-  // 연도별 플레이 게임 페이지 (/games는 전체 보기라 메뉴 경로로 이미 포함)
+  // 연도별 플레이 게임 페이지 (/games는 전체 보기라 메뉴 경로로 이미 포함). 영어판도 함께 넣고 서로 연결 (v1.1.2)
   // 수정일 = 그해 게임의 가장 늦은 시작일·끝낸 날, 날짜가 없으면 생략
-  const gameYears = getGameYears().map((year) => {
+  const gameYears = getGameYears().flatMap((year) => {
+    const href = `/games/${year}`
     const latest = (getGamesByYear(year) ?? [])
       .flatMap((game) => [game.startedAt, game.endedAt])
       .filter((date): date is string => Boolean(date))
       .sort()
       .at(-1)
-    return {
-      url: `${siteUrl}/games/${year}`,
-      ...(latest && { lastModified: new Date(`${latest}T00:00:00Z`) }),
-    }
+    const lastModified = latest && { lastModified: new Date(`${latest}T00:00:00Z`) }
+    const alternates = languages(href)
+    return [
+      { url: abs(href), ...lastModified, alternates },
+      { url: abs(localePath("en", href)), ...lastModified, alternates },
+    ]
   })
   return [...pages, ...posts, ...tags, ...gameYears]
 }

@@ -196,10 +196,12 @@ ffmpeg -i 원본.mp4 -vf "scale=-2:'min(1080,ih)'" -c:v libx264 -preset slow -cr
   {
     "slug": "stellar-blade",
     "title": "스텔라 블레이드",
+    "titleEn": "Stellar Blade",
     "platforms": ["PC (Steam)"],
     "status": "cleared",
     "rating": 4,
     "comment": "전투 손맛이 좋았다.",
+    "commentEn": "The combat felt great.",
     "playtime": 21.5,
     "startedAt": "2026-03-06",
     "endedAt": "2026-06-29",
@@ -214,14 +216,16 @@ ffmpeg -i 원본.mp4 -vf "scale=-2:'min(1080,ih)'" -c:v libx264 -preset slow -cr
 | ---- | ---- | ---- |
 | `slug` | 필수 | 영문 소문자·숫자·하이픈. 한 파일 안에서 중복 금지 |
 | `title` | 필수 | 게임 이름 |
-| `platforms` | 필수 | 1개 이상. 표기는 `"PC (Steam)"`, `"PC"`, `"모바일"`. 여러 개면 `["PC", "모바일"]` 순서 |
+| `titleEn` | 선택 | 영어 페이지(`/en/games`)에 보일 공식 영문 이름. 없으면 `title` 그대로. 이름이 이미 영어면 생략 |
+| `platforms` | 필수 | 1개 이상. 표기는 `"PC (Steam)"`, `"PC"`, `"모바일"`. 여러 개면 `["PC", "모바일"]` 순서 (영어 페이지에서 `모바일`은 `Mobile`로 표시) |
 | `status` | 선택 | `playing`(플레이 중) · `cleared`(클리어) · `dropped`(중단) · `wishlist`(하고 싶은 게임). 없으면 "플레이한 게임" 묶음 |
 | `rating` | 선택 | 1~5 **정수** |
 | `comment` | 선택 | 한 줄 소감 |
+| `commentEn` | 선택 | 영어 소감. 없으면 영어 페이지에서는 소감을 숨김. `comment` 없이 적으면 빌드 실패 |
 | `playtime` | 선택 | 플레이 시간(시간 단위 숫자, 예: `21.5`) |
 | `startedAt` / `endedAt` | 선택 | `YYYY-MM-DD`. `endedAt`이 `startedAt`보다 이르면 실패 |
 | `cover` | 선택 | 표지 경로. **있으면 `coverCredit`(출처)도 필수** |
-| `coverCredit` | 선택 | 표지 출처 문구 (예: `"직접 촬영한 플레이 화면"`, `"OO게임즈 공식 프레스 킷"`) |
+| `coverCredit` | 선택 | 표지 출처 문구 (예: `"직접 촬영한 플레이 화면"`, `"OO게임즈 공식 프레스 킷"`). 영어 페이지에도 그대로 보이므로 영문으로 적거나 영문을 함께 적기를 권장 (예: `"OO Games press kit"`) |
 | `trailer` | 선택 | 공식 PV 유튜브 영상 ID 11자. `https://www.youtube.com/watch?v=qgJBFa952mY`면 `qgJBFa952mY` |
 
 - 표에 없는 필드(오타 포함)를 적으면 빌드 실패입니다.

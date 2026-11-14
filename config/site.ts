@@ -9,7 +9,7 @@ export const siteConfig = {
   mainNav: [
     { title: "홈", titleEn: "Home", href: "/", hasEnglish: true },
     { title: "블로그", titleEn: "Blog", href: "/blog", hasEnglish: true },
-    { title: "게임", titleEn: "Games", href: "/games", hasEnglish: false },
+    { title: "게임", titleEn: "Games", href: "/games", hasEnglish: true },
   ],
   // 푸터 외부 링크는 content/profile.json의 links에 있습니다 (T-207)
 } as const

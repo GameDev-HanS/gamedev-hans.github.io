@@ -7,10 +7,11 @@ import path from "node:path"
 import { cache } from "react"
 import { z } from "zod"
 
-import { GAME_STATUSES, STATUS_LABEL, type GameStatus } from "./game-status"
+import { GAME_STATUSES, type GameStatus } from "./game-status"
+import { UI, type Locale } from "./i18n"
 import { SLUG, SLUG_MESSAGE, dateString, formatIssues, required } from "./schema"
 
-export { GAME_STATUSES, STATUS_LABEL, type GameStatus }
+export { GAME_STATUSES, type GameStatus }
 
 // 플레이 게임 기록 로더. content/games/<연도>.json과 earlier.json(게임 배열)을 읽고 검증합니다.
 // 형식이 틀리면 파일 이름이 들어간 메시지로 빌드를 실패시켜 잘못된 기록이 배포되지 않게 합니다.
@@ -23,6 +24,8 @@ const gameSchema = z
   .object({
     slug: z.string(required('"slug": "stellar-blade"')).regex(SLUG, SLUG_MESSAGE),
     title: z.string(required('"title": "스텔라 블레이드"')).trim().min(1, "제목이 비어 있습니다"),
+    // 영어 페이지(/en/games)에서 보일 공식 영문 이름(선택, v1.1.2). 없으면 title 그대로
+    titleEn: z.string().trim().min(1, "영문 이름이 비어 있습니다").optional(),
     platforms: z
       .array(z.string().trim().min(1, "빈 플랫폼 이름입니다"), required('"platforms": ["PC (Steam)"]'))
       .min(1, "플랫폼을 1개 이상 적습니다"),
@@ -35,6 +38,8 @@ const gameSchema = z
       .max(5, "1~5 사이 정수여야 합니다")
       .optional(),
     comment: z.string().trim().min(1, "소감이 비어 있습니다").optional(),
+    // 영어 소감(선택, v1.1.2). 없으면 영어 페이지에서는 소감을 숨깁니다
+    commentEn: z.string().trim().min(1, "영어 소감이 비어 있습니다").optional(),
     // 플레이 시간(시간 단위)
     playtime: z.number({ error: "시간 단위 숫자여야 합니다 (예: 21.5)" }).nonnegative("0 이상이어야 합니다").optional(),
     startedAt: dateString('"startedAt": "2026-03-06"').optional(),
@@ -65,6 +70,10 @@ const gameSchema = z
   .refine((game) => !game.cover || game.coverCredit, {
     message: "표지(cover)가 있으면 출처(coverCredit)도 적어야 합니다",
     path: ["coverCredit"],
+  })
+  .refine((game) => !game.commentEn || game.comment, {
+    message: "영어 소감(commentEn)은 한국어 소감(comment)이 있을 때만 적습니다",
+    path: ["commentEn"],
   })
 
 export type Game = z.infer<typeof gameSchema>
@@ -157,6 +166,11 @@ export function readGamesDir(dir: string, publicDir: string = PUBLIC_DIR): Games
 // 한 번의 렌더 안에서는 폴더를 한 번만 읽습니다.
 const loadGames = cache(() => readGamesDir(GAMES_DIR))
 
+/** 주소의 연도("2026")를 숫자로. 네 자리 숫자가 아니면 null (/games/[year], /en/games/[year] 공용) */
+export function parseYear(value: string): number | null {
+  return /^\d{4}$/.test(value) ? Number(value) : null
+}
+
 /** 기록이 있는 연도 목록 (최신순, earlier.json 제외). */
 export function getGameYears(): number[] {
   return [...loadGames().byYear.keys()].sort((a, b) => b - a)
@@ -187,8 +201,23 @@ export function mergeGames(data: GamesData): Game[] {
 /** 전체 보기용 게임 목록 (읽기 전용) */
 export const getAllGames = cache((): readonly Game[] => mergeGames(loadGames()))
 
-/** 상태가 없는 게임의 묶음 이름 */
-const NO_STATUS_LABEL = "플레이한 게임"
+/**
+ * 화면 언어에 맞춘 게임 목록 (v1.1.2). 컴포넌트는 title·comment·platforms만 읽으면 됩니다.
+ * en: 제목은 titleEn(없으면 title), 소감은 commentEn(없으면 숨김), 플랫폼 이름은 영어로. ko는 그대로.
+ */
+export function localizeGames(games: readonly Game[], locale: Locale): readonly Game[] {
+  if (locale === "ko") return games
+  const platformName = UI.en.games.platformName
+  return games.map((game) => ({
+    ...game,
+    title: game.titleEn ?? game.title,
+    comment: game.commentEn,
+    // Object.hasOwn: "constructor" 같은 기본 속성 이름이 섞여도 엉뚱한 값을 꺼내지 않게
+    platforms: game.platforms.map((platform) =>
+      Object.hasOwn(platformName, platform) ? platformName[platform] : platform
+    ),
+  }))
+}
 
 export type GameGroup = {
   /** 상태 값, 상태가 없는 묶음은 "none" */
@@ -197,35 +226,38 @@ export type GameGroup = {
   games: Game[]
 }
 
-// 묶음 안 순서: 시작일 최신순, 시작일이 없으면 뒤로 보내고 제목순
-function compareGames(a: Game, b: Game): number {
-  if (a.startedAt && b.startedAt) {
-    return b.startedAt.localeCompare(a.startedAt) || a.title.localeCompare(b.title, "ko")
+// 묶음 안 순서: 시작일 최신순, 시작일이 없으면 뒤로 보내고 제목순 (제목은 화면 언어 기준으로 정렬)
+function compareGames(locale: Locale) {
+  return (a: Game, b: Game): number => {
+    if (a.startedAt && b.startedAt) {
+      return b.startedAt.localeCompare(a.startedAt) || a.title.localeCompare(b.title, locale)
+    }
+    if (a.startedAt) return -1
+    if (b.startedAt) return 1
+    return a.title.localeCompare(b.title, locale)
   }
-  if (a.startedAt) return -1
-  if (b.startedAt) return 1
-  return a.title.localeCompare(b.title, "ko")
 }
 
 /**
  * 상태별 묶음: 플레이 중 → 클리어 → 중단 → 하고 싶은 게임 → 플레이한 게임(상태 없음).
- * 게임이 없는 묶음은 빼고 돌려줍니다. 받은 배열은 바꾸지 않습니다.
+ * 묶음 이름은 locale 언어로. 게임이 없는 묶음은 빼고 돌려줍니다. 받은 배열은 바꾸지 않습니다.
  */
-export function groupGames(games: readonly Game[]): GameGroup[] {
+export function groupGames(games: readonly Game[], locale: Locale = "ko"): GameGroup[] {
+  const t = UI[locale].games
   const groups: GameGroup[] = [
     ...GAME_STATUSES.map((status) => ({
       key: status,
-      label: STATUS_LABEL[status],
+      label: t.status[status],
       games: games.filter((game) => game.status === status),
     })),
-    { key: "none", label: NO_STATUS_LABEL, games: games.filter((game) => !game.status) },
+    { key: "none", label: t.noStatus, games: games.filter((game) => !game.status) },
   ]
   return groups
     .filter((group) => group.games.length > 0)
-    .map((group) => ({ ...group, games: group.games.toSorted(compareGames) }))
+    .map((group) => ({ ...group, games: group.games.toSorted(compareGames(locale)) }))
 }
 
 /** 묶음별 게임 수 (요약 줄용, 0개 묶음 제외) */
-export function countGroups(games: readonly Game[]): { label: string; count: number }[] {
-  return groupGames(games).map((group) => ({ label: group.label, count: group.games.length }))
+export function countGroups(games: readonly Game[], locale: Locale = "ko"): { label: string; count: number }[] {
+  return groupGames(games, locale).map((group) => ({ label: group.label, count: group.games.length }))
 }

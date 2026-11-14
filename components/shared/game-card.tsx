@@ -6,8 +6,8 @@ import { HoverCard } from "@/components/shared/motion/hover-card"
 import { StarRating } from "@/components/shared/star-rating"
 import { Badge } from "@/components/ui/badge"
 import { withBasePath } from "@/lib/base-path"
-import { STATUS_LABEL } from "@/lib/game-status"
 import type { Game } from "@/lib/games"
+import { UI, type Locale } from "@/lib/i18n"
 
 const ROW_CLASS = "flex items-center gap-3 border bg-card px-3 py-2.5"
 
@@ -16,11 +16,12 @@ const ROW_CLASS = "flex items-center gap-3 border bg-card px-3 py-2.5"
 // PV(trailer)가 있으면 줄 전체를 덮는 버튼으로 팝업을 열고, 마우스를 올리면 떠오르며 기웁니다 (HoverCard).
 // 버튼은 HoverCard의 overlay(제자리)에 두어 줄이 떠올라도 클릭 영역은 움직이지 않습니다.
 // PV가 없는 줄은 눌러도 반응이 없으므로 움직이지 않습니다.
-export function GameCard({ game }: { game: Game }) {
+// game은 화면 언어에 맞춘 값(localizeGames)이고, locale은 화면 문구(상태·시간·aria)에 씁니다.
+export function GameCard({ game, locale = "ko" }: { game: Game; locale?: Locale }) {
   if (!game.trailer) {
     return (
       <div className={`${ROW_CLASS} h-full`}>
-        <GameRowContent game={game} />
+        <GameRowContent game={game} locale={locale} />
       </div>
     )
   }
@@ -29,19 +30,20 @@ export function GameCard({ game }: { game: Game }) {
     <div className="group h-full">
       <HoverCard
         className={`${ROW_CLASS} accent-hover-in-group`}
-        overlay={<GameTrailerDialog videoId={game.trailer} title={game.title} />}
+        overlay={<GameTrailerDialog videoId={game.trailer} title={game.title} locale={locale} />}
       >
-        <GameRowContent game={game} />
+        <GameRowContent game={game} locale={locale} />
       </HoverCard>
     </div>
   )
 }
 
-function GameRowContent({ game }: { game: Game }) {
+function GameRowContent({ game, locale }: { game: Game; locale: Locale }) {
+  const t = UI[locale].games
   // "시작 ~ 끝", 끝낸 날이 없으면 "시작 ~", 시작일이 없으면 "~ 끝"
   const dates =
     game.startedAt || game.endedAt ? `${game.startedAt ?? ""} ~ ${game.endedAt ?? ""}`.trim() : null
-  const meta = [game.playtime !== undefined ? `${game.playtime}시간` : null, dates].filter(Boolean).join(" · ")
+  const meta = [game.playtime !== undefined ? t.playtime(game.playtime) : null, dates].filter(Boolean).join(" · ")
 
   return (
     <>
@@ -67,15 +69,15 @@ function GameRowContent({ game }: { game: Game }) {
           </h3>
           {game.status && (
             <Badge variant={game.status === "playing" ? "default" : "secondary"} className="shrink-0">
-              {STATUS_LABEL[game.status]}
+              {t.status[game.status]}
             </Badge>
           )}
-          {game.rating && <StarRating value={game.rating} className="shrink-0" />}
+          {game.rating && <StarRating value={game.rating} locale={locale} className="shrink-0" />}
         </div>
         {game.comment && <p className="line-clamp-1 text-xs text-muted-foreground">{game.comment}</p>}
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-[11px] text-muted-foreground">
           {meta && <span>{meta}</span>}
-          <ul className="flex flex-wrap gap-1" aria-label="플랫폼">
+          <ul className="flex flex-wrap gap-1" aria-label={t.platforms}>
             {game.platforms.map((platform) => (
               <li key={platform}>
                 <Badge variant="outline">{platform}</Badge>
