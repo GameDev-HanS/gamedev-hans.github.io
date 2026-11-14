@@ -1,6 +1,7 @@
 ---
 description: 기획부터 개발까지 진행합니다 — PRD 작성 → 로드맵 → TODO를 하나씩 계획·구현·리뷰·커밋 (문서 작성은 product-manager 서브에이전트가 맡음)
 argument-hint: "prd <아이디어> | roadmap | next | status"
+model: sonnet
 ---
 
 사용자와 함께 기획하고 개발을 진행합니다. **메인 세션(당신)이 사용자와 대화·계획·구현을 맡고**, 문서(PRD, ROADMAP)는 `product-manager` 서브에이전트가 씁니다. 서브에이전트는 사용자에게 질문할 수 없으므로, 질문은 항상 여기서 AskUserQuestion으로 합니다.

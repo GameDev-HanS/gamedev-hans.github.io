@@ -85,3 +85,4 @@ Tailwind v4이고 config 파일이 없습니다. 테마 변수와 다크 모드(
 - **개인정보 보호가 편의보다 우선**입니다. 비밀값(예: `DISCORD_WEBHOOK_URL`)은 환경 변수로만 다룹니다.
 - 유틸리티는 직접 만들지 않고 검증된 라이브러리를 씁니다 (next-themes, react-hook-form + zod, sonner, lucide-react 등).
 - `.claude/`의 공유 설정은 커밋하고, 개인 설정 `.claude/settings.local.json`만 제외합니다.
+- `.claude/docs/ROADMAP.md`는 통째로 읽지 않습니다. Grep으로 찾거나 필요한 줄만 `offset`/`limit`로 읽습니다.
