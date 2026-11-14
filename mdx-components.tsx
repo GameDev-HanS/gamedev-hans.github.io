@@ -3,6 +3,7 @@ import Link from "next/link"
 import type { ComponentProps } from "react"
 
 import { CodeBlock } from "@/components/shared/code-block"
+import { Video } from "@/components/shared/video"
 import { withBasePath } from "@/lib/base-path"
 import { cn } from "@/lib/utils"
 
@@ -43,6 +44,8 @@ const components: MDXComponents = {
   pre: (props: ComponentProps<"pre"> & { "data-language"?: string }) => (
     <CodeBlock language={props["data-language"]} {...props} />
   ),
+  // 본문 영상: <Video src="<Supabase 공개 URL>" poster="(선택)" /> (F008, T-304)
+  Video,
 }
 
 export function useMDXComponents(): MDXComponents {
