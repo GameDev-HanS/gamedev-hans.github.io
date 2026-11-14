@@ -1,5 +1,6 @@
 import Image from "next/image"
 import Link from "next/link"
+import { PlayIcon } from "lucide-react"
 
 import { HoverCard } from "@/components/shared/motion/hover-card"
 import { TagList } from "@/components/shared/tag-list"
@@ -32,6 +33,14 @@ export function PostCard({ post, headingAs: Heading = "h2" }: { post: Post; head
                 aria-hidden
                 className="size-full bg-linear-to-br from-primary/15 via-card to-card"
               />
+            )}
+            {/* 본문에 영상이 있는 글: 썸네일 왼쪽 위 표시. 사진·그라데이션 어느 쪽 위에서도 보이게 반투명 검정 배경 + 흰 글자.
+                글자가 있어 화면 낭독기도 카드 링크 이름에 "영상"을 함께 읽습니다 */}
+            {post.hasVideo && (
+              <span className="absolute top-2 left-2 inline-flex items-center gap-1 rounded-md bg-black/70 px-2 py-0.5 text-xs font-medium text-white backdrop-blur-sm">
+                <PlayIcon aria-hidden className="size-3 fill-current" />
+                영상
+              </span>
             )}
           </div>
           <div className="flex flex-1 flex-col gap-2 px-(--card-spacing)">

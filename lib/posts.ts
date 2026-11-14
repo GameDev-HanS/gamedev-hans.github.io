@@ -6,6 +6,11 @@ import path from "node:path"
 
 import matter from "gray-matter"
 import { cache } from "react"
+import remarkGfm from "remark-gfm"
+import remarkMdx from "remark-mdx"
+import remarkParse from "remark-parse"
+import { unified } from "unified"
+import { visit } from "unist-util-visit"
 import { z } from "zod"
 
 import { SLUG, SLUG_MESSAGE, dateString, formatIssues, required } from "./schema"
@@ -65,6 +70,43 @@ export type Post = Omit<z.infer<typeof frontmatterSchema>, "tags"> & {
   slug: string
   /** frontmatter 순서 그대로, 표시 이름을 붙인 태그 */
   tags: Tag[]
+  /** 본문에 <Video> 컴포넌트가 있는지 (빌드 시 계산, 목록 카드의 "영상" 표시) */
+  hasVideo: boolean
+}
+
+// MDX 본문을 문법 트리로 읽는 파서. MDX 빌드(next.config.ts)와 같은 문법 규칙(remark-mdx + remark-gfm)을 씁니다.
+// frontmatter는 gray-matter가 이미 떼어 낸 본문을 넘기므로 remark-frontmatter는 필요 없습니다.
+const mdxParser = unified().use(remarkParse).use(remarkMdx).use(remarkGfm)
+
+// 같은 본문은 한 번만 해석합니다. getAllPosts()는 React cache라 정적 빌드에서 페이지마다 다시 불리므로,
+// 본문 내용을 키로 결과를 모듈에 기억해 둡니다 (내용이 바뀌면 키가 달라져 다시 해석)
+const hasVideoMemo = new Map<string, boolean>()
+
+/**
+ * 본문(frontmatter 제외)에 <Video> 컴포넌트가 있는지 검사합니다.
+ * 정규식 대신 MDX 문법 트리에서 JSX 요소 이름으로 찾으므로, 코드 블록·인라인 코드(목록·인용 안 포함)와
+ * {/* 주석 *\/} 안에 예시로 적은 <Video>는 세지 않습니다.
+ */
+function hasVideoTag(content: string, where: string): boolean {
+  const memo = hasVideoMemo.get(content)
+  if (memo !== undefined) return memo
+
+  let tree
+  try {
+    tree = mdxParser.parse(content)
+  } catch (error) {
+    // MDX 문법 오류는 어차피 글 렌더링에서도 빌드가 실패하므로, 파일 이름을 붙여 먼저 알립니다
+    throw new Error(`${where}: MDX 본문을 읽을 수 없습니다 — ${(error as Error).message}`)
+  }
+  let found = false
+  visit(tree, (node) => {
+    // node.type으로 좁히면 name(string | null)이 있는 MDX JSX 노드 타입이 됩니다 (프래그먼트 <>는 null)
+    if ((node.type === "mdxJsxFlowElement" || node.type === "mdxJsxTextElement") && node.name === "Video") {
+      found = true
+    }
+  })
+  hasVideoMemo.set(content, found)
+  return found
 }
 
 /**
@@ -105,7 +147,7 @@ function readPost(file: string): Post {
     throw new Error(`${where}: 파일 이름은 ${SLUG_MESSAGE}`)
   }
 
-  const { data } = matter(fs.readFileSync(path.join(POSTS_DIR, file), "utf8"))
+  const { data, content } = matter(fs.readFileSync(path.join(POSTS_DIR, file), "utf8"))
   const parsed = frontmatterSchema.safeParse(data)
   if (!parsed.success) {
     throw new Error(`${where}: 글 정보(frontmatter)가 올바르지 않습니다 — ${formatIssues(parsed.error)}`)
@@ -116,7 +158,7 @@ function readPost(file: string): Post {
     throw new Error(`${where}: thumbnail 파일이 없습니다 — public${thumbnail}`)
   }
 
-  return { slug, ...parsed.data, tags: parsed.data.tags.map(toTag) }
+  return { slug, ...parsed.data, tags: parsed.data.tags.map(toTag), hasVideo: hasVideoTag(content, where) }
 }
 
 /**
