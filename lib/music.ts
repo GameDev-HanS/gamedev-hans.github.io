@@ -6,6 +6,8 @@ import path from "node:path"
 
 import { z } from "zod"
 
+import { withBasePath } from "@/lib/base-path"
+
 // 배경 음악 정보 (F015). 빌드 시 서버에서만 읽습니다.
 const MUSIC_JSON = "content/music.json"
 
@@ -54,6 +56,5 @@ export function getBackgroundMusic(): BackgroundMusic | null {
   const { file, ...info } = parsed.data
   if (!fs.existsSync(path.join(root, "public", "audio", file))) return null
 
-  const basePath = process.env.PAGES_BASE_PATH ?? ""
-  return { ...info, src: `${basePath}/audio/${file}` }
+  return { ...info, src: withBasePath(`/audio/${file}`) }
 }

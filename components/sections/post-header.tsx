@@ -1,6 +1,7 @@
 import Image from "next/image"
 
 import { TagList } from "@/components/shared/tag-list"
+import { withBasePath } from "@/lib/base-path"
 import type { Post } from "@/lib/posts"
 
 // 글 상세 상단: 작성일, 제목, 태그, 대표 이미지
@@ -17,7 +18,7 @@ export function PostHeader({ post }: { post: Post }) {
       {post.thumbnail && (
         <div className="relative mt-2 aspect-video overflow-hidden ring-1 ring-foreground/10">
           <Image
-            src={post.thumbnail}
+            src={withBasePath(post.thumbnail)}
             alt=""
             fill
             priority

@@ -5,6 +5,7 @@ import { GameTrailerDialog } from "@/components/shared/game-trailer-dialog"
 import { HoverCard } from "@/components/shared/motion/hover-card"
 import { StarRating } from "@/components/shared/star-rating"
 import { Badge } from "@/components/ui/badge"
+import { withBasePath } from "@/lib/base-path"
 import { STATUS_LABEL } from "@/lib/game-status"
 import type { Game } from "@/lib/games"
 
@@ -47,7 +48,7 @@ function GameRowContent({ game }: { game: Game }) {
       {/* 작은 이니셜(표지가 있으면 표지) 칸 (장식용) */}
       <div aria-hidden className="relative size-10 shrink-0 overflow-hidden bg-linear-to-br from-primary/20 to-card">
         {game.cover ? (
-          <Image src={game.cover} alt="" fill sizes="40px" className="object-cover" />
+          <Image src={withBasePath(game.cover)} alt="" fill sizes="40px" className="object-cover" />
         ) : (
           <span className="flex size-full items-center justify-center font-heading text-lg font-bold text-primary/80">
             {Array.from(game.title)[0]}

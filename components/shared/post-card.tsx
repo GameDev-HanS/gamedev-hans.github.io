@@ -4,6 +4,7 @@ import Link from "next/link"
 import { HoverCard } from "@/components/shared/motion/hover-card"
 import { TagList } from "@/components/shared/tag-list"
 import { Card } from "@/components/ui/card"
+import { withBasePath } from "@/lib/base-path"
 import type { Post } from "@/lib/posts"
 
 // 블로그 글 카드. 카드 전체가 글 상세로 가는 링크이고, 마우스를 올리거나 키보드로 포커스하면 테두리가 포인트 색으로 바뀝니다.
@@ -19,7 +20,7 @@ export function PostCard({ post, headingAs: Heading = "h2" }: { post: Post; head
             {post.thumbnail ? (
               // 카드 링크 이름에 제목이 이미 있으므로 썸네일은 장식 이미지로 처리 (화면 낭독기가 제목을 두 번 읽지 않게)
               <Image
-                src={post.thumbnail}
+                src={withBasePath(post.thumbnail)}
                 alt=""
                 fill
                 sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"

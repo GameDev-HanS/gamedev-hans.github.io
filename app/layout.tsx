@@ -10,6 +10,7 @@ import { ThemeProvider } from "@/components/providers/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { siteConfig } from "@/config/site";
+import { siteUrl } from "@/lib/base-path";
 import { getProfile } from "@/lib/content";
 import { baseOpenGraph } from "@/lib/metadata";
 import { getBackgroundMusic } from "@/lib/music";
@@ -26,7 +27,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteConfig.url),
+  // basePath 포함 주소: 페이지의 canonical·og:url·og:image 상대 경로가 이 주소 뒤에 이어 붙습니다
+  metadataBase: new URL(siteUrl),
   title: {
     default: siteConfig.name,
     template: `%s | ${siteConfig.name}`,
@@ -34,7 +36,7 @@ export const metadata: Metadata = {
   description: siteConfig.description,
   openGraph: {
     ...baseOpenGraph,
-    url: siteConfig.url,
+    url: siteUrl,
     title: siteConfig.name,
     description: siteConfig.description,
   },

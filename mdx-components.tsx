@@ -3,6 +3,7 @@ import Link from "next/link"
 import type { ComponentProps } from "react"
 
 import { CodeBlock } from "@/components/shared/code-block"
+import { withBasePath } from "@/lib/base-path"
 import { cn } from "@/lib/utils"
 
 // MDX 본문에 쓰는 전역 컴포넌트 (App Router에서 @next/mdx를 쓰려면 이 파일이 반드시 있어야 함).
@@ -25,10 +26,17 @@ const components: MDXComponents = {
       </a>
     )
   },
-  // 본문 이미지는 크기를 미리 알 수 없어 next/image 대신 img를 쓰고, 화면 폭을 넘지 않게 함
-  img: ({ alt = "", className, ...props }) => (
+  // 본문 이미지는 크기를 미리 알 수 없어 next/image 대신 img를 쓰고, 화면 폭을 넘지 않게 함.
+  // "/images/..." 경로에는 basePath를 붙임 (외부 주소는 그대로)
+  img: ({ alt = "", className, src, ...props }) => (
     // eslint-disable-next-line @next/next/no-img-element
-    <img alt={alt} loading="lazy" {...props} className={cn("h-auto max-w-full", className)} />
+    <img
+      alt={alt}
+      loading="lazy"
+      src={typeof src === "string" ? withBasePath(src) : src}
+      {...props}
+      className={cn("h-auto max-w-full", className)}
+    />
   ),
   // 코드 블록은 전용 패널로 (T-301). 언어는 rehype-pretty-code가 pre에 넣는 data-language에서 받고,
   // 언어를 적지 않은 블록은 이 값이 없어 상단 바 없이 패널만 보입니다.
