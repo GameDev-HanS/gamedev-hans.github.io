@@ -203,7 +203,7 @@ ffmpeg -i 원본.mp4 -vf "scale=-2:'min(1080,ih)'" -c:v libx264 -preset slow -cr
     "startedAt": "2026-03-06",
     "endedAt": "2026-06-29",
     "cover": "/images/games/2026/stellar-blade.webp",
-    "coverCredit": "Steam 스토어",
+    "coverCredit": "직접 촬영한 플레이 화면",
     "trailer": "_VyeH5uteVk"
   }
 ]
@@ -220,7 +220,7 @@ ffmpeg -i 원본.mp4 -vf "scale=-2:'min(1080,ih)'" -c:v libx264 -preset slow -cr
 | `playtime` | 선택 | 플레이 시간(시간 단위 숫자, 예: `21.5`) |
 | `startedAt` / `endedAt` | 선택 | `YYYY-MM-DD`. `endedAt`이 `startedAt`보다 이르면 실패 |
 | `cover` | 선택 | 표지 경로. **있으면 `coverCredit`(출처)도 필수** |
-| `coverCredit` | 선택 | 표지 출처 문구 (예: `"Steam 스토어"`) |
+| `coverCredit` | 선택 | 표지 출처 문구 (예: `"직접 촬영한 플레이 화면"`, `"OO게임즈 공식 프레스 킷"`) |
 | `trailer` | 선택 | 공식 PV 유튜브 영상 ID 11자. `https://www.youtube.com/watch?v=qgJBFa952mY`면 `qgJBFa952mY` |
 
 - 표에 없는 필드(오타 포함)를 적으면 빌드 실패입니다.
@@ -229,7 +229,7 @@ ffmpeg -i 원본.mp4 -vf "scale=-2:'min(1080,ih)'" -c:v libx264 -preset slow -cr
 
 - **해를 넘긴 게임**은 다음 해 파일에도 다시 적습니다. 전체 보기(`/games`)에는 가장 최근 연도 것 하나만 보입니다.
 - `earlier.json`에 연도 파일과 **같은 slug**를 적으면 빌드 실패입니다. 연도를 알게 되면 `earlier.json`에서 지우고 연도 파일로 옮깁니다.
-- **표지**: 공식 스토어·보도자료 이미지를 **가로 600px 이하** WebP로 줄여 `public/images/games/<연도>/`에 둡니다. `earlier.json`의 표지는 `public/images/games/earlier/`. 다른 연도 폴더를 가리키거나 파일이 없으면 빌드 실패입니다.
+- **표지**: **허락된 이미지만** 씁니다 — 직접 찍은 플레이 스크린샷, 또는 이용 조건을 확인한 공식 프레스 킷. Steam 상점 이미지처럼 허락 없이 가져온 이미지는 쓰지 않습니다 (공개 저장소라 한 번 푸시하면 지워도 git 기록에 남음). **가로 600px 이하**(약 150KB 이하) WebP로 줄여 `public/images/games/<연도>/`에 둡니다. `earlier.json`의 표지는 `public/images/games/earlier/`. 다른 연도 폴더를 가리키거나 파일이 없으면 빌드 실패입니다.
 
 ---
 
