@@ -112,4 +112,4 @@ npm run build        # 정적 빌드 → out/
 - **소개**: `content/profile.json`, `skills.json`, `timeline.json`
 - **배경 음악**: `content/music.json` + `public/audio/<파일>.mp3` (둘 다 있을 때만 버튼이 나타남)
 
-파일을 추가하고 푸시하면 코드 수정 없이 사이트에 반영됩니다.
+파일을 추가하고 푸시하면 코드 수정 없이 사이트에 반영됩니다. 자세한 절차와 필드 예시는 [콘텐츠 작성 가이드](docs/writing-posts.md)를 보세요.
