@@ -12,5 +12,6 @@
   { "name": "Vim", "category": "ide", "icon": "vim" },
   { "name": "Firebase", "category": "etc", "icon": "firebase" },
   { "name": "Git / GitHub", "category": "etc", "icon": "github" },
+  { "name": "SVN", "category": "etc", "icon": "subversion" },
   { "name": "Claude", "category": "etc", "icon": "claude" }
 ]
