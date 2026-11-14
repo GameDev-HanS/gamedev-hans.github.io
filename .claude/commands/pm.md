@@ -12,6 +12,7 @@ argument-hint: "prd <아이디어> | roadmap | next | status"
 - **이 명령으로 만드는 계획 문서는 모두 `.claude/docs/` 아래에 둡니다.**
   - `.claude/docs/PRD.md`, `.claude/docs/ROADMAP.md` (지침: `.claude/docs/prd-guide.md`)
   - TODO별 계획: `.claude/docs/plans/<작업 번호>.md` (예: `plans/T-101.md`)
+  - **v1.1.0부터 (2026-11-14 사용자 결정):** 새 계획은 그 작업으로 올라갈 **버전 이름**으로 저장합니다: `.claude/docs/plans/v<버전>.md` (예: `plans/v1.1.0.md`). 아래 절차의 `plans/<번호>.md`는 이 파일을 뜻하고, 문서 맨 위 줄에 작업 번호를 함께 적습니다 (`# v1.1.0 (T-313) <작업 이름>`). 버전을 올리지 않는 작업(콘텐츠만)은 계획 파일을 만들지 않거나 기존처럼 `plans/T-xxx.md`로 둡니다. 기존 `T-xxx.md` 파일은 이름을 바꾸지 않습니다.
 - `product-manager`는 Agent 도구로 **포그라운드** 실행하고, 프롬프트 첫 줄에 `모드: PRD`, `모드: ROADMAP`, 또는 둘 다 고칠 때 `모드: PRD+ROADMAP`을 적습니다.
 - **사용량 절약:** `/pm next`에서 문서 반영은 작업 하나에 **한 번만** product-manager를 실행합니다 (아래 5단계). 예외는 1단계의 작업 쪼개기뿐입니다. 진행 중에 나온 결정은 바로 문서에 넣지 말고 `plans/<번호>.md`의 `## 결정` 섹션에 먼저 적어 두었다가 한꺼번에 넘깁니다.
 - 메인 세션은 PRD.md를 직접 고치지 않고 product-manager에게 맡깁니다. ROADMAP.md는 `/pm next`의 계획 링크 추가와 체크 표시(`[ ]` → `[x]`)만 직접 고칩니다. `plans/` 파일은 메인 세션이 씁니다.
