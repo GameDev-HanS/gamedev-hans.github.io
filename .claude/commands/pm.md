@@ -21,7 +21,7 @@ argument-hint: "prd <아이디어> | roadmap | next | status"
   powershell -NoProfile -ExecutionPolicy Bypass -File .claude/scripts/notify-discord.ps1 -Type pm -Status <passed|blocked|failed> -Step "<단계>" -Detail "<요약>"
   ```
   - `blocked`: 사용자가 중단·취소함, `failed`: 에이전트 오류 등으로 진행 불가
-- **버전 규칙 (v1.0.0부터, 2026-11-14):** 큰 기능(새 페이지·새 섹션·새 PRD 기능)은 `1.X.0`, 작은 기능(기존 기능 개선·수정·문서)은 `1.0.X`로 올립니다. 콘텐츠만 추가(글·게임·음악 데이터)하면 버전을 올리지 않습니다. 첫 번째 숫자(1)는 사용자가 말할 때만 바꿉니다. 올릴 때는 `package.json`과 `package-lock.json`(맨 위 `version`과 `packages[""].version`)의 `version`, `CHANGELOG.md` 맨 위 항목을 함께 고칩니다. 푸터의 `v<버전>`은 `package.json`에서 읽으므로 따로 고치지 않습니다.
+- **버전 규칙 (v1.0.0부터, 2026-11-14):** 큰 기능(새 페이지·새 섹션·새 PRD 기능)은 `1.X.0`, 작은 기능(기존 기능 개선·수정·문서)은 `1.0.X`로 올립니다. 콘텐츠만 추가(글·게임·음악 데이터)하면 버전을 올리지 않습니다. 첫 번째 숫자(1)는 사용자가 말할 때만 바꿉니다. **같은 계열 기능은 같은 줄 (2026-11-14 사용자 결정):** 이미 시작한 기능 계열의 후속 작업은 큰 기능이라도 새 `1.X.0`을 열지 않고 그 줄의 셋째 자리로 이어 갑니다 (예: `1.1.X` = 영문 페이지 개발 — v1.1.0 영어판, v1.1.1 리뷰 반영, v1.1.2 게임 영어판). 새 계열이 시작될 때만 다음 `1.X.0`입니다. 올릴 때는 `package.json`과 `package-lock.json`(맨 위 `version`과 `packages[""].version`)의 `version`, `CHANGELOG.md` 맨 위 항목을 함께 고칩니다. 푸터의 `v<버전>`은 `package.json`에서 읽으므로 따로 고치지 않습니다.
 - **v1.0.0 이후 운영:** 로드맵에 없던 기능은 사용자가 요청할 때마다 새 작업으로 ROADMAP에 추가하고(`/pm roadmap` 또는 다음 작업 번호), `/pm next`로 하나씩 진행해 업데이트(버전)로 남깁니다.
 - 기존 흐름은 그대로 씁니다: 코드 리뷰는 Stop 훅 → `code-reviewer`, 커밋은 `/commit` 또는 `/commit-test`, 푸시는 사용자가 GitHub Desktop에서. Claude는 푸시하지 않습니다.
 
