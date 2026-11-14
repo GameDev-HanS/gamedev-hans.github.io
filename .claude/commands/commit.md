@@ -30,6 +30,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .claude/scripts/notify-disco
 
 3. 변경을 **주요 기능·수정 단위로 나눈 커밋 계획**을 세웁니다. 서로 관련된 파일끼리 묶고, 다른 커밋이 의존하는 변경(설정, `.gitignore` 등)을 먼저 둡니다. 변경이 하나의 단위면 커밋 하나로 충분합니다.
    커밋마다 메시지 초안을 씁니다. 기존 스타일을 따르고, 없으면 Conventional Commits(`feat:`, `fix:`, `chore:`, `docs:` 등) + 한국어. `$ARGUMENTS`의 힌트를 반영합니다.
+   **버전 기록 (2026-11-14 사용자 요청):** `package.json`의 `version`을 바꾸는 커밋은 제목 끝 괄호에 작업 번호(T-xxx) **대신** 버전을 적고(예: `feat: 푸터 버전 표시 (v1.0.0)`, 작업 번호는 본문에 적어도 됨), 본문 첫 줄에 `버전: v<이전> → v<새 버전>`을 적습니다. 처음 버전이면 `버전: v<새 버전>`. 버전이 바뀌지 않은 커밋은 적지 않습니다.
 
 4. **Agent 도구로 `privacy-guard` 서브에이전트를 실행**합니다 (포그라운드). 전체 변경을 스테이징한 상태로 한 번 검사하고, 프롬프트에 커밋 계획(커밋별 파일과 메시지 초안)을 넣습니다. 이 단계는 건너뛸 수 없습니다. 에이전트는 위험 요소를 보고만 하고 아무것도 바꾸지 않습니다.
 
@@ -51,6 +52,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .claude/scripts/notify-disco
    ```
    - 훅이 gitleaks로 한 번 더 검사해 비밀값이 있으면 막습니다(이 경우 `-Status blocked`로 알리고 원인 보고). 통과하면 승인 창 없이 바로 커밋됩니다. 자동 커밋은 위 형태(git 경로 + `commit -m` + here-string 또는 작은따옴표 메시지)의 단독 명령일 때만 되고, 메시지에 `"`, `\`, 특수 따옴표(‘ ’ “ ”)가 있으면 승인 창이 뜨므로 메시지에 쓰지 않습니다. 승인 창이 떠서 사용자가 거부하면 `-Status blocked -Detail "사용자가 커밋을 취소함"`으로 알리고 끝냅니다.
    - 실패하면 `-Status failed -Detail "<오류 요약>"`로 알리고 원인을 보고합니다. `--no-verify`로 우회하지 않습니다.
+
+6-1. **버전 태그:** 이번 커밋에서 `package.json`의 `version`이 바뀌었으면, 마지막 커밋에 주석 태그를 답니다 (단독 명령): `& '<git.exe 경로>' tag -a v<버전> -m 'v<버전>'`. 같은 이름의 태그가 이미 있으면 만들지 않고 보고합니다. 태그는 GitHub Desktop의 Push origin으로 함께 올라가며, GitHub에 보이지 않으면 사용자에게 알립니다.
 
 7. 모든 커밋이 끝나면 `-Status passed`로 알림을 한 번 보냅니다. `-Detail`에 커밋 개수와 각 제목을 적고, 제외한 파일이 있으면 `제외: <경로> (<이유>)`도 함께 적습니다. 중간에 실패하면 그 시점에 `-Status failed`로 알리고 남은 커밋은 멈춥니다.
 

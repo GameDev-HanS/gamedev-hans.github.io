@@ -20,6 +20,8 @@ argument-hint: "prd <아이디어> | roadmap | next | status"
   powershell -NoProfile -ExecutionPolicy Bypass -File .claude/scripts/notify-discord.ps1 -Type pm -Status <passed|blocked|failed> -Step "<단계>" -Detail "<요약>"
   ```
   - `blocked`: 사용자가 중단·취소함, `failed`: 에이전트 오류 등으로 진행 불가
+- **버전 규칙 (v1.0.0부터, 2026-11-14):** 큰 기능(새 페이지·새 섹션·새 PRD 기능)은 `1.X.0`, 작은 기능(기존 기능 개선·수정·문서)은 `1.0.X`로 올립니다. 콘텐츠만 추가(글·게임·음악 데이터)하면 버전을 올리지 않습니다. 첫 번째 숫자(1)는 사용자가 말할 때만 바꿉니다. 올릴 때는 `package.json`과 `package-lock.json`(맨 위 `version`과 `packages[""].version`)의 `version`, `CHANGELOG.md` 맨 위 항목을 함께 고칩니다. 푸터의 `v<버전>`은 `package.json`에서 읽으므로 따로 고치지 않습니다.
+- **v1.0.0 이후 운영:** 로드맵에 없던 기능은 사용자가 요청할 때마다 새 작업으로 ROADMAP에 추가하고(`/pm roadmap` 또는 다음 작업 번호), `/pm next`로 하나씩 진행해 업데이트(버전)로 남깁니다.
 - 기존 흐름은 그대로 씁니다: 코드 리뷰는 Stop 훅 → `code-reviewer`, 커밋은 `/commit` 또는 `/commit-test`, 푸시는 사용자가 GitHub Desktop에서. Claude는 푸시하지 않습니다.
 
 요청의 첫 단어로 아래 중 하나를 실행합니다. 비어 있거나 알 수 없으면 `status`를 실행하고 사용법을 한 줄로 안내합니다.
@@ -54,6 +56,7 @@ argument-hint: "prd <아이디어> | roadmap | next | status"
 4. **리뷰:** 마무리할 때 Stop 훅이 `code-reviewer` 리뷰와 `-Type review` 알림을 요청하면 그대로 따릅니다. 문제가 있으면 고칠지 사용자에게 묻고, 고치기로 하면 고칩니다. **리뷰 보고와 알림을 마친 뒤 멈추지 말고, 같은 턴에서 5단계로 이어 갑니다.** (고칠지 묻는 중이면 답을 받은 뒤 이어 갑니다.)
    - **재리뷰는 코드 동작이 바뀐 수정만** 받습니다 (로직·조건·props·데이터 구조). 주석·문구·데이터 순서·이름만 바꾼 수정은 `npm run lint`, `npx tsc --noEmit` 통과로 끝내고, 재리뷰를 생략한 이유를 보고에 한 줄 적습니다.
 5. **문서·체크:** 리뷰가 정리되면 `product-manager`를 **한 번** 실행합니다. PRD 변경이 필요하면 `모드: PRD+ROADMAP`, 아니면 `모드: ROADMAP`. 프롬프트에 `plans/<번호>.md`의 `## 결정`과 "그 작업을 `[x]`로 표시, 기존 완료 표시·메모·`계획:` 링크 유지"를 넣습니다 (코드와 함께 커밋되도록 커밋 전에). 문서 변경이 체크 표시뿐이면 product-manager 없이 메인 세션이 `[x]`만 바꿉니다.
+   - **버전:** 공통 규칙의 버전 규칙에 따라 큰 기능/작은 기능/버전 유지 중 하나로 판단하고, 올리면 `package.json`·`package-lock.json`·`CHANGELOG.md`를 같은 커밋에 넣습니다. 판단이 애매하면 AskUserQuestion으로 묻습니다. 새 버전은 6단계 알림 `-Detail`에 함께 적습니다.
 6. **알림:** `-Status passed -Step "TODO 완료 (<번호>)"`, `-Detail`에 작업 이름과 바뀐 파일 수를 적어 알립니다.
 7. **커밋 안내:** 사이트 화면이 바뀌었으면 `/commit-test`, 아니면 `/commit`을 안내합니다. 사용자가 원하면 그 명령의 절차를 그대로 실행합니다 (privacy-guard 검사 생략 불가, 검사를 통과하면 자동 커밋). 끝나면 "GitHub Desktop에서 Push origin을 눌러 푸시하세요."와 다음 작업 번호를 알려 줍니다.
 

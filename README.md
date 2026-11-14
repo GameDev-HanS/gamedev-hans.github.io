@@ -113,3 +113,7 @@ npm run build        # 정적 빌드 → out/
 - **배경 음악**: `content/music.json` + `public/audio/<파일>.mp3` (둘 다 있을 때만 버튼이 나타남)
 
 파일을 추가하고 푸시하면 코드 수정 없이 사이트에 반영됩니다. 자세한 절차와 필드 예시는 [콘텐츠 작성 가이드](docs/writing-posts.md)를 보세요.
+
+## 버전
+
+현재 버전과 변경 내용은 [CHANGELOG.md](CHANGELOG.md)에 있습니다. 큰 기능은 1.X.0, 작은 기능은 1.0.X로 올립니다.
