@@ -23,6 +23,13 @@
     "trailer": "u1oqfdh4xBY"
   },
   {
+    "slug": "rainbow-six-siege",
+    "title": "레인보우 식스 시즈",
+    "titleEn": "Tom Clancy's Rainbow Six Siege",
+    "platforms": ["PC (Steam)"],
+    "playtime": 879
+  },
+  {
     "slug": "eternal-return",
     "title": "이터널 리턴",
     "titleEn": "Eternal Return",

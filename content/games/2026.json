@@ -10,6 +10,15 @@
     "trailer": "2VaLOc1FpSo"
   },
   {
+    "slug": "yakuza-like-a-dragon",
+    "title": "용과 같이 7: 빛과 어둠의 행방",
+    "titleEn": "Yakuza: Like a Dragon",
+    "platforms": ["PC (Steam)"],
+    "status": "cleared",
+    "startedAt": "2026-01-16",
+    "endedAt": "2026-02-07"
+  },
+  {
     "slug": "yakuza-0",
     "title": "용과 같이 제로",
     "titleEn": "Yakuza 0",
@@ -58,9 +67,10 @@
     "title": "메타포: 리판타지오",
     "titleEn": "Metaphor: ReFantazio",
     "platforms": ["PC (Steam)"],
-    "playtime": 60.9,
+    "status": "cleared",
+    "playtime": 66.7,
     "startedAt": "2026-06-30",
-    "endedAt": "2026-08-20",
+    "endedAt": "2026-11-16",
     "trailer": "Np83M8m9rIg"
   },
   {
@@ -135,6 +145,7 @@
     "title": "승리의 여신: 니케",
     "titleEn": "Goddess of Victory: NIKKE",
     "platforms": ["PC", "모바일"],
+    "status": "playing",
     "trailer": "JjcR8wuWEC4"
   },
   {
