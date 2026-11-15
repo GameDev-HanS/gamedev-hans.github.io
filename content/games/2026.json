@@ -15,8 +15,10 @@
     "titleEn": "Yakuza: Like a Dragon",
     "platforms": ["PC (Steam)"],
     "status": "cleared",
+    "playtime": 34.7,
     "startedAt": "2026-01-16",
-    "endedAt": "2026-02-07"
+    "endedAt": "2026-02-07",
+    "trailer": "MG2vrbZ-eu4"
   },
   {
     "slug": "yakuza-0",
